@@ -88,6 +88,7 @@ def fill_feed_dict(data_set, images_pl, labels_pl):
   return feed_dict
 
 def do_eval(saver,
+            loss,
             eval_correct,
             images_placeholder,
             labels_placeholder,
