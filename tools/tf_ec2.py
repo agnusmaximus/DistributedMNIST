@@ -49,10 +49,17 @@ configuration = Cfg({
     "nfs_mount_point" : "/home/ubuntu/inception_shared", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     # Command specification
+    # Master pre commands are run only by the master
+    "master_pre_commands" :
+    [
+        "rm -rf %(nfs_mount_point)s/*",
+        "cd DistributedMNIST",
+        "git fetch && git reset --hard origin/master",
+    ],
+
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
-        "rm -rf %(nfs_mount_point)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -388,7 +395,7 @@ def run_tf(argv, batch_size=128, port=1234):
     command_machine_assignments = {}
 
     # Construct the master command
-    command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["pre_commands"])}
+    command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["master_pre_commands"])}
     for command_string in configuration["train_commands"]:
         command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "0").replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", "master"))
 
