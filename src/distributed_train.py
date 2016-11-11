@@ -142,8 +142,7 @@ def train(target, dataset, cluster_spec):
     total_loss = mnist.loss(logits, labels)
 
     # Create an optimizer that performs gradient descent.
-    #opt = tf.train.MomentumOptimizer(lr, 0.9).minimize(total_loss, global_step=global_step)
-    opt = tf.train.AdamOptimizer(lr)
+    opt = tf.train.MomentumOptimizer(learning_rate, 0.9)
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerV2(

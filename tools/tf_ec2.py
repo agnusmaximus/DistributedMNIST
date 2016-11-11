@@ -67,8 +67,8 @@ configuration = Cfg({
     # Model configuration
     "batch_size" : "128",
     "initial_learning_rate" : "0.01",
-    "learning_rate_decay_factor" : ".999",
-    "num_epochs_per_decay" : "5.0",
+    "learning_rate_decay_factor" : ".95",
+    "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
     # PS_HOSTS - special string replaced with actual list of ps hosts.
