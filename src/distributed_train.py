@@ -120,7 +120,6 @@ def train(target, dataset, cluster_spec):
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
-    global_step = get_global_step()
     tf.logging.info("HEYO: ")
     tf.logging.info(global_step.device)
 
