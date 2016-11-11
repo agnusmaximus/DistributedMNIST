@@ -46,7 +46,35 @@ tf.app.flags.DEFINE_integer('hidden2_units', 800, 'Number of units in the second
 
 FLAGS = tf.app.flags.FLAGS
 
-def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_units):
+def global_model(hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_units):
+    # Only use 1 ps
+    with tf.device("/job:ps/task:0"):
+        with tf.name_scope('hidden1'):
+            w1 = tf.Variable(
+                tf.truncated_normal([IMAGE_PIXELS, hidden1_units],
+                                    stddev=1.0 / math.sqrt(float(IMAGE_PIXELS))),
+                name='weights')
+            b1 = tf.Variable(tf.zeros([hidden1_units]),
+                             name='biases')
+        # Hidden 2
+        with tf.name_scope('hidden2'):
+            w2 = tf.Variable(
+                tf.truncated_normal([hidden1_units, hidden2_units],
+                                    stddev=1.0 / math.sqrt(float(hidden1_units))),
+                name='weights')
+            b2 = tf.Variable(tf.zeros([hidden2_units]),
+                                 name='biases')
+        # Linear
+        with tf.name_scope('softmax_linear'):
+            w3 = tf.Variable(
+                tf.truncated_normal([hidden2_units, NUM_CLASSES],
+                                    stddev=1.0 / math.sqrt(float(hidden2_units))),
+                name='weights')
+            b3 = tf.Variable(tf.zeros([NUM_CLASSES]),
+                             name='biases')
+        return w1, b1, w2, b2, w3, b3
+
+def inference(images)
   """Build the MNIST model up to where it may be used for inference.
 
   Args:
@@ -57,37 +85,20 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
   Returns:
     softmax_linear: Output tensor with the computed logits.
   """
+  w1, b1, w2, b2, w3, b3 = global_model()
 
   # Hidden 1
   with tf.name_scope('hidden1'):
-    weights = tf.Variable(
-        tf.truncated_normal([IMAGE_PIXELS, hidden1_units],
-                            stddev=1.0 / math.sqrt(float(IMAGE_PIXELS))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([hidden1_units]),
-                         name='biases')
-    hidden1 = tf.nn.relu(tf.matmul(images, weights) + biases)
+    hidden1 = tf.nn.relu(tf.matmul(images, w1) + b1)
   # Hidden 2
   with tf.name_scope('hidden2'):
-    weights = tf.Variable(
-        tf.truncated_normal([hidden1_units, hidden2_units],
-                            stddev=1.0 / math.sqrt(float(hidden1_units))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([hidden2_units]),
-                         name='biases')
-    hidden2 = tf.nn.relu(tf.matmul(hidden1, weights) + biases)
+    hidden2 = tf.nn.relu(tf.matmul(hidden1, w2) + b2)
   # Linear
   with tf.name_scope('softmax_linear'):
-    weights = tf.Variable(
-        tf.truncated_normal([hidden2_units, NUM_CLASSES],
-                            stddev=1.0 / math.sqrt(float(hidden2_units))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([NUM_CLASSES]),
-                         name='biases')
-    logits = tf.matmul(hidden2, weights) + biases
+    logits = tf.matmul(hidden2, w3) + b3
 
   tf.logging.info("YOOOOOOO")
-  tf.logging.info(logits.device)
+  tf.logging.info(w1.device)
 
   return logits
 
