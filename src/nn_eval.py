@@ -100,7 +100,7 @@ def do_eval(saver,
 
     # Summarize accuracy
     summary = tf.Summary()
-    summary.value.add(tag="Validation Accuracy", simple_value=acc)
+    summary.value.add(tag="Validation Accuracy", simple_value=float(acc))
     summary_writer.add_summary(summary, global_step)
 
     return global_step
