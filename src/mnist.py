@@ -99,7 +99,13 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
   # activations such that no rescaling is needed at evaluation time.
   if train:
       hidden = tf.nn.dropout(hidden, 0.5, seed=SEED)
-  return tf.matmul(hidden, fc2_weights) + fc2_biases
+
+  reg = (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
+         tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
+
+  loss = tf.matmul(hidden, fc2_weights) + fc2_biases
+
+  return loss + 5e-4 * reg
 
 def loss(logits, labels):
   """Calculates the loss from the logits and the labels.
@@ -114,11 +120,6 @@ def loss(logits, labels):
   loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
       logits, labels))
   return loss
-
-def regularization(loss):
-    return (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
-            tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
-
 
 def training(loss, learning_rate):
   """Sets up the training Ops.

@@ -140,10 +140,6 @@ def train(target, dataset, cluster_spec):
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
 
-    reg_term = mnist.regularization(total_loss)
-
-    total_loss += 5e-4 * reg_term
-
     # Create an optimizer that performs gradient descent.
     optimizer = tf.train.MomentumOptimizer(learning_rate, 0.9).minimize(total_loss, global_step=global_step)
 
