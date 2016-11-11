@@ -135,7 +135,7 @@ def do_eval(saver,
       total_loss += sess.run(loss, feed_dict=feed_dict)
     precision = true_count / num_examples
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f Loss: %0.04f' %
-          (num_examples, true_count, precision, total_loss))
+          (num_examples, true_count, precision, total_loss / num_examples))
     sys.stdout.flush()
 
 def evaluate(dataset):
