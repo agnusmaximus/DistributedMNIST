@@ -117,12 +117,16 @@ def train(target, dataset, cluster_spec):
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
     with tf.device('/job:ps/task:0'):
-      global_step = tf.get_variable('global_step',
-                                    shape=[],
-                                    dtype=tf.int64,
-                                    initializer=tf.zeros_initializer,
-                                    trainable=False,
-                                    collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP])
+      global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
+      if global_step_ref:
+        global_step = global_step_ref[0]
+      else:
+        global_step = tf.get_variable('global_step',
+                                      shape=[],
+                                      dtype=tf.int64,
+                                      initializer=tf.zeros_initializer,
+                                      trainable=False,
+                                      collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP])
 
     # Calculate the learning rate schedule.
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
