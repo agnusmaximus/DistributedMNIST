@@ -45,7 +45,6 @@ tf.app.flags.DEFINE_boolean('run_once', False,
 
 def do_eval(saver,
             writer,
-            summary_op,
             val_acc,
             images_placeholder,
             labels_placeholder,
@@ -101,11 +100,9 @@ def do_eval(saver,
 
     # Summarize accuracy
     summary = tf.Summary()
-    summary.ParseFromString(sess.run(summary_op))
     summary.value.add(tag="Validation Accuracy", simple_value=acc)
     summary_writer.add_summary(summary, global_step)
 
-    print("YO: ", global_step)
     return global_step
 
 def evaluate(dataset):
@@ -122,13 +119,12 @@ def evaluate(dataset):
     saver = tf.train.Saver()
 
     # Create summary writer
-    summary_op = tf.merge_all_summaries()
     graph_def = tf.get_default_graph().as_graph_def()
     summary_writer = tf.train.SummaryWriter(FLAGS.eval_dir,
                                             graph_def=graph_def)
     step = -1
     while True:
-      step = do_eval(saver, summary_writer, summary_op, validation_accuracy, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
+      step = do_eval(saver, summary_writer, validation_accuracy, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
