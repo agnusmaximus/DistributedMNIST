@@ -242,7 +242,7 @@ def train(target, dataset, cluster_spec):
           loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels], feed_dict=feed_dict)
 
         tf.logging.info("CORRECT: ")
-        tf.logging.info(ps, 1)
+        tf.logging.info(ps)
         tf.logging.info(ls)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
