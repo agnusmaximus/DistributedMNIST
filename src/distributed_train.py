@@ -111,9 +111,10 @@ def train(target, dataset, cluster_spec):
           ps_device="/job:ps/cpu:0",
           cluster=cluster_spec)):
 
-    local_global_step = tf.Variable(0, trainable=False, name="local_global_step_%d" % FLAGS.task_id)
-    tf.logging.info("YOAYOAOYAOY")
-    tf.logging.info(local_global_step.device)
+    with tf.device('/job:worker/task:%d' % FLAGS.task_id):
+      local_global_step = tf.Variable(0, trainable=False, name="local_global_step_%d" % FLAGS.task_id)
+      tf.logging.info("YOAYOAOYAOY")
+      tf.logging.info(local_global_step.device)
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
@@ -244,7 +245,6 @@ def train(target, dataset, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    tf.logging.info("HEYO STARING YOOOOO")
     while not sv.should_stop():
       try:
         start_time = time.time()
