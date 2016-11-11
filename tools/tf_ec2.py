@@ -77,7 +77,7 @@ configuration = Cfg({
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
-        "--train_dir=%(nfs_mount_point)s/ "
+        "--train_dir=%(nfs_mount_point)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
@@ -269,7 +269,7 @@ def run_ssh_commands_parallel(instance, commands, q):
 # Returns a tuple of (instance, is_instance_idle). We return a tuple for multithreading ease.
 def is_instance_idle(q, instance):
     python_processes = run_ssh_commands(instance, ["ps aux | grep python"])
-    q.put((instance, not "imagenet" in python_processes and not "flowers" in python_processes))
+    q.put((instance, not "ps_hosts" in python_processes and not "ps_workers" in python_processes))
 
 # Idle instances are running instances that are not running the inception model.
 # We check whether an instance is running the inception model by ssh'ing into a running machine,
