@@ -26,7 +26,7 @@ configuration = Cfg({
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2a",
+    "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
     "master_type" : "m4.2xlarge",
@@ -44,8 +44,9 @@ configuration = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    #"nfs_ip_address" : "172.31.3.173",        # This is particular to the availability zone specified above. west-2c
-    "nfs_ip_address" : "172.31.35.0",          # us-west-2a
+    #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
+    #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
+    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     # Command specification

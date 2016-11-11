@@ -49,7 +49,8 @@ def do_eval(saver,
             val_acc,
             images_placeholder,
             labels_placeholder,
-            data_set):
+            data_set,
+            prev_global_step=-1):
   """Runs one evaluation against the full epoch of data.
   Args:
     sess: The session in which the model has been trained.
@@ -60,6 +61,8 @@ def do_eval(saver,
       input_data.read_data_sets().
   """
   with tf.Session() as sess:
+
+    # Load checkpoint
     ckpt = tf.train.get_checkpoint_state(FLAGS.checkpoint_dir)
     if ckpt and ckpt.model_checkpoint_path:
       if os.path.isabs(ckpt.model_checkpoint_path):
@@ -75,18 +78,21 @@ def do_eval(saver,
       return
 
     global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+
+    # Don't evaluate on the same checkpoint
+    if prev_global_step == global_step:
+      return prev_global_step
+
     print('Succesfully loaded model from %s at step=%s.' %
           (ckpt.model_checkpoint_path, global_step))
     sys.stdout.flush()
 
-    # Let batch size be equal to the whole evaluation data
+    # Compute accuracy
     num_examples = data_set.num_examples
     feed_dict = mnist.fill_feed_dict(data_set,
                                      images_placeholder,
                                      labels_placeholder,
                                      num_examples)
-
-    # Compute accuracy
     acc = sess.run(val_acc, feed_dict=feed_dict)
 
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
@@ -98,6 +104,8 @@ def do_eval(saver,
     summary.ParseFromString(sess.run(summary_op))
     summary.value.add(tag="Validation Accuracy", simple_value=acc)
     summary_writer.add_summary(summary, global_step)
+
+    return global_step
 
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
@@ -117,8 +125,9 @@ def evaluate(dataset):
     graph_def = tf.get_default_graph().as_graph_def()
     summary_writer = tf.train.SummaryWriter(FLAGS.eval_dir,
                                             graph_def=graph_def)
+    step = -1
     while True:
-      do_eval(saver, summary_writer, summary_op, validation_accuracy, images_placeholder, labels_placeholder, dataset)
+      step = do_eval(saver, summary_writer, summary_op, validation_accuracy, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
