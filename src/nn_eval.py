@@ -95,8 +95,8 @@ def do_eval(saver,
                                      num_examples)
     acc = sess.run(val_acc, feed_dict=feed_dict)
 
-    print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
-          (num_examples, true_count, acc))
+    print('Num examples: %d  Precision @ 1: %0.04f' %
+          (num_examples, acc))
     sys.stdout.flush()
 
     # Summarize accuracy
