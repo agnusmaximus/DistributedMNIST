@@ -81,28 +81,6 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
-def get_global_step(device=''):
-  """Returns the global step variable.
-
-  Args:
-    device: Optional device to place the variable. It can be an string or a
-      function that is called to get the device for the variable.
-
-  Returns:
-    the tensor representing the global step variable.
-  """
-  with tf.device('/job:ps/task:0'):
-    global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
-    if global_step_ref:
-      return global_step_ref[0]
-    else:
-      return tf.get_variable('global_step',
-                             shape=[],
-                             dtype=tf.int64,
-                             initializer=tf.zeros_initializer,
-                             trainable=False,
-                             collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP])
-
 def train(target, dataset, cluster_spec):
 
   """Train Inception on a dataset for a number of steps."""
@@ -127,7 +105,12 @@ def train(target, dataset, cluster_spec):
   is_chief = (FLAGS.task_id == 0)
 
   # Ops are assigned to worker by default.
-  with tf.device('/job:worker/task:%d' % FLAGS.task_id):
+  with tf.device(
+      tf.train.replica_device_setter(
+          worker_device='/job:worker/task:%d' % FLAGS.task_id,
+          ps_device="/job:ps/cpu:0",
+          cluster=cluster_spec)):
+    global_step = tf.Variable(0, name="global_step", trainable=False)
 
     local_global_step = variables.Variable(initial_value=0,
                                            trainable=False,
