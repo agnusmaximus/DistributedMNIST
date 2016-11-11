@@ -135,10 +135,10 @@ def train(target, dataset, cluster_spec):
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
-    logits = mnist.inference(images, train=True)
+    logits, reg = mnist.inference(images, train=True)
 
     # Add classification loss.
-    total_loss = mnist.loss(logits, labels)
+    total_loss = mnist.loss(logits, labels) + reg
 
     # Create an optimizer that performs gradient descent.
     #opt = tf.train.MomentumOptimizer(lr, 0.9).minimize(total_loss, global_step=global_step)

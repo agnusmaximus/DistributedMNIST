@@ -104,9 +104,9 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
   reg = (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
          tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
 
-  loss = tf.matmul(hidden, fc2_weights) + fc2_biases
+  logits = tf.matmul(hidden, fc2_weights) + fc2_biases
 
-  return loss + 5e-4 * reg
+  return logits, 5e-4 * reg
 
 def loss(logits, labels):
   """Calculates the loss from the logits and the labels.
