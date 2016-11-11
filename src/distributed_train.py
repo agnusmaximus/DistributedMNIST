@@ -194,7 +194,7 @@ def train(target, dataset, cluster_spec):
     local_global_step_init_op = tf.initialize_variables([local_global_step])
 
     # Build an initialization operation to run below.
-    init_op = [local_global_step_init_op, tf.initialize_all_variables()]
+    init_op = tf.initialize_all_variables()
 
     # We run the summaries in the same thread as the training operations by
     # passing in None for summary_op to avoid a summary_thread being started.
