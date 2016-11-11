@@ -91,11 +91,11 @@ def get_global_step(device=''):
   Returns:
     the tensor representing the global step variable.
   """
-  global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
-  if global_step_ref:
-    return global_step_ref[0]
-  else:
-    with tf.device('/job:ps/task:0'):
+  with tf.device('/job:ps/task:0'):
+    global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
+    if global_step_ref:
+      return global_step_ref[0]
+    else:
       return tf.get_variable('global_step',
                              shape=[],
                              dtype=tf.int64,
