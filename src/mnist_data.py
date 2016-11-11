@@ -77,23 +77,19 @@ def read_data_sets(train_dir,
 
   local_file = base.maybe_download(TRAIN_IMAGES, train_dir,
                                    SOURCE_URL + TRAIN_IMAGES)
-  with open(local_file, 'rb') as f:
-    train_images = extract_data(f, 60000)
+  train_images = extract_data(local_file, 60000)
 
   local_file = base.maybe_download(TRAIN_LABELS, train_dir,
                                    SOURCE_URL + TRAIN_LABELS)
-  with open(local_file, 'rb') as f:
-    train_labels = extract_labels(f, 60000)
+  train_labels = extract_labels(local_file, 60000)
 
   local_file = base.maybe_download(TEST_IMAGES, train_dir,
                                    SOURCE_URL + TEST_IMAGES)
-  with open(local_file, 'rb') as f:
-    test_images = extract_data(f, 10000)
+  test_images = extract_data(local_file, 10000)
 
   local_file = base.maybe_download(TEST_LABELS, train_dir,
                                    SOURCE_URL + TEST_LABELS)
-  with open(local_file, 'rb') as f:
-    test_labels = extract_labels(f, 10000)
+  test_labels = extract_labels(local_file, 10000)
 
   if not 0 <= validation_size <= len(train_images):
     raise ValueError(
