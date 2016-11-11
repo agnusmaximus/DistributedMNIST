@@ -48,7 +48,6 @@ IMAGE_SIZE = 28
 NUM_CHANNELS = 1
 
 def do_eval(saver,
-            loss,
             eval_correct,
             images_placeholder,
             labels_placeholder,
@@ -86,13 +85,11 @@ def do_eval(saver,
     true_count = 0
     steps_per_epoch = data_set.num_examples // FLAGS.batch_size
     num_examples = steps_per_epoch * FLAGS.batch_size
-    total_loss = 0
     for step in xrange(steps_per_epoch):
       feed_dict = mnist.fill_feed_dict(data_set,
                                        images_placeholder,
                                        labels_placeholder)
       true_count += sess.run(eval_correct, feed_dict=feed_dict)
-      total_loss += sess.run(loss, feed_dict=feed_dict)
     precision = true_count / num_examples
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f Loss: %0.04f' %
           (num_examples, true_count, precision, total_loss / num_examples))
@@ -104,7 +101,6 @@ def evaluate(dataset):
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(FLAGS.batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
-    loss = mnist.loss(logits, labels_placeholder) + reg
     sess = tf.Session()
     saver = tf.train.Saver()
     while True:

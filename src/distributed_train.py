@@ -137,13 +137,10 @@ def train(target, dataset, cluster_spec):
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
-    logits, reg = mnist.inference(images, train=False)
+    logits, reg = mnist.inference(images, train=True)
 
     # Add classification loss.
-    #total_loss = mnist.loss(logits, labels) + reg
-    total_loss = mnist.loss(logits, labels)
-
-    evaluation = mnist.evaluation(logits, labels)
+    total_loss = mnist.loss(logits, labels) + reg
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.MomentumOptimizer(lr, .9)
@@ -239,11 +236,9 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
-          loss_value, step, c = sess.run([train_op, global_step, evaluation], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
+          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          loss_value, step, c = sess.run([train_op, global_step, evaluation], feed_dict=feed_dict)
-
-        tf.logging.info("CORRECT: %d of %d" % (c, FLAGS.batch_size))
+          loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
