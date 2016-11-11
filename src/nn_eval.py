@@ -101,7 +101,7 @@ def evaluate(dataset):
     sess = tf.Session()
     saver = tf.train.Saver()
     while True:
-      do_eval(saver, eval_correct, loss, images_placeholder, labels_placeholder, dataset)
+      do_eval(saver, eval_correct, images_placeholder, labels_placeholder, dataset)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
