@@ -205,106 +205,106 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-  local_init_op = [local_global_step_init_op, local_init_op]
-  ready_for_local_init_op = opt.ready_for_local_init_op
+    local_init_op = [local_global_step_init_op, local_init_op]
+    ready_for_local_init_op = opt.ready_for_local_init_op
 
-  sv = tf.train.Supervisor(is_chief=is_chief,
-                           local_init_op=local_init_op,
-                           ready_for_local_init_op=ready_for_local_init_op,
-                           logdir=FLAGS.train_dir,
-                           init_op=init_op,
-                           summary_op=None,
-                           global_step=global_step,
-                           saver=saver,
-                           save_model_secs=FLAGS.save_interval_secs)
-
-
-  tf.logging.info('%s Supervisor' % datetime.now())
-
-  sess_config = tf.ConfigProto(
-      allow_soft_placement=True,
-      log_device_placement=FLAGS.log_device_placement)
-
-  # Get a session.
-  sess = sv.prepare_or_wait_for_session(target, config=sess_config)
-
-  # Start the queue runners.
-  queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
-  sv.start_queue_runners(sess, queue_runners)
-  tf.logging.info('Started %d queues for processing input data.',
-                  len(queue_runners))
-
-  if is_chief:
-    sv.start_queue_runners(sess, chief_queue_runners)
-    sess.run(init_tokens_op)
-
-  # Train, checking for Nans. Concurrently run the summary operation at a
-  # specified interval. Note that the summary_op and train_op never run
-  # simultaneously in order to prevent running out of GPU memory.
-  next_summary_time = time.time() + FLAGS.save_summaries_secs
-  begin_time = time.time()
-  tf.logging.info("HEYO STARING YOOOOO")
-  while not sv.should_stop():
-    try:
-      start_time = time.time()
-      if FLAGS.timeline_logging:
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
-        loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
-        sess.run(assign_op, options=run_options)
-      else:
-        loss_value, step = sess.run([train_op, global_step])
-        sess.run(assign_op)
+    sv = tf.train.Supervisor(is_chief=is_chief,
+                             local_init_op=local_init_op,
+                             ready_for_local_init_op=ready_for_local_init_op,
+                             logdir=FLAGS.train_dir,
+                             init_op=init_op,
+                             summary_op=None,
+                             global_step=global_step,
+                             saver=saver,
+                             save_model_secs=FLAGS.save_interval_secs)
 
 
-      assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+    tf.logging.info('%s Supervisor' % datetime.now())
 
-      # Log the elapsed time per iteration
-      finish_time = time.time()
+    sess_config = tf.ConfigProto(
+        allow_soft_placement=True,
+        log_device_placement=FLAGS.log_device_placement)
 
-      # Create the Timeline object, and write it to a json
-      if FLAGS.timeline_logging:
-        tl = timeline.Timeline(run_metadata.step_stats)
-        ctf = tl.generate_chrome_trace_format()
-        with open('timelines/worker=%d_timeline_iter=%d.json' % (FLAGS.task_id, step), 'w') as f:
-          f.write(ctf)
+    # Get a session.
+    sess = sv.prepare_or_wait_for_session(target, config=sess_config)
 
-      if step > FLAGS.max_steps:
-        break
+    # Start the queue runners.
+    queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
+    sv.start_queue_runners(sess, queue_runners)
+    tf.logging.info('Started %d queues for processing input data.',
+                    len(queue_runners))
 
-      duration = time.time() - start_time
-      examples_per_sec = FLAGS.batch_size / float(duration)
-      format_str = ('Worker %d: %s: step %d, loss = %f'
-                    '(%.1f examples/sec; %.3f  sec/batch)')
-      tf.logging.info(format_str %
-                      (FLAGS.task_id, datetime.now(), step, loss_value,
-                         examples_per_sec, duration))
-      tf.logging.info("YOOOOO")
+    if is_chief:
+      sv.start_queue_runners(sess, chief_queue_runners)
+      sess.run(init_tokens_op)
 
-      # Determine if the summary_op should be run on the chief worker.
-      if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+    # Train, checking for Nans. Concurrently run the summary operation at a
+    # specified interval. Note that the summary_op and train_op never run
+    # simultaneously in order to prevent running out of GPU memory.
+    next_summary_time = time.time() + FLAGS.save_summaries_secs
+    begin_time = time.time()
+    tf.logging.info("HEYO STARING YOOOOO")
+    while not sv.should_stop():
+      try:
+        start_time = time.time()
+        if FLAGS.timeline_logging:
+          run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+          run_metadata = tf.RunMetadata()
+          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
+          sess.run(assign_op, options=run_options)
+        else:
+          loss_value, step = sess.run([train_op, global_step])
+          sess.run(assign_op)
 
-        tf.logging.info('Running Summary operation on the chief.')
-        summary_str = sess.run(summary_op)
-        sv.summary_computed(sess, summary_str)
-        tf.logging.info('Finished running Summary operation.')
 
-        # Determine the next time for running the summary.
-        next_summary_time += FLAGS.save_summaries_secs
-    except:
-      if is_chief:
-        tf.logging.info('About to execute sync_clean_up_op!')
-        #sess.run(clean_up_op)
-      raise
+        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
-  if is_chief:
-    tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
+        # Log the elapsed time per iteration
+        finish_time = time.time()
 
-  # Stop the supervisor.  This also waits for service threads to finish.
-  sv.stop()
+        # Create the Timeline object, and write it to a json
+        if FLAGS.timeline_logging:
+          tl = timeline.Timeline(run_metadata.step_stats)
+          ctf = tl.generate_chrome_trace_format()
+          with open('timelines/worker=%d_timeline_iter=%d.json' % (FLAGS.task_id, step), 'w') as f:
+            f.write(ctf)
 
-  # Save after the training ends.
-  if is_chief:
-    saver.save(sess,
-               os.path.join(FLAGS.train_dir, 'model.ckpt'),
-               global_step=global_step)
+        if step > FLAGS.max_steps:
+          break
+
+        duration = time.time() - start_time
+        examples_per_sec = FLAGS.batch_size / float(duration)
+        format_str = ('Worker %d: %s: step %d, loss = %f'
+                      '(%.1f examples/sec; %.3f  sec/batch)')
+        tf.logging.info(format_str %
+                        (FLAGS.task_id, datetime.now(), step, loss_value,
+                           examples_per_sec, duration))
+        tf.logging.info("YOOOOO")
+
+        # Determine if the summary_op should be run on the chief worker.
+        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+
+          tf.logging.info('Running Summary operation on the chief.')
+          summary_str = sess.run(summary_op)
+          sv.summary_computed(sess, summary_str)
+          tf.logging.info('Finished running Summary operation.')
+
+          # Determine the next time for running the summary.
+          next_summary_time += FLAGS.save_summaries_secs
+      except:
+        if is_chief:
+          tf.logging.info('About to execute sync_clean_up_op!')
+          #sess.run(clean_up_op)
+        raise
+
+    if is_chief:
+      tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
+
+    # Stop the supervisor.  This also waits for service threads to finish.
+    sv.stop()
+
+    # Save after the training ends.
+    if is_chief:
+      saver.save(sess,
+                 os.path.join(FLAGS.train_dir, 'model.ckpt'),
+                 global_step=global_step)
