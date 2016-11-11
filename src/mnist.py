@@ -30,12 +30,9 @@ NUM_CHANNELS = 1
 PIXEL_DEPTH = 255
 SEED = 66478  # Set to None for random seed.
 
-tf.app.flags.DEFINE_integer('hidden1_units', 500, 'Number of units in the first hidden layer.')
-tf.app.flags.DEFINE_integer('hidden2_units', 150, 'Number of units in the second hidden layer.')
-
 FLAGS = tf.app.flags.FLAGS
 
-def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_units, train=True):
+def inference(images, train=True):
 
   # The variables below hold all the trainable weights. They are passed an
   # initial value which will be assigned when we call:
