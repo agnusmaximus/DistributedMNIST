@@ -150,11 +150,6 @@ def training(loss, learning_rate):
   train_op = optimizer.minimize(loss, global_step=global_step)
   return train_op
 
-
-def n_correct(predictions, labels):
-  """Return the error rate based on dense predictions and sparse labels."""
-  return np.sum(np.argmax(predictions, 0) == labels)
-
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
-  return n_correct(pred, labels)
+  return tf.nn.in_top_k(logits, labels, 1)
