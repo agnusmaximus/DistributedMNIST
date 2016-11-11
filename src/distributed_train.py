@@ -110,7 +110,6 @@ def train(target, dataset, cluster_spec):
           worker_device='/job:worker/task:%d' % FLAGS.task_id,
           ps_device="/job:ps/cpu:0",
           cluster=cluster_spec)):
-    global_step = tf.Variable(0, name="global_step", dtype=tf.int64, trainable=False)
 
     local_global_step = variables.Variable(initial_value=0,
                                            trainable=False,
@@ -120,8 +119,7 @@ def train(target, dataset, cluster_spec):
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
-    tf.logging.info("HEYO: ")
-    tf.logging.info(global_step.device)
+    global_step = tf.Variable(0, name="global_step", dtype=tf.int64, trainable=False)
 
     # Calculate the learning rate schedule.
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
@@ -190,11 +188,11 @@ def train(target, dataset, cluster_spec):
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.merge_all_summaries()
 
-    # Build an initialization operation to run below.
-    init_op = tf.initialize_all_variables()
-
     # Initialize local global step
     local_global_step_init_op = state_ops.assign(local_global_step, global_step)
+
+    # Build an initialization operation to run below.
+    init_op = [tf.initialize_all_variables(), local_global_step_init_op]
 
     # We run the summaries in the same thread as the training operations by
     # passing in None for summary_op to avoid a summary_thread being started.
@@ -205,7 +203,6 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_op = [local_global_step_init_op, local_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
