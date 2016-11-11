@@ -87,7 +87,7 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
     logits = tf.matmul(hidden2, weights) + biases
 
   tf.logging.info("YOOOOOOO")
-  tf.logging.info(hidden1_units.device)
+  tf.logging.info(weights.device)
 
   return logits
 
