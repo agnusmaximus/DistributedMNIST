@@ -65,10 +65,7 @@ class DataSet(object):
         assert images.shape[3] == 1
         images = images.reshape(images.shape[0],
                                 images.shape[1] * images.shape[2])
-      if dtype == dtypes.float32:
-        # Convert from [0, 255] -> [0.0, 1.0].
-        images = images.astype(numpy.float32)
-        images = numpy.multiply(images, 1.0 / 255.0)
+
     self._images = images
     self._labels = labels
     self._epochs_completed = 0
