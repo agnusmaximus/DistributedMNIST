@@ -205,7 +205,7 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = [local_global_step_init_op, local_init_op]
+    local_init_opt = [local_init_op, local_global_step_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
