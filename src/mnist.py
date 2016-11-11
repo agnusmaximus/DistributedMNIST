@@ -22,6 +22,7 @@ import math
 import tensorflow as tf
 
 # The MNIST images are always 28x28 pixels.
+NUM_LABELS = 10
 IMAGE_SIZE = 28
 IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
 NUM_CHANNELS = 1
