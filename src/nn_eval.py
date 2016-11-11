@@ -112,7 +112,7 @@ def evaluate(dataset):
     batch_size = dataset.num_examples
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
-    validation_accuracy = tf.reduce_mean(mnist.evaluation(logits, labels_placeholder))
+    validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(batch_size)
 
     # Reference to sess and saver
     sess = tf.Session()
