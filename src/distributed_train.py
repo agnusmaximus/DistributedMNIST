@@ -212,7 +212,7 @@ def train(target, dataset, cluster_spec):
 
     sv = tf.train.Supervisor(is_chief=is_chief,
                              local_init_op=local_init_op,
-                             ready_for_local_init_op=ready_for_local_init_op,
+                             #ready_for_local_init_op=ready_for_local_init_op,
                              logdir=FLAGS.train_dir,
                              init_op=init_op,
                              summary_op=None,
