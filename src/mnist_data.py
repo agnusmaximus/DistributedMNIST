@@ -29,6 +29,7 @@ import tensorflow as tf
 
 from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
+from mnist import *
 
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 
