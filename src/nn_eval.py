@@ -75,7 +75,7 @@ def do_eval(saver,
     else:
       print('No checkpoint file found')
       sys.stdout.flush()
-      return
+      return -1
 
     global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
 
