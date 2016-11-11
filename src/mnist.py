@@ -74,7 +74,7 @@ def global_model(hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_
                              name='biases')
         return w1, b1, w2, b2, w3, b3
 
-def inference(images)
+def inference(images):
   """Build the MNIST model up to where it may be used for inference.
 
   Args:
