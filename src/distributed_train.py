@@ -157,13 +157,8 @@ def train(target, dataset, cluster_spec):
       total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
-    grads = opt.compute_gradients(total_loss)
-
-    # Add histograms for gradients.
-    for grad, var in grads:
-      if grad is not None:
-        tf.histogram_summary(var.op.name + '/gradients', grad)
-
+    #grads = opt.compute_gradients(total_loss)
+    grads = opt.minimize(total_loss, global_step=self.global_step)
     apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
