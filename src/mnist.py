@@ -156,5 +156,8 @@ def n_correct(predictions, labels):
   return np.sum(np.argmax(predictions, 1) == labels)
 
 def evaluation(logits, labels):
+  tf.logging.info("YOOO")
+  tf.logging.info(logits.shape())
+  tf.logging.info(labels.shape())
   pred = tf.nn.softmax(logits)
   return n_correct(pred, labels)
