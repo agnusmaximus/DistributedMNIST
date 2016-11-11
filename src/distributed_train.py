@@ -110,7 +110,7 @@ def train(target, dataset, cluster_spec):
           worker_device='/job:worker/task:%d' % FLAGS.task_id,
           ps_device="/job:ps/cpu:0",
           cluster=cluster_spec)):
-    global_step = tf.Variable(0, name="global_step", trainable=False)
+    global_step = tf.Variable(0, name="global_step", dtype=tf.int64, trainable=False)
 
     local_global_step = variables.Variable(initial_value=0,
                                            trainable=False,
