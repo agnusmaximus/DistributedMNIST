@@ -131,12 +131,6 @@ def train(target, dataset, cluster_spec):
     # Add a summary to track the learning rate.
     tf.scalar_summary('learning_rate', lr)
 
-    # Create an optimizer that performs gradient descent.
-    opt = tf.train.RMSPropOptimizer(lr,
-                                    RMSPROP_DECAY,
-                                    momentum=RMSPROP_MOMENTUM,
-                                    epsilon=RMSPROP_EPSILON)
-
     images, labels = dataset.next_batch(FLAGS.batch_size)
 
     # Number of classes in the Dataset label set plus 1.
@@ -145,6 +139,13 @@ def train(target, dataset, cluster_spec):
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
+
+    reg_term = mnist.regularization(total_loss)
+
+    total_loss += 5e-4 * reg_term
+
+    # Create an optimizer that performs gradient descent.
+    optimizer = tf.train.MomentumOptimizer(learning_rate, 0.9).minimize(total_loss, global_step=global_step)
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerV2(

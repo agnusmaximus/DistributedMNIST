@@ -114,6 +114,10 @@ def loss(logits, labels):
       logits, labels))
   return loss
 
+def regularization(loss):
+    return (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
+            tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
+
 
 def training(loss, learning_rate):
   """Sets up the training Ops.
