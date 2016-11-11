@@ -204,8 +204,8 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = [local_init_op]
-    ready_for_local_init_op = opt.ready_for_local_init_op
+    local_init_opt = local_init_op
+    ready_for_local_init_op = [local_global_step_init_op, opt.ready_for_local_init_op]
 
     sv = tf.train.Supervisor(is_chief=is_chief,
                              local_init_op=local_init_op,
@@ -236,7 +236,6 @@ def train(target, dataset, cluster_spec):
     if is_chief:
       sess.run(init_tokens_op)
       sv.start_queue_runners(sess, chief_queue_runners)
-    sess.run(local_global_step_init_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
