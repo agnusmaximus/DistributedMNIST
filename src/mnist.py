@@ -153,7 +153,7 @@ def training(loss, learning_rate):
 
 def n_correct(predictions, labels):
   """Return the error rate based on dense predictions and sparse labels."""
-  return np.sum(numpy.argmax(predictions, 1) == labels)
+  return np.sum(np.argmax(predictions, 1) == labels)
 
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
