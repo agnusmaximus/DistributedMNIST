@@ -81,6 +81,27 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
+def get_global_step(device=''):
+  """Returns the global step variable.
+
+  Args:
+    device: Optional device to place the variable. It can be an string or a
+      function that is called to get the device for the variable.
+
+  Returns:
+    the tensor representing the global step variable.
+  """
+  global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
+  if global_step_ref:
+    return global_step_ref[0]
+  else:
+    with tf.device(variable_device(device, 'global_step')):
+      return tf.get_variable('global_step',
+                             shape=[],
+                             dtype=tf.int64,
+                             initializer=tf.zeros_initializer,
+                             trainable=False,
+                             collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP])
 
 def train(target, dataset, cluster_spec):
 
@@ -116,17 +137,7 @@ def train(target, dataset, cluster_spec):
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
-    with tf.device('/job:ps/task:0'):
-      global_step_ref = tf.get_collection(tf.GraphKeys.GLOBAL_STEP)
-      if global_step_ref:
-        global_step = global_step_ref[0]
-      else:
-        global_step = tf.get_variable('global_step',
-                                      shape=[],
-                                      dtype=tf.int64,
-                                      initializer=tf.zeros_initializer,
-                                      trainable=False,
-                                      collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP])
+    global_step = get_global_step()
 
     # Calculate the learning rate schedule.
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
