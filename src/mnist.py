@@ -156,4 +156,4 @@ def n_correct(predictions, labels):
 
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
-  return n_correct(predictions, batch_labels)
+  return n_correct(pred, batch_labels)
