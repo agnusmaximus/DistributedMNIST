@@ -44,7 +44,9 @@ tf.app.flags.DEFINE_boolean('run_once', False,
                             """Whether to run eval only once.""")
 
 def do_eval(saver,
-            eval_correct,
+            writer,
+            summary_op,
+            val_acc,
             images_placeholder,
             labels_placeholder,
             data_set):
@@ -83,23 +85,40 @@ def do_eval(saver,
                                      images_placeholder,
                                      labels_placeholder,
                                      num_examples)
-    true_count = sess.run(eval_correct, feed_dict=feed_dict)
-    precision = true_count / num_examples
+
+    # Compute accuracy
+    acc = sess.run(val_acc, feed_dict=feed_dict)
+
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
-          (num_examples, true_count, precision))
+          (num_examples, true_count, acc))
     sys.stdout.flush()
+
+    # Summarize accuracy
+    summary = tf.Summary()
+    summary.ParseFromString(sess.run(summary_op))
+    summary.value.add(tag="Validation Accuracy", simple_value=acc)
+    summary_writer.add_summary(summary, global_step)
 
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
+    # Graph creation
     batch_size = dataset.num_examples
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
-    eval_correct = mnist.evaluation(logits, labels_placeholder)
+    validation_accuracy = tf.reduce_mean(mnist.evaluation(logits, labels_placeholder))
+
+    # Reference to sess and saver
     sess = tf.Session()
     saver = tf.train.Saver()
+
+    # Create summary writer
+    summary_op = tf.merge_all_summaries()
+    graph_def = tf.get_default_graph().as_graph_def()
+    summary_writer = tf.train.SummaryWriter(FLAGS.eval_dir,
+                                            graph_def=graph_def)
     while True:
-      do_eval(saver, eval_correct, images_placeholder, labels_placeholder, dataset)
+      do_eval(saver, summary_writer, summary_op, validation_accuracy, images_placeholder, labels_placeholder, dataset)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
