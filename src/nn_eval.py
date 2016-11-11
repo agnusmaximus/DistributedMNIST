@@ -44,9 +44,6 @@ tf.app.flags.DEFINE_integer('eval_interval_secs', 1,
 tf.app.flags.DEFINE_boolean('run_once', False,
                             """Whether to run eval only once.""")
 
-IMAGE_SIZE = 28
-NUM_CHANNELS = 1
-
 def do_eval(saver,
             eval_correct,
             images_placeholder,
@@ -91,8 +88,8 @@ def do_eval(saver,
                                        labels_placeholder)
       true_count += sess.run(eval_correct, feed_dict=feed_dict)
     precision = true_count / num_examples
-    print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f Loss: %0.04f' %
-          (num_examples, true_count, precision, total_loss / num_examples))
+    print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
+          (num_examples, true_count, precision))
     sys.stdout.flush()
 
 def evaluate(dataset):
