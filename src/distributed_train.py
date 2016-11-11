@@ -111,7 +111,7 @@ def train(target, dataset, cluster_spec):
           ps_device="/job:ps/cpu:0",
           cluster=cluster_spec)):
 
-    local_global_step = variables.Variable(initial_value=0, trainable=False, collections=[ops.GraphKeys.LOCAL_VARIABLES], name="local_global_step_%d" % FLAGS.task_id)
+    local_global_step = tf.Variable(0, trainable=False, name="local_global_step_%d" % FLAGS.task_id)
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
