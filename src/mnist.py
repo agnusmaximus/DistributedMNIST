@@ -33,6 +33,46 @@ SEED = 66478  # Set to None for random seed.
 
 FLAGS = tf.app.flags.FLAGS
 
+def placeholder_inputs(batch_size):
+  """Generate placeholder variables to represent the input tensors.
+  These placeholders are used as inputs by the rest of the model building
+  code and will be fed from the downloaded data in the .run() loop, below.
+  Args:
+    batch_size: The batch size will be baked into both placeholders.
+  Returns:
+    images_placeholder: Images placeholder.
+    labels_placeholder: Labels placeholder.
+  """
+  # Note that the shapes of the placeholders match the shapes of the full
+  # image and label tensors, except the first dimension is now batch_size
+  # rather than the full size of the train or test data sets.
+  images_placeholder = tf.placeholder(tf.float32, shape=(FLAGS.batch_size, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS))
+  labels_placeholder = tf.placeholder(tf.int64, shape=(FLAGS.batch_size,))
+  return images_placeholder, labels_placeholder
+
+def fill_feed_dict(data_set, images_pl, labels_pl):
+  """Fills the feed_dict for training the given step.
+  A feed_dict takes the form of:
+  feed_dict = {
+      <placeholder>: <tensor of values to be passed for placeholder>,
+      ....
+  }
+  Args:
+    data_set: The set of images and labels, from input_data.read_data_sets()
+    images_pl: The images placeholder, from placeholder_inputs().
+    labels_pl: The labels placeholder, from placeholder_inputs().
+  Returns:
+    feed_dict: The feed dictionary mapping from placeholders to values.
+  """
+  # Create the feed_dict for the placeholders filled with the next
+  # `batch size` examples.
+  images_feed, labels_feed = data_set.next_batch(FLAGS.batch_size)
+  feed_dict = {
+      images_pl: images_feed,
+      labels_pl: labels_feed,
+  }
+  return feed_dict
+
 def inference(images, train=True):
 
   # The variables below hold all the trainable weights. They are passed an

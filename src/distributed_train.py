@@ -131,7 +131,7 @@ def train(target, dataset, cluster_spec):
     # Add a summary to track the learning rate.
     tf.scalar_summary('learning_rate', lr)
 
-    images, labels = dataset.next_batch(FLAGS.batch_size)
+    images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -231,12 +231,14 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
         start_time = time.time()
+        feed_dict = mnist.fill_feed_dict(dataset, images, labesl)
+
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
-          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels], options=run_options, run_metadata=run_metadata)
+          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels])
+          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels], feed_dict=feed_dict)
 
         tf.logging.info("CORRECT: ")
         tf.logging.info(np.argmax(ps, 1))

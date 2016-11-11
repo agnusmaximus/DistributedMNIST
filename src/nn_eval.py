@@ -47,46 +47,6 @@ tf.app.flags.DEFINE_boolean('run_once', False,
 IMAGE_SIZE = 28
 NUM_CHANNELS = 1
 
-def placeholder_inputs(batch_size):
-  """Generate placeholder variables to represent the input tensors.
-  These placeholders are used as inputs by the rest of the model building
-  code and will be fed from the downloaded data in the .run() loop, below.
-  Args:
-    batch_size: The batch size will be baked into both placeholders.
-  Returns:
-    images_placeholder: Images placeholder.
-    labels_placeholder: Labels placeholder.
-  """
-  # Note that the shapes of the placeholders match the shapes of the full
-  # image and label tensors, except the first dimension is now batch_size
-  # rather than the full size of the train or test data sets.
-  images_placeholder = tf.placeholder(tf.float32, shape=(FLAGS.batch_size, IMAGE_SIZE, IMAGE_SIZE, NUM_CHANNELS))
-  labels_placeholder = tf.placeholder(tf.int64, shape=(FLAGS.batch_size,))
-  return images_placeholder, labels_placeholder
-
-def fill_feed_dict(data_set, images_pl, labels_pl):
-  """Fills the feed_dict for training the given step.
-  A feed_dict takes the form of:
-  feed_dict = {
-      <placeholder>: <tensor of values to be passed for placeholder>,
-      ....
-  }
-  Args:
-    data_set: The set of images and labels, from input_data.read_data_sets()
-    images_pl: The images placeholder, from placeholder_inputs().
-    labels_pl: The labels placeholder, from placeholder_inputs().
-  Returns:
-    feed_dict: The feed dictionary mapping from placeholders to values.
-  """
-  # Create the feed_dict for the placeholders filled with the next
-  # `batch size` examples.
-  images_feed, labels_feed = data_set.next_batch(FLAGS.batch_size)
-  feed_dict = {
-      images_pl: images_feed,
-      labels_pl: labels_feed,
-  }
-  return feed_dict
-
 def do_eval(saver,
             loss,
             eval_correct,
@@ -128,9 +88,9 @@ def do_eval(saver,
     num_examples = steps_per_epoch * FLAGS.batch_size
     total_loss = 0
     for step in xrange(steps_per_epoch):
-      feed_dict = fill_feed_dict(data_set,
-                                 images_placeholder,
-                                 labels_placeholder)
+      feed_dict = mnist.fill_feed_dict(data_set,
+                                       images_placeholder,
+                                       labels_placeholder)
       true_count += sess.run(eval_correct, feed_dict=feed_dict)
       total_loss += sess.run(loss, feed_dict=feed_dict)
     precision = true_count / num_examples
@@ -141,7 +101,7 @@ def do_eval(saver,
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
-    images_placeholder, labels_placeholder = placeholder_inputs(FLAGS.batch_size)
+    images_placeholder, labels_placeholder = mnist.placeholder_inputs(FLAGS.batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
     loss = mnist.loss(logits, labels_placeholder) + reg
