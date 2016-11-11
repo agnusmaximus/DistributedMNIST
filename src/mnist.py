@@ -13,19 +13,6 @@
 # limitations under the License.
 # ==============================================================================
 
-"""Builds the MNIST network.
-
-Implements the inference/loss/training pattern for model building.
-
-1. inference() - Builds the model as far as is required for running the network
-forward to make predictions.
-2. loss() - Adds to the inference model the layers required to generate loss.
-3. training() - Adds to the loss model the Ops required to generate and
-apply gradients.
-
-This file is used by the various "fully_connected_*.py" files and not meant to
-be run.
-"""
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
@@ -46,48 +33,72 @@ tf.app.flags.DEFINE_integer('hidden2_units', 150, 'Number of units in the second
 
 FLAGS = tf.app.flags.FLAGS
 
-def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_units):
-  """Build the MNIST model up to where it may be used for inference.
+def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hidden2_units, train=True):
 
-  Args:
-    images: Images placeholder, from inputs().
-    hidden1_units: Size of the first hidden layer.
-    hidden2_units: Size of the second hidden layer.
+  # The variables below hold all the trainable weights. They are passed an
+  # initial value which will be assigned when we call:
+  # {tf.initialize_all_variables().run()}
+  conv1_weights = tf.Variable(
+      tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
+                          stddev=0.1,
+                          seed=SEED, dtype=data_type()))
+  conv1_biases = tf.Variable(tf.zeros([32], dtype=data_type()))
+  conv2_weights = tf.Variable(tf.truncated_normal(
+      [5, 5, 32, 64], stddev=0.1,
+      seed=SEED, dtype=data_type()))
+  conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=data_type()))
+  fc1_weights = tf.Variable(  # fully connected, depth 512.
+      tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64, 512],
+                          stddev=0.1,
+                          seed=SEED,
+                          dtype=data_type()))
+  fc1_biases = tf.Variable(tf.constant(0.1, shape=[512], dtype=data_type()))
+  fc2_weights = tf.Variable(tf.truncated_normal([512, NUM_LABELS],
+                                                stddev=0.1,
+                                                seed=SEED,
+                                                dtype=data_type()))
+  fc2_biases = tf.Variable(tf.constant(
+      0.1, shape=[NUM_LABELS], dtype=data_type()))
 
-  Returns:
-    softmax_linear: Output tensor with the computed logits.
-  """
-
-  # Hidden 1
-  with tf.name_scope('hidden1'):
-    weights = tf.Variable(
-        tf.truncated_normal([IMAGE_PIXELS, hidden1_units],
-                            stddev=1.0 / math.sqrt(float(IMAGE_PIXELS))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([hidden1_units]),
-                         name='biases')
-    hidden1 = tf.nn.relu(tf.matmul(images, weights) + biases)
-  # Hidden 2
-  with tf.name_scope('hidden2'):
-    weights = tf.Variable(
-        tf.truncated_normal([hidden1_units, hidden2_units],
-                            stddev=1.0 / math.sqrt(float(hidden1_units))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([hidden2_units]),
-                         name='biases')
-    hidden2 = tf.nn.relu(tf.matmul(hidden1, weights) + biases)
-  # Linear
-  with tf.name_scope('softmax_linear'):
-    weights = tf.Variable(
-        tf.truncated_normal([hidden2_units, NUM_CLASSES],
-                            stddev=1.0 / math.sqrt(float(hidden2_units))),
-        name='weights')
-    biases = tf.Variable(tf.zeros([NUM_CLASSES]),
-                         name='biases')
-    logits = tf.matmul(hidden2, weights) + biases
-
-  return logits
-
+  """The Model definition."""
+  # 2D convolution, with 'SAME' padding (i.e. the output feature map has
+  # the same size as the input). Note that {strides} is a 4D array whose
+  # shape matches the data layout: [image index, y, x, depth].
+  conv = tf.nn.conv2d(images,
+                      conv1_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  # Bias and rectified linear non-linearity.
+  relu = tf.nn.relu(tf.nn.bias_add(conv, conv1_biases))
+  # Max pooling. The kernel size spec {ksize} also follows the layout of
+  # the data. Here we have a pooling window of 2, and a stride of 2.
+  pool = tf.nn.max_pool(relu,
+                        ksize=[1, 2, 2, 1],
+                        strides=[1, 2, 2, 1],
+                        padding='SAME')
+  conv = tf.nn.conv2d(pool,
+                      conv2_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  relu = tf.nn.relu(tf.nn.bias_add(conv, conv2_biases))
+  pool = tf.nn.max_pool(relu,
+                        ksize=[1, 2, 2, 1],
+                        strides=[1, 2, 2, 1],
+                        padding='SAME')
+  # Reshape the feature map cuboid into a 2D matrix to feed it to the
+  # fully connected layers.
+  pool_shape = pool.get_shape().as_list()
+  reshape = tf.reshape(
+      pool,
+      [pool_shape[0], pool_shape[1] * pool_shape[2] * pool_shape[3]])
+  # Fully connected layer. Note that the '+' operation automatically
+  # broadcasts the biases.
+  hidden = tf.nn.relu(tf.matmul(reshape, fc1_weights) + fc1_biases)
+  # Add a 50% dropout during training only. Dropout also scales
+  # activations such that no rescaling is needed at evaluation time.
+  if train:
+      hidden = tf.nn.dropout(hidden, 0.5, seed=SEED)
+  return tf.matmul(hidden, fc2_weights) + fc2_biases
 
 def loss(logits, labels):
   """Calculates the loss from the logits and the labels.
@@ -99,10 +110,8 @@ def loss(logits, labels):
   Returns:
     loss: Loss tensor of type float.
   """
-  labels = tf.to_int64(labels)
-  cross_entropy = tf.nn.sparse_softmax_cross_entropy_with_logits(
-      logits, labels, name='xentropy')
-  loss = tf.reduce_mean(cross_entropy, name='xentropy_mean')
+  loss = tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(
+      logits, labels))
   return loss
 
 

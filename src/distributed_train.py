@@ -141,7 +141,7 @@ def train(target, dataset, cluster_spec):
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
-    logits = mnist.inference(images)
+    logits = mnist.inference(images, train=True)
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)

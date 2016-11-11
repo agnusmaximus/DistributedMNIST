@@ -137,9 +137,7 @@ def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
     images_placeholder, labels_placeholder = placeholder_inputs(FLAGS.batch_size)
-    logits = mnist.inference(images_placeholder,
-                             FLAGS.hidden1_units,
-                             FLAGS.hidden2_units)
+    logits = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
     sess = tf.Session()
     saver = tf.train.Saver()
