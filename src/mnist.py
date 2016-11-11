@@ -120,7 +120,7 @@ def loss(logits, labels):
 
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
-  pred = logging_ops.Print(pred, [pred], message="Prediction")
+  pred = tf.Print(pred, [pred], message="Prediction")
   correct = tf.nn.in_top_k(pred, labels, 1)
-  correct = logging_ops.Print(correct, [correct], message="Correct")
+  correct = tf.Print(correct, [correct], message="Correct")
   return tf.reduce_sum(tf.cast(correct, tf.int32))
