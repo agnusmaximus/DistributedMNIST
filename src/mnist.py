@@ -127,4 +127,4 @@ def evaluation(logits, labels):
   return tf.reduce_sum(tf.cast(correct, tf.int32))
 
 def evaluation2(logits, labels):
-    return (tf.nn.softmax(logits), labels)
+    return tf.nn.softmax(logits)
