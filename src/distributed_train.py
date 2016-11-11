@@ -140,7 +140,7 @@ def train(target, dataset, cluster_spec):
     # Add classification loss.
     total_loss = mnist.loss(logits, labels) + reg
 
-    evaluation2 = mnist.evaluation2(logits, labels)
+    preds = mnist.predictions(logits)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.AdamOptimizer(lr)
@@ -234,14 +234,13 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
-          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
-          a = sess.run([evaluation2])
+          loss_value, step, preds, labels = sess.run([train_op, global_step, predictions, labels], options=run_options, run_metadata=run_metadata)
         else:
-          loss_value, step = sess.run([train_op, global_step])
-          a = sess.run([evaluation2])
+          loss_value, step, preds, labels = sess.run([train_op, global_step, predictions, labels])
 
         tf.logging.info("CORRECT: ")
-        tf.logging.info(a)
+        tf.logging.info(np.argmax(preds))
+        tf.logging.info(labels)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 

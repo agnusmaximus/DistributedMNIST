@@ -126,5 +126,5 @@ def evaluation(logits, labels):
   correct = tf.Print(correct, [correct], message="Correct")
   return tf.reduce_sum(tf.cast(correct, tf.int32))
 
-def evaluation2(logits, labels):
+def predictions(logits):
     return tf.nn.softmax(logits)

@@ -42,5 +42,5 @@ def main(unused_args):
     distributed_train.train(server.target, dataset.train, cluster_spec)
 
 if __name__ == '__main__':
-  tf.logging.set_verbosity(tf.logging.INFO)
+  tf.logging.set_verbosity(tf.logging.DEBUG)
   tf.app.run()
