@@ -144,7 +144,7 @@ def read_data_sets(train_dir,
                    fake_data=False,
                    one_hot=False,
                    dtype=dtypes.float32,
-                   reshape=True,
+                   reshape=False,
                    validation_size=5000):
   if fake_data:
 
