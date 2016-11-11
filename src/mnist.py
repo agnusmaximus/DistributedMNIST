@@ -41,8 +41,8 @@ NUM_CLASSES = 10
 IMAGE_SIZE = 28
 IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
 
-tf.app.flags.DEFINE_integer('hidden1_units', 200, 'Number of units in the first hidden layer.')
-tf.app.flags.DEFINE_integer('hidden2_units', 800, 'Number of units in the second hidden layer.')
+tf.app.flags.DEFINE_integer('hidden1_units', 500, 'Number of units in the first hidden layer.')
+tf.app.flags.DEFINE_integer('hidden2_units', 150, 'Number of units in the second hidden layer.')
 
 FLAGS = tf.app.flags.FLAGS
 
