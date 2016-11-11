@@ -190,7 +190,7 @@ def train(target, dataset, cluster_spec):
     summary_op = tf.merge_all_summaries()
 
     # Initialize local global step
-    local_global_step_init_op = tf.initialize_variables([local_global_step])
+    local_global_step_init_op = tf.initialize_variables([local_global_step]).run()
 
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
