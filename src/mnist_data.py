@@ -30,6 +30,8 @@ import tensorflow as tf
 from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
 
+SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
+
 def extract_data(filename, num_images):
   """Extract the images into a 4D tensor [image index, y, x, channels].
   Values are rescaled from [0, 255] down to [-0.5, 0.5].
