@@ -234,13 +234,13 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
-          loss_value, step, preds, labels = sess.run([train_op, global_step, predictions, labels], options=run_options, run_metadata=run_metadata)
+          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels], options=run_options, run_metadata=run_metadata)
         else:
-          loss_value, step, preds, labels = sess.run([train_op, global_step, predictions, labels])
+          loss_value, step, ps, ls = sess.run([train_op, global_step, preds, labels])
 
         tf.logging.info("CORRECT: ")
-        tf.logging.info(np.argmax(preds))
-        tf.logging.info(labels)
+        tf.logging.info(np.argmax(ps, 1))
+        tf.logging.info(ls)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
