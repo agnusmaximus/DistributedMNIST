@@ -92,7 +92,13 @@ configuration = Cfg({
     ],
 
     # Commands to run on the evaluator
-    "evaluate_commands" : [],
+    "evaluate_commands" :
+    [
+        "python src/mnist_eval.py "
+        "--eval_dir=$(nfs_mount_point)s/eval_dir "
+        "--checkpoint_dir=$(nfs_mount_point)s/train_dir "
+        "> %(nfs_mount_point)s/out_evaluator 2>&1 &"
+    ],
 })
 
 client = boto3.client("ec2", region_name=configuration["region"])
@@ -419,7 +425,7 @@ def run_tf(argv, batch_size=128, port=1234):
     # We also launch the tensorboard on it.
     assert(len(machine_assignments["evaluator"]) == 1)
     command_machine_assignments["evaluator"] = {"instance" : machine_assignments["evaluator"][0],
-                                                "commands" : list(configuration["evaluate_commands"])}
+                                                "commands" : list(configuration["pre_commands"]) + list(configuration["evaluate_commands"])}
 
     # Run the commands via ssh in parallel
     threads = []
