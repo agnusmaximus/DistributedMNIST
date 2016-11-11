@@ -138,7 +138,8 @@ def train(target, dataset, cluster_spec):
     logits, reg = mnist.inference(images, train=True)
 
     # Add classification loss.
-    total_loss = mnist.loss(logits, labels) + reg
+    #total_loss = mnist.loss(logits, labels) + reg
+    total_loss = mnist.loss(logits, labels)
 
     # Create an optimizer that performs gradient descent.
     #opt = tf.train.MomentumOptimizer(lr, 0.9).minimize(total_loss, global_step=global_step)
