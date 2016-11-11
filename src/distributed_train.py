@@ -18,6 +18,7 @@ from tensorflow.python.ops import variables
 from tensorflow.python.ops import state_ops
 from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
+import mnist
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -37,6 +38,7 @@ tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
+tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size.')
 tf.app.flags.DEFINE_string('subset', 'train', 'Either "train" or "validation".')
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             'Whether to log device placement.')
@@ -106,258 +108,200 @@ def train(target, dataset, cluster_spec):
   # Ops are assigned to worker by default.
   with tf.device('/job:worker/task:%d' % FLAGS.task_id):
 
-    # Variables and its related init/assign ops are assigned to ps.
-    with slim.scopes.arg_scope(
-        [slim.variables.variable, slim.variables.global_step],
-        device=slim.variables.VariableDeviceChooser(num_parameter_servers)):
+    local_global_step = variables.Variable(initial_value=0,
+                                           trainable=False,
+                                           collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP],
+                                           dtype=tf.int64,
+                                           name="local_global_step_%d" % FLAGS.task_id)
 
-      local_global_step = variables.Variable(initial_value=0, trainable=False, collections=[ops.GraphKeys.LOCAL_VARIABLES], dtype=tf.int64, name="local_global_step_%d" % FLAGS.task_id)
+    # Create a variable to count the number of train() calls. This equals the
+    # number of updates applied to the variables. The PS holds the global step.
+    with tf.device('/job:ps/task:0'):
+      global_step = variables.Variable(initial_value=0,
+                                       trainable=False,
+                                       collections=[ops.GraphKeys.LOCAL_VARIABLES],
+                                       dtype=tf.int64,
+                                       name="global_step")
 
-      # Create a variable to count the number of train() calls. This equals the
-      # number of updates applied to the variables.
-      global_step = slim.variables.global_step()
+    # Calculate the learning rate schedule.
+    num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
 
-      # Calculate the learning rate schedule.
-      num_batches_per_epoch = (dataset.num_examples_per_epoch() /
-                               FLAGS.batch_size)
-      # Decay steps need to be divided by the number of replicas to aggregate.
-      decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay /
-                        num_replicas_to_aggregate)
+    # Decay steps need to be divided by the number of replicas to aggregate.
+    decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
 
-      # Decay the learning rate exponentially based on the number of steps.
-      lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
-                                      global_step,
-                                      decay_steps,
-                                      FLAGS.learning_rate_decay_factor,
-                                      staircase=True)
-      # Add a summary to track the learning rate.
-      tf.scalar_summary('learning_rate', lr)
+    # Decay the learning rate exponentially based on the number of steps.
+    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
+                                    global_step,
+                                    decay_steps,
+                                    FLAGS.learning_rate_decay_factor,
+                                    staircase=True)
 
-      # Create an optimizer that performs gradient descent.
-      opt = tf.train.RMSPropOptimizer(lr,
-                                      RMSPROP_DECAY,
-                                      momentum=RMSPROP_MOMENTUM,
-                                      epsilon=RMSPROP_EPSILON)
+    # Add a summary to track the learning rate.
+    tf.scalar_summary('learning_rate', lr)
 
-      images, labels = image_processing.distorted_inputs(
-          dataset,
-          batch_size=FLAGS.batch_size,
-          num_preprocess_threads=FLAGS.num_preprocess_threads)
+    # Create an optimizer that performs gradient descent.
+    opt = tf.train.RMSPropOptimizer(lr,
+                                    RMSPROP_DECAY,
+                                    momentum=RMSPROP_MOMENTUM,
+                                    epsilon=RMSPROP_EPSILON)
 
-      # Number of classes in the Dataset label set plus 1.
-      # Label 0 is reserved for an (unused) background class.
-      num_classes = dataset.num_classes() + 1
-      logits = inception.inference(images, num_classes, for_training=True)
-      # Add classification loss.
-      inception.loss(logits, labels)
+    images, labels = dataset.next_batch(FLAGS.batch_size)
 
-      # Gather all of the losses including regularization losses.
-      losses = tf.get_collection(slim.losses.LOSSES_COLLECTION)
-      losses += tf.get_collection(tf.GraphKeys.REGULARIZATION_LOSSES)
+    # Number of classes in the Dataset label set plus 1.
+    # Label 0 is reserved for an (unused) background class.
+    logits = mnist.inference(images)
 
-      total_loss = tf.add_n(losses, name='total_loss')
+    # Add classification loss.
+    total_loss = mnist.loss(logits, labels)
 
-      if is_chief:
-        # Compute the moving average of all individual losses and the
-        # total loss.
-        loss_averages = tf.train.ExponentialMovingAverage(0.9, name='avg')
-        loss_averages_op = loss_averages.apply(losses + [total_loss])
+    # Use V2 optimizer
+    opt = SyncReplicasOptimizerV2(
+      opt,
+      #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
+      replicas_to_aggregate=num_replicas_to_aggregate,
+      total_num_replicas=num_workers,
+      global_step=global_step,
+      local_global_step=local_global_step)
 
-        # Attach a scalar summmary to all individual losses and the total loss;
-        # do the same for the averaged version of the losses.
-        for l in losses + [total_loss]:
-          loss_name = l.op.name
-          # Name each loss as '(raw)' and name the moving average version of the
-          # loss as the original loss name.
-          tf.scalar_summary(loss_name + ' (raw)', l)
-          tf.scalar_summary(loss_name, loss_averages.average(l))
+    # Compute gradients with respect to the loss.
+    grads = opt.compute_gradients(total_loss)
 
-        # Add dependency to compute loss_averages.
-        with tf.control_dependencies([loss_averages_op]):
-          total_loss = tf.identity(total_loss)
+    # Add histograms for gradients.
+    for grad, var in grads:
+      if grad is not None:
+        tf.histogram_summary(var.op.name + '/gradients', grad)
 
-      # Track the moving averages of all trainable variables.
-      # Note that we maintain a 'double-average' of the BatchNormalization
-      # global statistics.
-      # This is not needed when the number of replicas are small but important
-      # for synchronous distributed training with tens of workers/replicas.
-      exp_moving_averager = tf.train.ExponentialMovingAverage(
-          inception.MOVING_AVERAGE_DECAY, global_step)
+    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
-      variables_to_average = (
-          tf.trainable_variables() + tf.moving_average_variables())
+    assign_op = state_ops.assign(local_global_step, logging_ops.Print(global_step, [global_step], message="Assigning global step to local global step"))
 
-      # Add histograms for model variables.
-      for var in variables_to_average:
-        tf.histogram_summary(var.op.name, var)
+    with tf.control_dependencies([apply_gradients_op]):
+      train_op = tf.identity(total_loss, name='train_op')
+    # Get chief queue_runners, init_tokens and clean_up_op, which is used to
+    # synchronize replicas.
+    # More details can be found in sync_replicas_optimizer.
+    chief_queue_runners = [opt.get_chief_queue_runner()]
+    init_tokens_op = opt.get_init_tokens_op()
+    #clean_up_op = opt.get_clean_up_op()
 
-      # Create synchronous replica optimizer.
-      """opt = tf.train.SyncReplicasOptimizer(
-        opt,
-        replicas_to_aggregate=num_replicas_to_aggregate,
-        replica_id=FLAGS.task_id,
-        total_num_replicas=num_workers,
-        variable_averages=exp_moving_averager,
-        variables_to_average=variables_to_average)"""
+    # Create a saver.
+    saver = tf.train.Saver()
 
-      # Use V2 optimizer
-      opt = SyncReplicasOptimizerV2(
-        opt,
-        #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
-        replicas_to_aggregate=num_replicas_to_aggregate,
-        total_num_replicas=num_workers,
-        variable_averages=exp_moving_averager,
-        variables_to_average=variables_to_average,
-        global_step=global_step,
-        local_global_step=local_global_step)
+    # Build the summary operation based on the TF collection of Summaries.
+    summary_op = tf.merge_all_summaries()
 
+    # Build an initialization operation to run below.
+    init_op = tf.initialize_all_variables()
 
-      batchnorm_updates = tf.get_collection(slim.ops.UPDATE_OPS_COLLECTION)
-      assert batchnorm_updates, 'Batchnorm updates are missing'
-      batchnorm_updates_op = tf.group(*batchnorm_updates)
-      # Add dependency to compute batchnorm_updates.
-      with tf.control_dependencies([batchnorm_updates_op]):
-        total_loss = tf.identity(total_loss)
+    # Initialize local global step
+    local_global_step_init_op = state_ops.assign(local_global_step, global_step)
 
-      # Compute gradients with respect to the loss.
-      grads = opt.compute_gradients(total_loss)
+    # We run the summaries in the same thread as the training operations by
+    # passing in None for summary_op to avoid a summary_thread being started.
+    # Running summaries and training operations in parallel could run out of
+    # GPU memory.
+    if is_chief:
+      local_init_op = opt.chief_init_op
+    else:
+      local_init_op = opt.local_step_init_op
 
-      # Add histograms for gradients.
-      for grad, var in grads:
-        if grad is not None:
-          tf.histogram_summary(var.op.name + '/gradients', grad)
-
-      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
-
-      assign_op = state_ops.assign(local_global_step, logging_ops.Print(global_step, [global_step], message="Assigning global step to local global step"))
-
-      with tf.control_dependencies([apply_gradients_op]):
-        train_op = tf.identity(total_loss, name='train_op')
-      # Get chief queue_runners, init_tokens and clean_up_op, which is used to
-      # synchronize replicas.
-      # More details can be found in sync_replicas_optimizer.
-      chief_queue_runners = [opt.get_chief_queue_runner()]
-      init_tokens_op = opt.get_init_tokens_op()
-      #clean_up_op = opt.get_clean_up_op()
-
-      # Create a saver.
-      saver = tf.train.Saver()
-
-      # Build the summary operation based on the TF collection of Summaries.
-      summary_op = tf.merge_all_summaries()
-
-      # Build an initialization operation to run below.
-      init_op = tf.initialize_all_variables()
-
-      # Initialize local global step
-      local_global_step_init_op = state_ops.assign(local_global_step, global_step)
+    local_init_op = [local_global_step_init_op, local_init_op]
+    ready_for_local_init_op = opt.ready_for_local_init_op
+    sv = tf.train.Supervisor(is_chief=is_chief,
+                             local_init_op=local_init_op,
+                             ready_for_local_init_op=ready_for_local_init_op,
+                             logdir=FLAGS.train_dir,
+                             init_op=init_op,
+                             summary_op=None,
+                             global_step=global_step,
+                             saver=saver,
+                             save_model_secs=FLAGS.save_interval_secs)
 
 
-      # We run the summaries in the same thread as the training operations by
-      # passing in None for summary_op to avoid a summary_thread being started.
-      # Running summaries and training operations in parallel could run out of
-      # GPU memory.
-      if is_chief:
-        local_init_op = opt.chief_init_op
-      else:
-        local_init_op = opt.local_step_init_op
-      local_init_op = [local_global_step_init_op, local_init_op]
-      ready_for_local_init_op = opt.ready_for_local_init_op
-      sv = tf.train.Supervisor(is_chief=is_chief,
-                               local_init_op=local_init_op,
-                               ready_for_local_init_op=ready_for_local_init_op,
-                               logdir=FLAGS.train_dir,
-                               init_op=init_op,
-                               summary_op=None,
-                               global_step=global_step,
-                               saver=saver,
-                               save_model_secs=FLAGS.save_interval_secs)
+    tf.logging.info('%s Supervisor' % datetime.now())
+
+    sess_config = tf.ConfigProto(
+        allow_soft_placement=True,
+        log_device_placement=FLAGS.log_device_placement)
+
+    # Get a session.
+    sess = sv.prepare_or_wait_for_session(target, config=sess_config)
+
+    # Start the queue runners.
+    queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
+    sv.start_queue_runners(sess, queue_runners)
+    tf.logging.info('Started %d queues for processing input data.',
+                    len(queue_runners))
+
+    if is_chief:
+      sv.start_queue_runners(sess, chief_queue_runners)
+      sess.run(init_tokens_op)
+
+    # Train, checking for Nans. Concurrently run the summary operation at a
+    # specified interval. Note that the summary_op and train_op never run
+    # simultaneously in order to prevent running out of GPU memory.
+    next_summary_time = time.time() + FLAGS.save_summaries_secs
+    begin_time = time.time()
+    while not sv.should_stop():
+      try:
+        start_time = time.time()
+        if FLAGS.timeline_logging:
+          run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+          run_metadata = tf.RunMetadata()
+          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
+          sess.run(assign_op, options=run_options)
+        else:
+          loss_value, step = sess.run([train_op, global_step])
+          sess.run(assign_op)
 
 
-      tf.logging.info('%s Supervisor' % datetime.now())
+        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
-      sess_config = tf.ConfigProto(
-          allow_soft_placement=True,
-          log_device_placement=FLAGS.log_device_placement)
+        # Log the elapsed time per iteration
+        finish_time = time.time()
 
-      # Get a session.
-      sess = sv.prepare_or_wait_for_session(target, config=sess_config)
+        # Create the Timeline object, and write it to a json
+        if FLAGS.timeline_logging:
+          tl = timeline.Timeline(run_metadata.step_stats)
+          ctf = tl.generate_chrome_trace_format()
+          with open('timelines/worker=%d_timeline_iter=%d.json' % (FLAGS.task_id, step), 'w') as f:
+            f.write(ctf)
 
-      # Start the queue runners.
-      queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
-      sv.start_queue_runners(sess, queue_runners)
-      tf.logging.info('Started %d queues for processing input data.',
-                      len(queue_runners))
+        if step > FLAGS.max_steps:
+          break
 
-      if is_chief:
-        sv.start_queue_runners(sess, chief_queue_runners)
-        sess.run(init_tokens_op)
+        duration = time.time() - start_time
+        examples_per_sec = FLAGS.batch_size / float(duration)
+        format_str = ('Worker %d: %s: step %d, loss = %.2f'
+                      '(%.1f examples/sec; %.3f  sec/batch)')
+        tf.logging.info(format_str %
+                        (FLAGS.task_id, datetime.now(), step, loss_value,
+                           examples_per_sec, duration))
 
-      # Train, checking for Nans. Concurrently run the summary operation at a
-      # specified interval. Note that the summary_op and train_op never run
-      # simultaneously in order to prevent running out of GPU memory.
-      next_summary_time = time.time() + FLAGS.save_summaries_secs
-      begin_time = time.time()
-      while not sv.should_stop():
-        try:
-          start_time = time.time()
-          if FLAGS.timeline_logging:
-            run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-            run_metadata = tf.RunMetadata()
-            loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
-            sess.run(assign_op, options=run_options)
-          else:
-            loss_value, step = sess.run([train_op, global_step])
-            sess.run(assign_op)
+        # Determine if the summary_op should be run on the chief worker.
+        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
+          tf.logging.info('Running Summary operation on the chief.')
+          summary_str = sess.run(summary_op)
+          sv.summary_computed(sess, summary_str)
+          tf.logging.info('Finished running Summary operation.')
 
-          assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+          # Determine the next time for running the summary.
+          next_summary_time += FLAGS.save_summaries_secs
+      except:
+        if is_chief:
+          tf.logging.info('About to execute sync_clean_up_op!')
+          #sess.run(clean_up_op)
+        raise
 
-          # Log the elapsed time per iteration
-          finish_time = time.time()
+    if is_chief:
+      tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
 
-          # Create the Timeline object, and write it to a json
-          if FLAGS.timeline_logging:
-            tl = timeline.Timeline(run_metadata.step_stats)
-            ctf = tl.generate_chrome_trace_format()
-            with open('timelines/worker=%d_timeline_iter=%d.json' % (FLAGS.task_id, step), 'w') as f:
-              f.write(ctf)
+    # Stop the supervisor.  This also waits for service threads to finish.
+    sv.stop()
 
-          if step > FLAGS.max_steps:
-            break
-
-          duration = time.time() - start_time
-          examples_per_sec = FLAGS.batch_size / float(duration)
-          format_str = ('Worker %d: %s: step %d, loss = %.2f'
-                        '(%.1f examples/sec; %.3f  sec/batch)')
-          tf.logging.info(format_str %
-                          (FLAGS.task_id, datetime.now(), step, loss_value,
-                             examples_per_sec, duration))
-
-          # Determine if the summary_op should be run on the chief worker.
-          if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
-
-            tf.logging.info('Running Summary operation on the chief.')
-            summary_str = sess.run(summary_op)
-            sv.summary_computed(sess, summary_str)
-            tf.logging.info('Finished running Summary operation.')
-
-            # Determine the next time for running the summary.
-            next_summary_time += FLAGS.save_summaries_secs
-        except:
-          if is_chief:
-            tf.logging.info('About to execute sync_clean_up_op!')
-            #sess.run(clean_up_op)
-          raise
-
-      if is_chief:
-        tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
-
-      # Stop the supervisor.  This also waits for service threads to finish.
-      sv.stop()
-
-      # Save after the training ends.
-      if is_chief:
-        saver.save(sess,
-                   os.path.join(FLAGS.train_dir, 'model.ckpt'),
-                   global_step=global_step)
+    # Save after the training ends.
+    if is_chief:
+      saver.save(sess,
+                 os.path.join(FLAGS.train_dir, 'model.ckpt'),
+                 global_step=global_step)

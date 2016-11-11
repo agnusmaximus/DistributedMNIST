@@ -8,7 +8,7 @@ from __future__ import print_function
 import tensorflow as tf
 
 import distributed_train
-from mnist_data import MNISTData
+import mnist_data
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -34,14 +34,12 @@ def main(unused_args):
     # `ps` jobs wait for incoming connections from the workers.
     server.join()
   else:
-    # `worker` jobs will actually do the work.
-    dataset = MNISTData(subset=FLAGS.subset)
-    assert dataset.data_files()
+    dataset = mnist_data.load_mnist()
     # Only the chief checks for or creates train_dir.
     if FLAGS.task_id == 0:
       if not tf.gfile.Exists(FLAGS.train_dir):
         tf.gfile.MakeDirs(FLAGS.train_dir)
-    #inception_distributed_train.train(server.target, dataset, cluster_spec)
+    distributed_train.train(server.target, dataset.train, cluster_spec)
 
 if __name__ == '__main__':
   tf.logging.set_verbosity(tf.logging.INFO)
