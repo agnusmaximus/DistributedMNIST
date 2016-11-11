@@ -31,7 +31,6 @@ import mnist
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size.')
 
 tf.app.flags.DEFINE_string('eval_dir', '/tmp/imagenet_eval',
                            """Directory where to write event logs.""")
@@ -78,15 +77,12 @@ def do_eval(saver,
           (ckpt.model_checkpoint_path, global_step))
     sys.stdout.flush()
 
-    # And run one epoch of eval.
-    true_count = 0
-    steps_per_epoch = data_set.num_examples // FLAGS.batch_size
-    num_examples = steps_per_epoch * FLAGS.batch_size
-    for step in xrange(steps_per_epoch):
-      feed_dict = mnist.fill_feed_dict(data_set,
-                                       images_placeholder,
-                                       labels_placeholder)
-      true_count += sess.run(eval_correct, feed_dict=feed_dict)
+    # Let batch size be equal to the whole evaluation data
+    num_examples = data_set.num_examples
+    feed_dict = mnist.fill_feed_dict(data_set,
+                                     images_placeholder,
+                                     labels_placeholder)
+    true_count = sess.run(eval_correct, feed_dict=feed_dict)
     precision = true_count / num_examples
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
           (num_examples, true_count, precision))
@@ -95,7 +91,8 @@ def do_eval(saver,
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
-    images_placeholder, labels_placeholder = mnist.placeholder_inputs(FLAGS.batch_size)
+    batch_size = dataset.num_examples
+    images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
     sess = tf.Session()
