@@ -175,7 +175,7 @@ def train(target, dataset, cluster_spec):
 
     apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
-    assign_op = state_ops.assign(local_global_step, logging_ops.Print(global_step, [global_step], message="Assigning global step to local global step"))
+    #assign_op = state_ops.assign(local_global_step, logging_ops.Print(global_step, [global_step], message="Assigning global step to local global step"))
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -193,7 +193,7 @@ def train(target, dataset, cluster_spec):
     summary_op = tf.merge_all_summaries()
 
     # Initialize local global step
-    local_global_step_init_op = tf.initialize_variables([local_global_step])
+    #local_global_step_init_op = tf.initialize_variables([local_global_step])
 
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
@@ -207,7 +207,7 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = [local_global_step_init_op, local_init_op]
+    local_init_opt = [local_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
@@ -253,10 +253,10 @@ def train(target, dataset, cluster_spec):
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
-          sess.run(assign_op, options=run_options)
+          #sess.run(assign_op, options=run_options)
         else:
           loss_value, step = sess.run([train_op, global_step])
-          sess.run(assign_op)
+          #sess.run(assign_op)
 
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
