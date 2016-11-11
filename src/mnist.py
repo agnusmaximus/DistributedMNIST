@@ -97,9 +97,6 @@ def inference(images):
   with tf.name_scope('softmax_linear'):
     logits = tf.matmul(hidden2, w3) + b3
 
-  tf.logging.info("YOOOOOOO")
-  tf.logging.info(w1.device)
-
   return logits
 
 
