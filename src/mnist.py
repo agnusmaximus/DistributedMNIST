@@ -21,12 +21,12 @@ import math
 
 import tensorflow as tf
 
-# The MNIST dataset has 10 classes, representing the digits 0 through 9.
-NUM_CLASSES = 10
-
 # The MNIST images are always 28x28 pixels.
 IMAGE_SIZE = 28
 IMAGE_PIXELS = IMAGE_SIZE * IMAGE_SIZE
+NUM_CHANNELS = 1
+PIXEL_DEPTH = 255
+SEED = 66478  # Set to None for random seed.
 
 tf.app.flags.DEFINE_integer('hidden1_units', 500, 'Number of units in the first hidden layer.')
 tf.app.flags.DEFINE_integer('hidden2_units', 150, 'Number of units in the second hidden layer.')
