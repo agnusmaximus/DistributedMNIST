@@ -111,9 +111,6 @@ def train(target, dataset, cluster_spec):
           ps_device="/job:ps/cpu:0",
           cluster=cluster_spec)):
 
-    with tf.device('/job:worker/task:%d' % FLAGS.task_id):
-      local_global_step = variables.Variable(initial_value=0, trainable=False, collections=[ops.GraphKeys.LOCAL_VARIABLES], name="local_global_step_%d" % FLAGS.task_id)
-
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
     global_step = tf.Variable(0, name="global_step", trainable=False)
@@ -155,8 +152,7 @@ def train(target, dataset, cluster_spec):
       #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
-      global_step=global_step,
-      local_global_step=local_global_step)
+      global_step=global_step)
     """opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
@@ -173,8 +169,6 @@ def train(target, dataset, cluster_spec):
 
     apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
-    assign_op = state_ops.assign(local_global_step, logging_ops.Print(global_step, [global_step], message="Assigning global step to local global step"))
-
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
     # Get chief queue_runners, init_tokens and clean_up_op, which is used to
@@ -190,9 +184,6 @@ def train(target, dataset, cluster_spec):
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.merge_all_summaries()
 
-    # Initialize local global step
-    local_global_step_init_op = tf.initialize_variables([local_global_step])
-
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
 
@@ -205,7 +196,7 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = [local_init_op, local_global_step_init_op]
+    local_init_opt = [local_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
@@ -250,11 +241,8 @@ def train(target, dataset, cluster_spec):
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata)
-          sess.run(assign_op, options=run_options)
         else:
           loss_value, step = sess.run([train_op, global_step])
-          sess.run(assign_op)
-
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
