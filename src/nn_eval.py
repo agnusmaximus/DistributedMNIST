@@ -130,21 +130,23 @@ def do_eval(saver,
                                  images_placeholder,
                                  labels_placeholder)
       true_count += sess.run(eval_correct, feed_dict=feed_dict)
+      loss = sess.run(loss, feed_dict=feed_dict)
     precision = true_count / num_examples
-    print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
-          (num_examples, true_count, precision))
+    print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f Loss: %0.04f' %
+          (num_examples, true_count, precision, loss))
     sys.stdout.flush()
 
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
     images_placeholder, labels_placeholder = placeholder_inputs(FLAGS.batch_size)
-    logits, _ = mnist.inference(images_placeholder, train=False)
+    logits, reg = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
+    loss = mnist.loss(logits, labels_placeholder)
     sess = tf.Session()
     saver = tf.train.Saver()
     while True:
-      do_eval(saver, eval_correct, images_placeholder, labels_placeholder, dataset)
+      do_eval(saver, eval_correct, loss, images_placeholder, labels_placeholder, dataset)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
