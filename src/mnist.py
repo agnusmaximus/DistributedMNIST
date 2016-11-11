@@ -50,7 +50,7 @@ def placeholder_inputs(batch_size):
   labels_placeholder = tf.placeholder(tf.int64, shape=(batch_size,))
   return images_placeholder, labels_placeholder
 
-def fill_feed_dict(data_set, images_pl, labels_pl):
+def fill_feed_dict(data_set, images_pl, labels_pl, batch_size):
   """Fills the feed_dict for training the given step.
   A feed_dict takes the form of:
   feed_dict = {
@@ -66,7 +66,7 @@ def fill_feed_dict(data_set, images_pl, labels_pl):
   """
   # Create the feed_dict for the placeholders filled with the next
   # `batch size` examples.
-  images_feed, labels_feed = data_set.next_batch(FLAGS.batch_size)
+  images_feed, labels_feed = data_set.next_batch(batch_size)
   feed_dict = {
       images_pl: images_feed,
       labels_pl: labels_feed,

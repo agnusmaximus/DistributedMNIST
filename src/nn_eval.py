@@ -81,7 +81,8 @@ def do_eval(saver,
     num_examples = data_set.num_examples
     feed_dict = mnist.fill_feed_dict(data_set,
                                      images_placeholder,
-                                     labels_placeholder)
+                                     labels_placeholder,
+                                     num_examples)
     true_count = sess.run(eval_correct, feed_dict=feed_dict)
     precision = true_count / num_examples
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f' %
