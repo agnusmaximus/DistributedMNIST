@@ -84,7 +84,7 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
         name='weights')
     biases = tf.Variable(tf.zeros([NUM_CLASSES]),
                          name='biases')
-    logits = tf.matmul(hidden2, weights) + biases
+    logits = tf.nn.softmax(tf.matmul(hidden2, weights) + biases)
 
   return logits
 
