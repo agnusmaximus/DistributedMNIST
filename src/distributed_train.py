@@ -112,7 +112,7 @@ def train(target, dataset, cluster_spec):
           cluster=cluster_spec)):
 
     with tf.device('/job:worker/task:%d' % FLAGS.task_id):
-      local_global_step = tf.Variable(0, trainable=False, name="local_global_step_%d" % FLAGS.task_id)
+      local_global_step = variables.Variable(initial_value=0, trainable=False, collections=[ops.GraphKeys.LOCAL_VARIABLES], name="local_global_step_%d" % FLAGS.task_id)
       tf.logging.info("YOAYOAOYAOY")
       tf.logging.info(local_global_step.device)
 
@@ -196,7 +196,7 @@ def train(target, dataset, cluster_spec):
     local_global_step_init_op = state_ops.assign(local_global_step, global_step)
 
     # Build an initialization operation to run below.
-    init_op = [local_global_step_init_op, tf.initialize_all_variables()]
+    init_op = tf.initialize_all_variables()
 
     # We run the summaries in the same thread as the training operations by
     # passing in None for summary_op to avoid a summary_thread being started.
@@ -207,7 +207,7 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = local_init_op
+    local_init_opt = [local_global_step_init_op, local_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
