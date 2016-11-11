@@ -234,10 +234,10 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
           run_metadata = tf.RunMetadata()
-          loss_value, step, evalu2 = sess.run([train_op, global_step, evaluation], options=run_options, run_metadata=run_metadata)
+          loss_value, step, evalu2 = sess.run([train_op, global_step, evaluation2], options=run_options, run_metadata=run_metadata)
 
         else:
-          loss_value, step, evalu2 = sess.run([train_op, global_step, evaluation])
+          loss_value, step, evalu2 = sess.run([train_op, global_step, evaluation2])
 
         tf.logging.info("CORRECT: ")
         tf.logging.info(evalu2)
