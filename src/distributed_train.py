@@ -20,7 +20,7 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 import mnist
 
-np.set_printoptions(threshold=numpy.nan)
+np.set_printoptions(threshold=np.nan)
 
 FLAGS = tf.app.flags.FLAGS
 
