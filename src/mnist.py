@@ -148,4 +148,5 @@ def training(loss, learning_rate):
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
   correct = tf.nn.in_top_k(pred, labels, 1)
+  print(labels.get_shape())
   return tf.reduce_sum(tf.cast(correct, tf.int32))
