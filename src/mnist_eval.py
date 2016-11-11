@@ -32,7 +32,7 @@ def main(unused_argv=None):
   if tf.gfile.Exists(FLAGS.eval_dir):
     tf.gfile.DeleteRecursively(FLAGS.eval_dir)
   tf.gfile.MakeDirs(FLAGS.eval_dir)
-  nn_eval.evaluate(dataset.train)
+  nn_eval.evaluate(dataset.validation)
 
 
 if __name__ == '__main__':
