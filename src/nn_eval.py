@@ -105,6 +105,7 @@ def do_eval(saver,
     summary.value.add(tag="Validation Accuracy", simple_value=acc)
     summary_writer.add_summary(summary, global_step)
 
+    print("YO: ", global_step)
     return global_step
 
 def evaluate(dataset):
