@@ -231,7 +231,7 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
         start_time = time.time()
-        feed_dict = mnist.fill_feed_dict(dataset, images, labesl)
+        feed_dict = mnist.fill_feed_dict(dataset, images, labels)
 
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
