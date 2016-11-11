@@ -95,8 +95,8 @@ configuration = Cfg({
     "evaluate_commands" :
     [
         "python src/mnist_eval.py "
-        "--eval_dir=$(nfs_mount_point)s/eval_dir "
-        "--checkpoint_dir=$(nfs_mount_point)s/train_dir "
+        "--eval_dir=%(nfs_mount_point)s/eval_dir "
+        "--checkpoint_dir=%(nfs_mount_point)s/train_dir "
         "> %(nfs_mount_point)s/out_evaluator 2>&1 &"
     ],
 })
