@@ -180,7 +180,7 @@ def train(target, dataset, cluster_spec):
     # synchronize replicas.
     # More details can be found in sync_replicas_optimizer.
     chief_queue_runners = [opt.get_chief_queue_runner()]
-    init_tokens_op = opt.get_init_tokens_op()
+    init_tokens_op = [opt.get_init_tokens_op()]
     #clean_up_op = opt.get_clean_up_op()
 
     # Create a saver.
@@ -190,7 +190,7 @@ def train(target, dataset, cluster_spec):
     summary_op = tf.merge_all_summaries()
 
     # Initialize local global step
-    local_global_step_init_op = tf.initialize_variables([local_global_step]).run()
+    local_global_step_init_op = tf.initialize_variables([local_global_step])
 
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
@@ -236,6 +236,7 @@ def train(target, dataset, cluster_spec):
     if is_chief:
       sess.run(init_tokens_op)
       sv.start_queue_runners(sess, chief_queue_runners)
+    sess.run(local_global_step_init_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
