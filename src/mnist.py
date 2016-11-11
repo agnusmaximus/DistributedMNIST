@@ -21,6 +21,7 @@ import math
 
 import tensorflow as tf
 import numpy as np
+from tensorflow.python.ops import logging_ops
 
 # The MNIST images are always 28x28 pixels.
 NUM_LABELS = 10
@@ -119,5 +120,7 @@ def loss(logits, labels):
 
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
+  pred = logging_ops.Print(pred, [pred], message="Prediction")
   correct = tf.nn.in_top_k(pred, labels, 1)
+  correct = logging_ops.Print(correct, [correct], message="Correct")
   return tf.reduce_sum(tf.cast(correct, tf.int32))
