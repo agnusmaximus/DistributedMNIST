@@ -39,7 +39,7 @@ tf.app.flags.DEFINE_string('checkpoint_dir', '/tmp/imagenet_train',
                            """Directory where to read model checkpoints.""")
 
 # Flags governing the frequency of the eval.
-tf.app.flags.DEFINE_integer('eval_interval_secs', 60,
+tf.app.flags.DEFINE_integer('eval_interval_secs', 10,
                             """How often to run the eval.""")
 tf.app.flags.DEFINE_boolean('run_once', False,
                             """Whether to run eval only once.""")
