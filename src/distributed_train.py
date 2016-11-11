@@ -114,12 +114,11 @@ def train(target, dataset, cluster_spec):
     local_global_step = variables.Variable(initial_value=0,
                                            trainable=False,
                                            collections=[tf.GraphKeys.VARIABLES, tf.GraphKeys.GLOBAL_STEP],
-                                           dtype=tf.int64,
                                            name="local_global_step_%d" % FLAGS.task_id)
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
-    global_step = tf.Variable(0, name="global_step", dtype=tf.int64, trainable=False)
+    global_step = tf.Variable(0, name="global_step", trainable=False)
 
     # Calculate the learning rate schedule.
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
