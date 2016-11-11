@@ -131,10 +131,10 @@ def do_eval(saver,
                                  images_placeholder,
                                  labels_placeholder)
       true_count += sess.run(eval_correct, feed_dict=feed_dict)
-      loss = sess.run(loss, feed_dict=feed_dict)
+      loss_val = sess.run(loss, feed_dict=feed_dict)
     precision = true_count / num_examples
     print('Num examples: %d  Num correct: %d  Precision @ 1: %0.04f Loss: %0.04f' %
-          (num_examples, true_count, precision, loss))
+          (num_examples, true_count, precision, loss_val))
     sys.stdout.flush()
 
 def evaluate(dataset):
