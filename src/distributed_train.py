@@ -20,6 +20,8 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 import mnist
 
+np.set_printoptions(threshold=numpy.nan)
+
 FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
