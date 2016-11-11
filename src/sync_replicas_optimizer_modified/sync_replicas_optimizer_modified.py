@@ -161,7 +161,6 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
                variables_to_average=None,
                use_locking=False,
                global_step=None,
-               local_global_step=None,
                name="sync_replicas"):
     """Construct a sync_replicas optimizer.
 
@@ -199,7 +198,6 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
     self._total_num_replicas = total_num_replicas
     self._tokens_per_step = max(total_num_replicas, replicas_to_aggregate)
     self._global_step = global_step
-    self._local_global_step = local_global_step
     self._sync_token_queue = None
 
     # The synchronization op will be executed in a queue runner which should
@@ -237,7 +235,7 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
       A list of (gradient, variable) pairs.
     """
     kwargs["sync_token_queue"] = self._sync_token_queue
-    kwargs["local_global_step"] = self._local_global_step
+    kwargs["local_global_step"] = self._local_step
     kwargs["global_step"] = self._global_step
     return compute_gradients_with_injected_short_circuiting(*args, **kwargs)
     #return self._opt.compute_gradients(*args, **kwargs)

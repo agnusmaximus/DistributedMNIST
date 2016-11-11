@@ -361,7 +361,6 @@ def gradients_short_circuited(ys,
   """
   assert sync_token_queue is not None
   assert global_step is not None
-  assert local_global_step is not None
   ys = _AsList(ys)
   xs = _AsList(xs)
   if grad_ys is None:
