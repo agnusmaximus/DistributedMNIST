@@ -95,10 +95,16 @@ configuration = Cfg({
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
+        # Evaluation command
         "python src/mnist_eval.py "
         "--eval_dir=%(nfs_mount_point)s/eval_dir "
         "--checkpoint_dir=%(nfs_mount_point)s/train_dir "
-        "> %(nfs_mount_point)s/out_evaluator 2>&1 &"
+        "> %(nfs_mount_point)s/out_evaluator 2>&1 &",
+
+        # Tensorboard command
+        "python /usr/local/lib/python2.7/dist-packages/tensorflow/tensorboard/tensorboard.py "
+        " --logdir=%(nfs_mount_point)s/eval_dir/ "
+        "> %(nfs_mount_point)/out_evaluator_tensorboard 2>&1 &"
     ],
 })
 
