@@ -95,7 +95,7 @@ def get_global_step(device=''):
   if global_step_ref:
     return global_step_ref[0]
   else:
-    with tf.device(variable_device(device, 'global_step')):
+    with tf.device('/job:ps/task:0'):
       return tf.get_variable('global_step',
                              shape=[],
                              dtype=tf.int64,
