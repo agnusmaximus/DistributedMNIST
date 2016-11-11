@@ -91,7 +91,7 @@ def do_eval(saver,
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
-    batch_size = dataset.num_examples()
+    batch_size = dataset.num_examples
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
     eval_correct = mnist.evaluation(logits, labels_placeholder)
