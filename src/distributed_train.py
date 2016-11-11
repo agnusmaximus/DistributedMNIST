@@ -149,18 +149,18 @@ def train(target, dataset, cluster_spec):
     total_loss = mnist.loss(logits, labels)
 
     # Use V2 optimizer
-    """opt = SyncReplicasOptimizerV2(
+    opt = SyncReplicasOptimizerV2(
       opt,
       #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
       global_step=global_step,
-      local_global_step=local_global_step)"""
-    opt = tf.train.SyncReplicasOptimizerV2(
+      local_global_step=local_global_step)
+    """opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       #replicas_to_aggregate=int(num_replicas_to_aggregate * 10.0 / 100.0),
       replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)
+      total_num_replicas=num_workers)"""
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
@@ -204,12 +204,12 @@ def train(target, dataset, cluster_spec):
     else:
       local_init_op = opt.local_step_init_op
 
-    local_init_opt = local_init_op
-    ready_for_local_init_op = [local_global_step_init_op, opt.ready_for_local_init_op]
+    local_init_opt = [local_init_op]
+    ready_for_local_init_op = opt.ready_for_local_init_op
 
     sv = tf.train.Supervisor(is_chief=is_chief,
                              local_init_op=local_init_op,
-                             ready_for_local_init_op=ready_for_local_init_op,
+                             #ready_for_local_init_op=ready_for_local_init_op,
                              logdir=FLAGS.train_dir,
                              init_op=init_op,
                              summary_op=None,
