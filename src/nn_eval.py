@@ -88,10 +88,6 @@ def fill_feed_dict(data_set, images_pl, labels_pl):
   return feed_dict
 
 def do_eval(saver,
-            loss,
-            eval_correct,
-            images_placeholder,
-            labels_placeholder,
             data_set):
   """Runs one evaluation against the full epoch of data.
   Args:
@@ -122,6 +118,11 @@ def do_eval(saver,
           (ckpt.model_checkpoint_path, global_step))
     sys.stdout.flush()
 
+    images_placeholder, labels_placeholder = placeholder_inputs(FLAGS.batch_size)
+    logits, reg = mnist.inference(images_placeholder, train=False)
+    eval_correct = mnist.evaluation(logits, labels_placeholder)
+    loss = mnist.loss(logits, labels_placeholder)
+
     # And run one epoch of eval.
     true_count = 0
     steps_per_epoch = data_set.num_examples // FLAGS.batch_size
@@ -140,14 +141,10 @@ def do_eval(saver,
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
   with tf.Graph().as_default():
-    images_placeholder, labels_placeholder = placeholder_inputs(FLAGS.batch_size)
-    logits, reg = mnist.inference(images_placeholder, train=False)
-    eval_correct = mnist.evaluation(logits, labels_placeholder)
-    loss = mnist.loss(logits, labels_placeholder)
     sess = tf.Session()
     saver = tf.train.Saver()
     while True:
-      do_eval(saver, eval_correct, loss, images_placeholder, labels_placeholder, dataset)
+      do_eval(saver, dataset)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
