@@ -57,6 +57,7 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
   Returns:
     softmax_linear: Output tensor with the computed logits.
   """
+
   # Hidden 1
   with tf.name_scope('hidden1'):
     weights = tf.Variable(
@@ -84,6 +85,10 @@ def inference(images, hidden1_units=FLAGS.hidden1_units, hidden2_units=FLAGS.hid
     biases = tf.Variable(tf.zeros([NUM_CLASSES]),
                          name='biases')
     logits = tf.matmul(hidden2, weights) + biases
+
+  tf.logging.info("YOOOOOOO")
+  tf.logging.info(logits.device)
+
   return logits
 
 
