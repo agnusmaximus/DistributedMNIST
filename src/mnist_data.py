@@ -150,7 +150,9 @@ def read_data_sets(train_dir,
                    one_hot=False,
                    dtype=dtypes.float32,
                    reshape=False,
-                   validation_size=5000):
+                   validation_size=5000,
+                   worker_id=-1,
+                   n_workers=-1):
   if fake_data:
 
     def fake():
@@ -192,12 +194,28 @@ def read_data_sets(train_dir,
   train_images = train_images
   train_labels = train_labels
 
-  train = DataSet(train_images, train_labels, dtype=dtype, reshape=reshape)
+  # Depending on the worker id, keep a segment of the data while dropping others.
+  if worker_id != -1:
+    n_validation, n_train = validation_images.shape[0], train_images.shape[0]
+    n_validation_per_worker, n_train_per_worker = int(n_validation / n_workers), int(n_train / n_workers)
+    start_validation, end_validation = worker_id * n_validation_per_worker, (worker_id+1) * n_validation_per_worker
+    start_train, end_train = worker_id * n_train_per_worker, (worker_id+1) * n_train_per_worker
+    if worker_id == n_workers - 1:
+      end_train = n_train
+      end_validation = n_validation
+
+    validation_images = validation_images[start_validation:end_validation]
+    validation_labels = validation_labels[start_validation:end_validation]
+    train_images = train_images[start_train:end:train]
+    train_labels = train_labels[start_train:end:train]
+
+  train = DataSet(train_images, train_labels, dtype=dtype, reshape=reshape, worker_id=worker_id)
   validation = DataSet(validation_images,
-                            validation_labels,
-                            dtype=dtype,
-                            reshape=reshape)
+                       validation_labels,
+                       dtype=dtype,
+                       reshape=reshape,
+                       worker_id=worker_id)
   return base.Datasets(train=train, validation=validation, test=None)
 
-def load_mnist(train_dir='MNIST-data'):
-  return read_data_sets(train_dir)
+def load_mnist(train_dir='MNIST-data', worker_id=-1, n_workers=-1):
+  return read_data_sets(train_dir, worker_id=worker_id, n_workers=n_workers)

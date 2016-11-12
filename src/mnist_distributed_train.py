@@ -34,11 +34,14 @@ def main(unused_args):
     # `ps` jobs wait for incoming connections from the workers.
     server.join()
   else:
-    dataset = mnist_data.load_mnist()
+    n_workers = len(worker_hosts)
+    worker_id = int(FLAGS.task_id)
+    dataset = mnist_data.load_mnist(worker_id=worker_id, n_workers=n_workers)
     # Only the chief checks for or creates train_dir.
     if FLAGS.task_id == 0:
       if not tf.gfile.Exists(FLAGS.train_dir):
         tf.gfile.MakeDirs(FLAGS.train_dir)
+
     distributed_train.train(server.target, dataset.train, cluster_spec)
 
 if __name__ == '__main__':
