@@ -30,6 +30,7 @@ import tensorflow as tf
 from tensorflow.contrib.learn.python.learn.datasets import base
 from tensorflow.python.framework import dtypes
 from mnist import *
+import time
 
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 
@@ -47,6 +48,7 @@ class DataSet(object):
     `uint8` to leave the input as `[0, 255]`, or `float32` to rescale into
     `[0, 1]`.
     """
+    numpy.random.seed(time.time())
     dtype = dtypes.as_dtype(dtype).base_dtype
     if dtype not in (dtypes.uint8, dtypes.float32):
       raise TypeError('Invalid image dtype %r, expected uint8 or float32' %
