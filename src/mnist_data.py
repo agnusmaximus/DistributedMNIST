@@ -194,21 +194,6 @@ def read_data_sets(train_dir,
   train_images = train_images
   train_labels = train_labels
 
-  # Depending on the worker id, keep a segment of the data while dropping others.
-  if worker_id != -1:
-    n_validation, n_train = validation_images.shape[0], train_images.shape[0]
-    n_validation_per_worker, n_train_per_worker = int(n_validation / n_workers), int(n_train / n_workers)
-    start_validation, end_validation = worker_id * n_validation_per_worker, (worker_id+1) * n_validation_per_worker
-    start_train, end_train = worker_id * n_train_per_worker, (worker_id+1) * n_train_per_worker
-    if worker_id == n_workers - 1:
-      end_train = n_train
-      end_validation = n_validation
-
-    validation_images = validation_images[start_validation:end_validation]
-    validation_labels = validation_labels[start_validation:end_validation]
-    train_images = train_images[start_train:end_train]
-    train_labels = train_labels[start_train:end_train]
-
   train = DataSet(train_images, train_labels, dtype=dtype, reshape=reshape)
   validation = DataSet(validation_images,
                        validation_labels,
