@@ -213,8 +213,7 @@ def read_data_sets(train_dir,
   validation = DataSet(validation_images,
                        validation_labels,
                        dtype=dtype,
-                       reshape=reshape,
-                       worker_id=worker_id)
+                       reshape=reshape)
   return base.Datasets(train=train, validation=validation, test=None)
 
 def load_mnist(train_dir='MNIST-data', worker_id=-1, n_workers=-1):
