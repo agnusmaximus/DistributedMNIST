@@ -76,10 +76,6 @@ class DataSet(object):
     numpy.random.shuffle(perm)
     self._images = self._images[perm]
     self._labels = self._labels[perm]
-    # Start next epoch
-    start = 0
-    self._index_in_epoch = batch_size
-    assert batch_size <= self._num_examples
 
   @property
   def images(self):
