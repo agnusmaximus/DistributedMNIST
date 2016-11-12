@@ -24,14 +24,14 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
-    "name" : "mnist_cnn_6_workers",      # Unique name for this specific configuration
-    "key_name": "DistributedSGD",        # Necessary to ssh into created instances
+    "name" : "mnist_cnn_10_workers",      # Unique name for this specific configuration
+    "key_name": "DistributedSGD",         # Necessary to ssh into created instances
 
     # Cluster topology
-    "n_masters" : 1,                     # Should always be 1
-    "n_workers" : 5,
+    "n_masters" : 1,                      # Should always be 1
+    "n_workers" : 9,
     "n_ps" : 1,
-    "n_evaluators" : 1,                  # Continually validates the model on the validation data
+    "n_evaluators" : 1,                   # Continually validates the model on the validation data
 
     # Region speficiation
     "region" : "us-west-2",
@@ -42,13 +42,13 @@ configuration = Cfg({
     "worker_type" : "m4.2xlarge",
     "ps_type" : "m4.2xlarge",
     "evaluator_type" : "m4.2xlarge",
-    "image_id" : "ami-4749ea27",         # US west
+    "image_id" : "ami-4749ea27",          # US west
 
     # Launch specifications
-    "spot_price" : ".3",                 # Has to be a string
+    "spot_price" : ".17",                 # Has to be a string
 
     # SSH configuration
-    "ssh_username" : "ubuntu",           # For sshing. E.G: ssh ssh_username@hostname
+    "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
     "path_to_keyfile" : "/Users/maxlam/Desktop/School/Fall2016/Research/DistributedSGD/DistributedSGD.pem",
 
     # NFS configuration
@@ -78,7 +78,7 @@ configuration = Cfg({
     # Model configuration
     "batch_size" : "128",
     "initial_learning_rate" : "0.01",
-    "learning_rate_decay_factor" : ".99",
+    "learning_rate_decay_factor" : ".98",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
