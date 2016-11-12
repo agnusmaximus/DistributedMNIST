@@ -1,3 +1,7 @@
+#
+# Basic script for working with ec2 and distributed tensorflow.
+#
+
 from __future__ import print_function
 import sys
 import threading
@@ -6,6 +10,7 @@ import paramiko as pm
 import boto3
 import time
 import json
+import os
 
 class Cfg(dict):
 
@@ -18,6 +23,7 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
+    "name" : "mnist_cnn_6_workers",      # Unique name for this specific configuration
     "key_name": "DistributedSGD",        # Necessary to ssh into created instances
 
     # Cluster topology
@@ -50,7 +56,7 @@ configuration = Cfg({
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
     "nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
-    "base_out_dir" : "%(nfs_mount_point)s/mnist_cnn_6_workers", # Master writes checkpoints to this directory. Outfiles are written to this directory.
+    "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     # Command specification
     # Master pre commands are run only by the master
@@ -111,93 +117,221 @@ configuration = Cfg({
     ],
 })
 
-client = boto3.client("ec2", region_name=configuration["region"])
-ec2 = boto3.resource("ec2", region_name=configuration["region"])
+def tf_ec2_run(argv, configuration):
 
+    client = boto3.client("ec2", region_name=configuration["region"])
+    ec2 = boto3.resource("ec2", region_name=configuration["region"])
 
-# A cfg is a special integer that identifies
-# the configuration. We use a hash function to approximate this.
-def get_cfg_id():
-    s = json.dumps(configuration)
-    return s.__hash__() % sys.maxsize
+    def sleep_a_bit():
+        time.sleep(5)
 
-def sleep_a_bit():
-    time.sleep(5)
+    def summarize_instances(instances):
+        instance_type_to_instance_map = {}
+        for instance in instances:
+            typ = instance.instance_type
+            if typ not in instance_type_to_instance_map:
+                instance_type_to_instance_map[typ] = []
+            instance_type_to_instance_map[typ].append(instance)
 
-def summarize_instances(instances):
-    instance_type_to_instance_map = {}
-    for instance in instances:
-        typ = instance.instance_type
-        if typ not in instance_type_to_instance_map:
-            instance_type_to_instance_map[typ] = []
-        instance_type_to_instance_map[typ].append(instance)
+        for k,v in instance_type_to_instance_map.items():
+            print("%s - %d running" % (k, len(v)))
 
-    for k,v in instance_type_to_instance_map.items():
-        print("%s - %d running" % (k, len(v)))
+        return instance_type_to_instance_map
 
-    return instance_type_to_instance_map
+    def summarize_idle_instances(argv):
+        print("Idle instances: (Idle = not running tensorflow)")
+        summarize_instances(get_idle_instances())
 
-def summarize_idle_instances(argv):
-    print("Idle instances: (Idle = not running tensorflow)")
-    summarize_instances(get_idle_instances())
+    def summarize_running_instances(argv):
+        print("Running instances: ")
+        summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]))
 
-def summarize_running_instances(argv):
-    print("Running instances: ")
-    summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]))
-
-# Terminate all request.
-def terminate_all_requests(method="spot"):
-    if method == "spot":
-        spot_requests = client.describe_spot_instance_requests()
-        spot_request_ids = []
-        for spot_request in spot_requests["SpotInstanceRequests"]:
-            if spot_request["State"] != "cancelled":
-                spot_request_id = spot_request["SpotInstanceRequestId"]
-                spot_request_ids.append(spot_request_id)
-
-        if len(spot_request_ids) != 0:
-            print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
-            client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
-
-        # Wait until all are cancelled.
-        # TODO: Use waiter class
-        done = False
-        while not done:
-            print("Waiting for all spot requests to be terminated...")
-            done = True
+    # Terminate all request.
+    def terminate_all_requests(method="spot"):
+        if method == "spot":
             spot_requests = client.describe_spot_instance_requests()
-            states = [x["State"] for x in spot_requests["SpotInstanceRequests"]]
-            for state in states:
-                if state != "cancelled":
-                    done = False
-            sleep_a_bit()
-    else:
-        print("Unsupported terminate method: %s" % method)
+            spot_request_ids = []
+            for spot_request in spot_requests["SpotInstanceRequests"]:
+                if spot_request["State"] != "cancelled":
+                    spot_request_id = spot_request["SpotInstanceRequestId"]
+                    spot_request_ids.append(spot_request_id)
 
-# Terminate all instances in the configuration
-# Note: all_instances = ec2.instances.all() to get all intances
-def terminate_all_instances():
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    all_instance_ids = [x.id for x in live_instances]
-    if len(all_instance_ids) != 0:
-        print("Terminating instances: %s" % (" ".join([str(x) for x in all_instance_ids])))
-        client.terminate_instances(InstanceIds=all_instance_ids)
+            if len(spot_request_ids) != 0:
+                print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
+                client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
 
-        # Wait until all are terminated
-        # TODO: Use waiter class
+            # Wait until all are cancelled.
+            # TODO: Use waiter class
+            done = False
+            while not done:
+                print("Waiting for all spot requests to be terminated...")
+                done = True
+                spot_requests = client.describe_spot_instance_requests()
+                states = [x["State"] for x in spot_requests["SpotInstanceRequests"]]
+                for state in states:
+                    if state != "cancelled":
+                        done = False
+                sleep_a_bit()
+        else:
+            print("Unsupported terminate method: %s" % method)
+
+    # Terminate all instances in the configuration
+    # Note: all_instances = ec2.instances.all() to get all intances
+    def terminate_all_instances():
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        all_instance_ids = [x.id for x in live_instances]
+        if len(all_instance_ids) != 0:
+            print("Terminating instances: %s" % (" ".join([str(x) for x in all_instance_ids])))
+            client.terminate_instances(InstanceIds=all_instance_ids)
+
+            # Wait until all are terminated
+            # TODO: Use waiter class
+            done = False
+            while not done:
+                print("Waiting for all instances to be terminated...")
+                done = True
+                instances = ec2.instances.all()
+                for instance in instances:
+                    if instance.state == "active":
+                        done = False
+                sleep_a_bit()
+
+    # Launch instances as specified in the configuration.
+    def launch_instances(method="spot"):
+        if method == "spot":
+            worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
+            master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
+            ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
+            evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
+            specs = [(worker_instance_type, worker_count),
+                     (master_instance_type, master_count),
+                     (ps_instance_type, ps_count),
+                     (evaluator_instance_type, evaluator_count)]
+            for (instance_type, count) in specs:
+                launch_specs = {"KeyName" : configuration["key_name"],
+                                "ImageId" : configuration["image_id"],
+                                "InstanceType" : instance_type,
+                                "Placement" : {"AvailabilityZone":configuration["availability_zone"]},
+                                "SecurityGroups": ["default"]}
+                # TODO: EBS optimized? (Will incur extra hourly cost)
+                client.request_spot_instances(InstanceCount=count,
+                                              LaunchSpecification=launch_specs,
+                                              SpotPrice=configuration["spot_price"])
+        else:
+            print("Unsupported launch method: %s" % method)
+
+    # TODO: use waiter class?
+    def wait_until_running_instances_initialized():
         done = False
         while not done:
-            print("Waiting for all instances to be terminated...")
+            print("Waiting for instances to be initialized...")
             done = True
-            instances = ec2.instances.all()
-            for instance in instances:
-                if instance.state == "active":
+            live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+            ids = [x.id for x in live_instances]
+            resps = client.describe_instance_status(InstanceIds=ids)
+            for resp in resps["InstanceStatuses"]:
+                if resp["InstanceStatus"]["Status"] != "ok":
                     done = False
+            if len(ids) <= 0:
+                done = False
             sleep_a_bit()
 
-# Launch instances as specified in the configuration.
-def launch_instances(method="spot"):
-    if method == "spot":
+    # Waits until status requests are all fulfilled.
+    # Prints out status of request in between time waits.
+    # TODO: Use waiter class
+    def wait_until_instance_request_status_fulfilled(method="spot"):
+        if method == "spot":
+            requests_fulfilled, at_least_one_open_or_active = False, False
+            while not requests_fulfilled or not at_least_one_open_or_active:
+                requests_fulfilled = True
+                statuses = client.describe_spot_instance_requests()
+                print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
+                print("-------------------------------------------")
+                for instance_request in statuses["SpotInstanceRequests"]:
+                    sid = instance_request["SpotInstanceRequestId"]
+                    machine_type = instance_request["LaunchSpecification"]["InstanceType"]
+                    price = instance_request["SpotPrice"]
+                    state = instance_request["State"]
+                    status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
+                    if state == "active" or state == "open":
+                        at_least_one_open_or_active = True
+                        print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
+                        if state != "active":
+                            requests_fulfilled = False
+                print("-------------------------------------------")
+                sleep_a_bit()
+        else:
+            print("Unsupported instance request method: %s" % method)
+
+    # Takes a list of commands (E.G: ["ls", "cd models"]
+    # and executes command on instance, returning the stdout.
+    # Executes everything in one session, and returns all output from all the commands.
+    def run_ssh_commands(instance, commands):
+        print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, " ".join(commands)))
+
+        # Always need to exit
+        commands.append("exit")
+
+        # Set up ssh client
+        client = pm.SSHClient()
+        host = instance.public_ip_address
+        client.set_missing_host_key_policy(pm.AutoAddPolicy())
+        client.connect(host, username=configuration["ssh_username"], key_filename=configuration["path_to_keyfile"])
+
+        # Clear the stdout from ssh'ing in
+        # For each command perform command and read stdout
+        commandstring = "\n".join(commands)
+        stdin, stdout, stderr = client.exec_command(commandstring)
+        output = stdout.read()
+
+        # Close down
+        stdout.close()
+        stdin.close()
+        client.close()
+
+        return output
+
+    def run_ssh_commands_parallel(instance, commands, q):
+        output = run_ssh_commands(instance, commands)
+        q.put((instance, output))
+
+    # Checks whether instance is idle. Assumed that instance is up and running.
+    # An instance is idle if it is not running tensorflow...
+    # Returns a tuple of (instance, is_instance_idle). We return a tuple for multithreading ease.
+    def is_instance_idle(q, instance):
+        python_processes = run_ssh_commands(instance, ["ps aux | grep python"])
+        q.put((instance, not "ps_hosts" in python_processes and not "ps_workers" in python_processes))
+
+    # Idle instances are running instances that are not running the inception model.
+    # We check whether an instance is running the inception model by ssh'ing into a running machine,
+    # and checking whether python is running.
+    def get_idle_instances():
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        threads = []
+        q = Queue.Queue()
+
+        # Run commands in parallel, writing to the queue
+        for instance in live_instances:
+            t = threading.Thread(target=is_instance_idle, args=(q, instance))
+            t.daemon = True
+            t.start()
+            threads.append(t)
+
+        # Wait for threads to finish
+        for thread in threads:
+            thread.join()
+
+        # Collect idle instances
+        idle_instances = []
+        while not q.empty():
+            instance, is_idle = q.get()
+            if is_idle:
+                idle_instances.append(instance)
+
+        return idle_instances
+
+    def get_instance_requirements():
+        # Get the requirements given the specification of worker/master/etc machine types
         worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
         master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
         ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
@@ -206,387 +340,269 @@ def launch_instances(method="spot"):
                  (master_instance_type, master_count),
                  (ps_instance_type, ps_count),
                  (evaluator_instance_type, evaluator_count)]
-        for (instance_type, count) in specs:
-            launch_specs = {"KeyName" : configuration["key_name"],
-                            "ImageId" : configuration["image_id"],
-                            "InstanceType" : instance_type,
-                            "Placement" : {"AvailabilityZone":configuration["availability_zone"]},
-                            "SecurityGroups": ["default"]}
-            # TODO: EBS optimized? (Will incur extra hourly cost)
-            client.request_spot_instances(InstanceCount=count,
-                                          LaunchSpecification=launch_specs,
-                                          SpotPrice=configuration["spot_price"])
-    else:
-        print("Unsupported launch method: %s" % method)
+        reqs = {}
+        for (type_needed, count_needed) in specs:
+            if type_needed not in reqs:
+                reqs[type_needed] = 0
+            reqs[type_needed] += count_needed
+        return reqs
 
-# TODO: use waiter class?
-def wait_until_running_instances_initialized():
-    done = False
-    while not done:
-        print("Waiting for instances to be initialized...")
-        done = True
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-        ids = [x.id for x in live_instances]
-        resps = client.describe_instance_status(InstanceIds=ids)
-        for resp in resps["InstanceStatuses"]:
-            if resp["InstanceStatus"]["Status"] != "ok":
-                done = False
-        if len(ids) <= 0:
-            done = False
-        sleep_a_bit()
+    # Returns whether the idle instances satisfy the specs of the configuration.
+    def check_idle_instances_satisfy_configuration():
+        # Create a map of instance types to instances of that type
+        idle_instances = get_idle_instances()
+        instance_type_to_instance_map = summarize_instances(idle_instances)
 
-# Waits until status requests are all fulfilled.
-# Prints out status of request in between time waits.
-# TODO: Use waiter class
-def wait_until_instance_request_status_fulfilled(method="spot"):
-    if method == "spot":
-        requests_fulfilled, at_least_one_open_or_active = False, False
-        while not requests_fulfilled or not at_least_one_open_or_active:
-            requests_fulfilled = True
-            statuses = client.describe_spot_instance_requests()
-            print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
-            print("-------------------------------------------")
-            for instance_request in statuses["SpotInstanceRequests"]:
-                sid = instance_request["SpotInstanceRequestId"]
-                machine_type = instance_request["LaunchSpecification"]["InstanceType"]
-                price = instance_request["SpotPrice"]
-                state = instance_request["State"]
-                status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
-                if state == "active" or state == "open":
-                    at_least_one_open_or_active = True
-                    print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
-                    if state != "active":
-                        requests_fulfilled = False
-            print("-------------------------------------------")
-            sleep_a_bit()
-    else:
-        print("Unsupported instance request method: %s" % method)
+        # Get instance requirements
+        reqs = get_instance_requirements()
 
-# Takes a list of commands (E.G: ["ls", "cd models"]
-# and executes command on instance, returning the stdout.
-# Executes everything in one session, and returns all output from all the commands.
-def run_ssh_commands(instance, commands):
-    print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, " ".join(commands)))
+        # Check the requirements are satisfied.
+        print("Checking whether # of running instances satisfies the configuration...")
+        for k,v in instance_type_to_instance_map.items():
+            print("%s - %d running vs %d required" % (k,len(v),reqs[k]))
+            if len(v) < reqs[k]:
+                print("Error, running instances failed to satisfy configuration requirements")
+                sys.exit(0)
+        print("Success, running instances satisfy configuration requirement")
 
-    # Always need to exit
-    commands.append("exit")
+    def shut_everything_down(argv):
+        terminate_all_requests()
+        terminate_all_instances()
 
-    # Set up ssh client
-    client = pm.SSHClient()
-    host = instance.public_ip_address
-    client.set_missing_host_key_policy(pm.AutoAddPolicy())
-    client.connect(host, username=configuration["ssh_username"], key_filename=configuration["path_to_keyfile"])
+    # Main method to run tf commands on a set of idle instances.
+    def run_tf(argv, batch_size=128, port=1234):
 
-    # Clear the stdout from ssh'ing in
-    # For each command perform command and read stdout
-    commandstring = "\n".join(commands)
-    stdin, stdout, stderr = client.exec_command(commandstring)
-    output = stdout.read()
+        assert(configuration["n_masters"] == 1)
 
-    # Close down
-    stdout.close()
-    stdin.close()
-    client.close()
+        # Check idle instances satisfy configs
+        check_idle_instances_satisfy_configuration()
 
-    return output
+        # Get idle instances
+        idle_instances = get_idle_instances()
 
-def run_ssh_commands_parallel(instance, commands, q):
-    output = run_ssh_commands(instance, commands)
-    q.put((instance, output))
+        # Clear the nfs
+        instances_string = ",".join([x.instance_id for x in idle_instances])
+        clear_outdir_argv = ["python", "inception_ec2.py", instances_string, "rm -rf %s" % configuration["base_out_dir"]]
+        run_command(clear_outdir_argv, quiet=True)
+        make_outdir_argv = ["python", "inception_ec2.py", instances_string, "mkdir %s" % configuration["base_out_dir"]]
+        run_command(make_outdir_argv, quiet=True)
 
-# Checks whether instance is idle. Assumed that instance is up and running.
-# An instance is idle if it is not running tensorflow...
-# Returns a tuple of (instance, is_instance_idle). We return a tuple for multithreading ease.
-def is_instance_idle(q, instance):
-    python_processes = run_ssh_commands(instance, ["ps aux | grep python"])
-    q.put((instance, not "ps_hosts" in python_processes and not "ps_workers" in python_processes))
+        # Assign instances for worker/ps/etc
+        instance_type_to_instance_map = summarize_instances(idle_instances)
+        specs = {
+            "master" : {"instance_type" : configuration["master_type"],
+                        "n_required" : configuration["n_masters"]},
+            "worker" : {"instance_type" : configuration["worker_type"],
+                        "n_required" : configuration["n_workers"]},
+            "ps" : {"instance_type" : configuration["ps_type"],
+                    "n_required" : configuration["n_ps"]},
+            "evaluator" : {"instance_type" : configuration["evaluator_type"],
+                           "n_required" : configuration["n_evaluators"]}
+        }
+        machine_assignments = {
+            "master" : [],
+            "worker" : [],
+            "ps" : [],
+            "evaluator" : []
+        }
+        for role, requirement in specs.items():
+            instance_type_for_role = requirement["instance_type"]
+            n_instances_needed = requirement["n_required"]
+            instances_to_assign, rest = instance_type_to_instance_map[instance_type_for_role][:n_instances_needed], instance_type_to_instance_map[instance_type_for_role][n_instances_needed:]
+            instance_type_to_instance_map[instance_type_for_role] = rest
+            machine_assignments[role] = instances_to_assign
 
-# Idle instances are running instances that are not running the inception model.
-# We check whether an instance is running the inception model by ssh'ing into a running machine,
-# and checking whether python is running.
-def get_idle_instances():
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    threads = []
-    q = Queue.Queue()
+        # Construct the host strings necessary for running the inception command.
+        # Note we use private ip addresses to avoid EC2 transfer costs.
+        worker_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["master"] + machine_assignments["worker"]])
+        ps_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["ps"]])
 
-    # Run commands in parallel, writing to the queue
-    for instance in live_instances:
-        t = threading.Thread(target=is_instance_idle, args=(q, instance))
-        t.daemon = True
-        t.start()
-        threads.append(t)
+        # Create a map of command&machine assignments
+        command_machine_assignments = {}
 
-    # Wait for threads to finish
-    for thread in threads:
-        thread.join()
-
-    # Collect idle instances
-    idle_instances = []
-    while not q.empty():
-        instance, is_idle = q.get()
-        if is_idle:
-            idle_instances.append(instance)
-
-    return idle_instances
-
-def get_instance_requirements():
-    # Get the requirements given the specification of worker/master/etc machine types
-    worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
-    master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
-    ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
-    evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
-    specs = [(worker_instance_type, worker_count),
-             (master_instance_type, master_count),
-             (ps_instance_type, ps_count),
-             (evaluator_instance_type, evaluator_count)]
-    reqs = {}
-    for (type_needed, count_needed) in specs:
-        if type_needed not in reqs:
-            reqs[type_needed] = 0
-        reqs[type_needed] += count_needed
-    return reqs
-
-# Returns whether the idle instances satisfy the specs of the configuration.
-def check_idle_instances_satisfy_configuration():
-    # Create a map of instance types to instances of that type
-    idle_instances = get_idle_instances()
-    instance_type_to_instance_map = summarize_instances(idle_instances)
-
-    # Get instance requirements
-    reqs = get_instance_requirements()
-
-    # Check the requirements are satisfied.
-    print("Checking whether # of running instances satisfies the configuration...")
-    for k,v in instance_type_to_instance_map.items():
-        print("%s - %d running vs %d required" % (k,len(v),reqs[k]))
-        if len(v) < reqs[k]:
-            print("Error, running instances failed to satisfy configuration requirements")
-            sys.exit(0)
-    print("Success, running instances satisfy configuration requirement")
-
-def shut_everything_down(argv):
-    terminate_all_requests()
-    terminate_all_instances()
-
-# Main method to run tf commands on a set of idle instances.
-def run_tf(argv, batch_size=128, port=1234):
-
-    assert(configuration["n_masters"] == 1)
-
-    # Check idle instances satisfy configs
-    check_idle_instances_satisfy_configuration()
-
-    # Get idle instances
-    idle_instances = get_idle_instances()
-
-    # Clear the nfs
-    instances_string = ",".join([x.instance_id for x in idle_instances])
-    clear_nfs_argv = ["python", "inception_ec2.py", instances_string, "rm -rf %s" % configuration["base_out_dir"], "mkdir %s" % configuration["base_out_dir"]]
-    run_command(clear_nfs_argv, quiet=True)
-
-    # Assign instances for worker/ps/etc
-    instance_type_to_instance_map = summarize_instances(idle_instances)
-    specs = {
-        "master" : {"instance_type" : configuration["master_type"],
-                    "n_required" : configuration["n_masters"]},
-        "worker" : {"instance_type" : configuration["worker_type"],
-                    "n_required" : configuration["n_workers"]},
-        "ps" : {"instance_type" : configuration["ps_type"],
-                "n_required" : configuration["n_ps"]},
-        "evaluator" : {"instance_type" : configuration["evaluator_type"],
-                       "n_required" : configuration["n_evaluators"]}
-    }
-    machine_assignments = {
-        "master" : [],
-        "worker" : [],
-        "ps" : [],
-        "evaluator" : []
-    }
-    for role, requirement in specs.items():
-        instance_type_for_role = requirement["instance_type"]
-        n_instances_needed = requirement["n_required"]
-        instances_to_assign, rest = instance_type_to_instance_map[instance_type_for_role][:n_instances_needed], instance_type_to_instance_map[instance_type_for_role][n_instances_needed:]
-        instance_type_to_instance_map[instance_type_for_role] = rest
-        machine_assignments[role] = instances_to_assign
-
-    # Construct the host strings necessary for running the inception command.
-    # Note we use private ip addresses to avoid EC2 transfer costs.
-    worker_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["master"] + machine_assignments["worker"]])
-    ps_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["ps"]])
-
-    # Create a map of command&machine assignments
-    command_machine_assignments = {}
-
-    # Construct the master command
-    command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["master_pre_commands"])}
-    for command_string in configuration["train_commands"]:
-        command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "0").replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", "master"))
-
-    # Construct the worker commands
-    for worker_id, instance in enumerate(machine_assignments["worker"]):
-        name = "worker_%d" % worker_id
-        command_machine_assignments[name] = {"instance" : instance,
-                                             "commands" : list(configuration["pre_commands"])}
+        # Construct the master command
+        command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["master_pre_commands"])}
         for command_string in configuration["train_commands"]:
-            command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "%d" % (worker_id+1)).replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", name))
+            command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "0").replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", "master"))
 
-    # Construct ps commands
-    for ps_id, instance in enumerate(machine_assignments["ps"]):
-        name = "ps_%d" % ps_id
-        command_machine_assignments[name] = {"instance" : instance,
-                                             "commands" : list(configuration["pre_commands"])}
-        for command_string in configuration["train_commands"]:
-            command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "%d" % ps_id).replace("JOB_NAME", "ps").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", name))
+        # Construct the worker commands
+        for worker_id, instance in enumerate(machine_assignments["worker"]):
+            name = "worker_%d" % worker_id
+            command_machine_assignments[name] = {"instance" : instance,
+                                                 "commands" : list(configuration["pre_commands"])}
+            for command_string in configuration["train_commands"]:
+                command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "%d" % (worker_id+1)).replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", name))
 
-    # The evaluator requires a special command to continually evaluate accuracy on validation data.
-    # We also launch the tensorboard on it.
-    assert(len(machine_assignments["evaluator"]) == 1)
-    command_machine_assignments["evaluator"] = {"instance" : machine_assignments["evaluator"][0],
-                                                "commands" : list(configuration["pre_commands"]) + list(configuration["evaluate_commands"])}
+        # Construct ps commands
+        for ps_id, instance in enumerate(machine_assignments["ps"]):
+            name = "ps_%d" % ps_id
+            command_machine_assignments[name] = {"instance" : instance,
+                                                 "commands" : list(configuration["pre_commands"])}
+            for command_string in configuration["train_commands"]:
+                command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "%d" % ps_id).replace("JOB_NAME", "ps").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", name))
 
-    # Run the commands via ssh in parallel
-    threads = []
-    q = Queue.Queue()
-    for name, command_and_machine in command_machine_assignments.items():
-        instance = command_and_machine["instance"]
-        commands = command_and_machine["commands"]
-        print("-----------------------")
-        print("Command: %s\n" % " ".join(commands))
-        t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
-        t.start()
-        threads.append(t)
+        # The evaluator requires a special command to continually evaluate accuracy on validation data.
+        # We also launch the tensorboard on it.
+        assert(len(machine_assignments["evaluator"]) == 1)
+        command_machine_assignments["evaluator"] = {"instance" : machine_assignments["evaluator"][0],
+                                                    "commands" : list(configuration["pre_commands"]) + list(configuration["evaluate_commands"])}
 
-    # Wait until commands are all finished
-    for t in threads:
-        t.join()
+        # Run the commands via ssh in parallel
+        threads = []
+        q = Queue.Queue()
+        for name, command_and_machine in command_machine_assignments.items():
+            instance = command_and_machine["instance"]
+            commands = command_and_machine["commands"]
+            print("-----------------------")
+            print("Command: %s\n" % " ".join(commands))
+            t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
+            t.start()
+            threads.append(t)
 
-    # Print the output
-    while not q.empty():
-        instance, output = q.get()
-        print(instance.public_ip_address)
-        print(output)
+        # Wait until commands are all finished
+        for t in threads:
+            t.join()
 
-    # Debug print
-    instances = []
-    print("\n--------------------------------------------------\n")
-    print("Machine assignments:")
-    print("------------------------")
-    for name, command_and_machine in command_machine_assignments.items():
-        instance = command_and_machine["instance"]
-        instances.append(instance)
-        commands = command_and_machine["commands"]
-        ssh_command = "ssh -i %s %s@%s" % (configuration["path_to_keyfile"], configuration["ssh_username"], instance.public_ip_address)
-        print("%s - %s" % (name, instance.instance_id))
-        print("To ssh: %s" % ssh_command)
+        # Print the output
+        while not q.empty():
+            instance, output = q.get()
+            print(instance.public_ip_address)
+            print(output)
+
+        # Debug print
+        instances = []
+        print("\n--------------------------------------------------\n")
+        print("Machine assignments:")
         print("------------------------")
+        for name, command_and_machine in command_machine_assignments.items():
+            instance = command_and_machine["instance"]
+            instances.append(instance)
+            commands = command_and_machine["commands"]
+            ssh_command = "ssh -i %s %s@%s" % (configuration["path_to_keyfile"], configuration["ssh_username"], instance.public_ip_address)
+            print("%s - %s" % (name, instance.instance_id))
+            print("To ssh: %s" % ssh_command)
+            print("------------------------")
 
-    # Print out list of instance ids (which will be useful in selctively stopping inception
-    # for given instances.
-    instance_cluster_string = ",".join([x.instance_id for x in instances])
-    print("\nInstances cluster string: %s" % instance_cluster_string)
+        # Print out list of instance ids (which will be useful in selctively stopping inception
+        # for given instances.
+        instance_cluster_string = ",".join([x.instance_id for x in instances])
+        print("\nInstances cluster string: %s" % instance_cluster_string)
 
-def kill_python(argv):
-    if len(argv) != 3:
-        print("Usage: python inception_ec2.py kill_python instance_id1,instance_id2,id3...")
-        sys.exit(0)
-    cluster_instance_string = argv[2]
-    instance_ids_to_shutdown = cluster_instance_string.split(",")
+        # Print out the id of the configuration file
+        cluster_save = {
+            "configuration" : configuration,
+            "name" : configuration["name"],
+            "command_machine_assignments" : command_machine_assignments,
+            "cluster_string" : instance_cluster_string
+        }
 
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    threads = []
-    q = Queue.Queue()
-    for instance in live_instances:
-        if instance.instance_id in instance_ids_to_shutdown:
+        return cluster_save
+
+    def kill_python(argv):
+        if len(argv) != 3:
+            print("Usage: python inception_ec2.py kill_python instance_id1,instance_id2,id3...")
+            sys.exit(0)
+        cluster_instance_string = argv[2]
+        instance_ids_to_shutdown = cluster_instance_string.split(",")
+
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        threads = []
+        q = Queue.Queue()
+        for instance in live_instances:
+            if instance.instance_id in instance_ids_to_shutdown:
+                commands = ["pkill -9 python"]
+                t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
+                t.start()
+                threads.append(t)
+        for thread in threads:
+            thread.join()
+        summarize_idle_instances(None)
+
+    def kill_all_python(argv):
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        threads = []
+        q = Queue.Queue()
+        for instance in live_instances:
             commands = ["pkill -9 python"]
             t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
             t.start()
             threads.append(t)
-    for thread in threads:
-        thread.join()
-    summarize_idle_instances(None)
+        for thread in threads:
+            thread.join()
+        summarize_idle_instances(None)
 
-def kill_all_python(argv):
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    threads = []
-    q = Queue.Queue()
-    for instance in live_instances:
-        commands = ["pkill -9 python"]
-        t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
-        t.start()
-        threads.append(t)
-    for thread in threads:
-        thread.join()
-    summarize_idle_instances(None)
+    def run_command(argv, quiet=False):
+        if len(argv) != 4:
+            print("Usage: python inception_ec2.py run_command instance_id1,instance_id2,id3... command")
+            sys.exit(0)
+        cluster_instance_string = argv[2]
+        command = argv[3]
+        instance_ids_to_run_command = cluster_instance_string.split(",")
 
-def run_command(argv, quiet=False):
-    if len(argv) != 4:
-        print("Usage: python inception_ec2.py run_command instance_id1,instance_id2,id3... command")
-        sys.exit(0)
-    cluster_instance_string = argv[2]
-    command = argv[3]
-    instance_ids_to_run_command = cluster_instance_string.split(",")
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        threads = []
+        q = Queue.Queue()
+        for instance in live_instances:
+            if instance.instance_id in instance_ids_to_run_command:
+                commands = [command]
+                t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
+                t.start()
+                threads.append(t)
+        for thread in threads:
+            thread.join()
 
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    threads = []
-    q = Queue.Queue()
-    for instance in live_instances:
-        if instance.instance_id in instance_ids_to_run_command:
-            commands = [command]
-            t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
-            t.start()
-            threads.append(t)
-    for thread in threads:
-        thread.join()
+        while not q.empty():
+            instance, output = q.get()
+            if not quiet:
+                print(instance, output)
 
-    while not q.empty():
-        instance, output = q.get()
-        if not quiet:
-            print(instance, output)
+    # Setup nfs on all instances
+    def setup_nfs():
+        print("Installing nfs on all running instances...")
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances_string = ",".join([x.instance_id for x in live_instances])
+        update_command = "sudo apt-get -y update"
+        install_nfs_command = "sudo apt-get -y install nfs-common"
+        create_mount_command = "mkdir %s" % configuration["base_out_dir"]
+        setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["base_out_dir"])
+        reduce_permissions_command = "sudo chmod 777 %s " % configuration["base_out_dir"]
+        command = update_command + " && " + install_nfs_command + " && " + create_mount_command + " && " + setup_nfs_command + " && " + reduce_permissions_command
 
-# Setup nfs on all instances
-def setup_nfs():
-    print("Installing nfs on all running instances...")
-    live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
-    live_instances_string = ",".join([x.instance_id for x in live_instances])
-    update_command = "sudo apt-get -y update"
-    install_nfs_command = "sudo apt-get -y install nfs-common"
-    create_mount_command = "mkdir %s" % configuration["base_out_dir"]
-    setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["base_out_dir"])
-    reduce_permissions_command = "sudo chmod 777 %s " % configuration["base_out_dir"]
-    command = update_command + " && " + install_nfs_command + " && " + create_mount_command + " && " + setup_nfs_command + " && " + reduce_permissions_command
+        # pretty hackish
+        argv = ["python", "inception_ec2.py", live_instances_string, command]
+        run_command(argv, quiet=True)
 
-    # pretty hackish
-    argv = ["python", "inception_ec2.py", live_instances_string, command]
-    run_command(argv, quiet=True)
+    # Launch instances as specified by the configuration.
+    # We also want a shared filesystem to write model checkpoints.
+    # For simplicity we will have the user specify the filesystem via the config.
+    def launch(argv):
+        launch_instances()
+        wait_until_instance_request_status_fulfilled()
+        wait_until_running_instances_initialized()
+        setup_nfs()
 
-# Launch instances as specified by the configuration.
-# We also want a shared filesystem to write model checkpoints.
-# For simplicity we will have the user specify the filesystem via the config.
-def launch(argv):
-    launch_instances()
-    wait_until_instance_request_status_fulfilled()
-    wait_until_running_instances_initialized()
-    setup_nfs()
+    def clean_launch_and_run(argv):
+        # 1. Kills all instances in region
+        # 2. Kills all requests in region
+        # 3. Launches requests
+        # 5. Waits until launch requests have all been satisfied,
+        #    printing status outputs in the meanwhile
+        # 4. Checks that configuration has been satisfied
+        # 5. Runs inception
+        shut_everything_down(None)
+        launch(None)
+        run_tf(None)
 
-def clean_launch_and_run(argv):
-    # 1. Kills all instances in region
-    # 2. Kills all requests in region
-    # 3. Launches requests
-    # 5. Waits until launch requests have all been satisfied,
-    #    printing status outputs in the meanwhile
-    # 4. Checks that configuration has been satisfied
-    # 5. Runs inception
-    shut_everything_down(None)
-    launch(None)
-    run_tf(None)
+    def help(hmap):
+        print("Usage: python inception_ec2.py [command]")
+        print("Commands:")
+        for k,v in hmap.items():
+            print("%s - %s" % (k,v))
 
-def help(hmap):
-    print("Usage: python inception_ec2.py [command]")
-    print("Commands:")
-    for k,v in hmap.items():
-        print("%s - %s" % (k,v))
+    ##############################
+    # tf_ec2 main starting point #
+    ##############################
 
-if __name__ == "__main__":
     command_map = {
         "launch" : launch,
         "clean_launch_and_run" : clean_launch_and_run,
@@ -610,9 +626,12 @@ if __name__ == "__main__":
         "run_command" : "Runs given command on instances selcted by instance id string, separated by ','.",
     }
 
-    if len(sys.argv) < 2:
+    if len(argv) < 2:
         help(help_map)
         sys.exit(0)
 
-    command = sys.argv[1]
-    command_map[command](sys.argv)
+    command = argv[1]
+    command_map[command](argv)
+
+if __name__ == "__main__":
+    tf_ec2_run(sys.argv, configuration)
