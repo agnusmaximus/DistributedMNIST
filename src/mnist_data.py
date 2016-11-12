@@ -206,8 +206,8 @@ def read_data_sets(train_dir,
 
     validation_images = validation_images[start_validation:end_validation]
     validation_labels = validation_labels[start_validation:end_validation]
-    train_images = train_images[start_train:end:train]
-    train_labels = train_labels[start_train:end:train]
+    train_images = train_images[start_train:end_train]
+    train_labels = train_labels[start_train:end_train]
 
   train = DataSet(train_images, train_labels, dtype=dtype, reshape=reshape, worker_id=worker_id)
   validation = DataSet(validation_images,
