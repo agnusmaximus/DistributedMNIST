@@ -614,7 +614,7 @@ def tf_ec2_run(argv, configuration):
         update_command = "sudo apt-get -y update"
         install_nfs_command = "sudo apt-get -y install nfs-common"
         create_mount_command = "mkdir %s" % configuration["nfs_mount_point"]
-        setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["base_out_dir"])
+        setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["nfs_mount_point"])
         reduce_permissions_command = "sudo chmod 777 %s " % configuration["nfs_mount_point"]
         command = update_command + " && " + install_nfs_command + " && " + create_mount_command + " && " + setup_nfs_command + " && " + reduce_permissions_command
 
