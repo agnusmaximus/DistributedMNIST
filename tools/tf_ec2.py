@@ -50,7 +50,7 @@ configuration = Cfg({
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
     "nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
-    "base_out_dir" : "%(nfs_mount_point)/mnist_cnn_6_workers", # Master writes checkpoints to this directory. Outfiles are written to this directory.
+    "base_out_dir" : "%(nfs_mount_point)s/mnist_cnn_6_workers", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     # Command specification
     # Master pre commands are run only by the master
