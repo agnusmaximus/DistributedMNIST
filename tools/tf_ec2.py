@@ -5,8 +5,10 @@ import Queue
 import paramiko as pm
 import boto3
 import time
+import json
 
 class Cfg(dict):
+
    def __getitem__(self, item):
        item = dict.__getitem__(self, item)
        if type(item) == type([]):
@@ -47,13 +49,14 @@ configuration = Cfg({
     #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
     "nfs_ip_address" : "172.31.28.54",          # us-west-2b
-    "nfs_mount_point" : "/home/ubuntu/inception_shared", # Master writes checkpoints to this directory. Outfiles are written to this directory.
+    "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
+    "base_out_dir" : "%(nfs_mount_point)/mnist_cnn_6_workers", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     # Command specification
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "rm -rf %(nfs_mount_point)s/*",
+        "rm -rf %(base_out_dir)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -85,11 +88,11 @@ configuration = Cfg({
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
-        "--train_dir=%(nfs_mount_point)s/train_dir "
+        "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
-        "--job_name=JOB_NAME > %(nfs_mount_point)s/out_ROLE_ID 2>&1 &"
+        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
 
     # Commands to run on the evaluator
@@ -97,19 +100,26 @@ configuration = Cfg({
     [
         # Evaluation command
         "python src/mnist_eval.py "
-        "--eval_dir=%(nfs_mount_point)s/eval_dir "
-        "--checkpoint_dir=%(nfs_mount_point)s/train_dir "
-        "> %(nfs_mount_point)s/out_evaluator 2>&1 &",
+        "--eval_dir=%(base_out_dir)s/eval_dir "
+        "--checkpoint_dir=%(base_out_dir)s/train_dir "
+        "> %(base_out_dir)s/out_evaluator 2>&1 &",
 
         # Tensorboard command
         "python /usr/local/lib/python2.7/dist-packages/tensorflow/tensorboard/tensorboard.py "
-        " --logdir=%(nfs_mount_point)s/eval_dir/ "
-        "> %(nfs_mount_point)s/out_evaluator_tensorboard 2>&1 &"
+        " --logdir=%(base_out_dir)s/eval_dir/ "
+        "> %(base_out_dir)s/out_evaluator_tensorboard 2>&1 &"
     ],
 })
 
 client = boto3.client("ec2", region_name=configuration["region"])
 ec2 = boto3.resource("ec2", region_name=configuration["region"])
+
+
+# A cfg is a special integer that identifies
+# the configuration. We use a hash function to approximate this.
+def get_cfg_id():
+    s = json.dumps(configuration)
+    return s.__hash__() % sys.maxsize
 
 def sleep_a_bit():
     time.sleep(5)
@@ -371,7 +381,7 @@ def run_tf(argv, batch_size=128, port=1234):
 
     # Clear the nfs
     instances_string = ",".join([x.instance_id for x in idle_instances])
-    clear_nfs_argv = ["python", "inception_ec2.py", instances_string, "rm -rf %s/*" % configuration["nfs_mount_point"]]
+    clear_nfs_argv = ["python", "inception_ec2.py", instances_string, "rm -rf %s" % configuration["base_out_dir"], "mkdir %s" % configuration["base_out_dir"]]
     run_command(clear_nfs_argv, quiet=True)
 
     # Assign instances for worker/ps/etc
@@ -540,9 +550,9 @@ def setup_nfs():
     live_instances_string = ",".join([x.instance_id for x in live_instances])
     update_command = "sudo apt-get -y update"
     install_nfs_command = "sudo apt-get -y install nfs-common"
-    create_mount_command = "mkdir %s" % configuration["nfs_mount_point"]
-    setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["nfs_mount_point"])
-    reduce_permissions_command = "sudo chmod 777 %s " % configuration["nfs_mount_point"]
+    create_mount_command = "mkdir %s" % configuration["base_out_dir"]
+    setup_nfs_command = "sudo mount -t nfs4 -o nfsvers=4.1,rsize=1048576,wsize=1048576,hard,timeo=600,retrans=2 %s:/ %s" % (configuration["nfs_ip_address"], configuration["base_out_dir"])
+    reduce_permissions_command = "sudo chmod 777 %s " % configuration["base_out_dir"]
     command = update_command + " && " + install_nfs_command + " && " + create_mount_command + " && " + setup_nfs_command + " && " + reduce_permissions_command
 
     # pretty hackish
