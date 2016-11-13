@@ -560,13 +560,11 @@ def gradients_short_circuited(ys,
                 new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
                 #in_grads = tf.cond(new_global_step > local_global_step.ref(),
                 #in_grads = tf.cond(sync_token_queue.size() >= 10000,
-                a = in_grad_function()
-                b = zero_grad_function()
-                #in_grads = tf.cond(local_global_step >= 10000,
-                #                   zero_grad_function,
-                #                   in_grad_function)
+                tf.logging.info("YOOOO\n")
+                tf.logging.info(local_global_step.device)
                 in_grads = tf.cond(local_global_step >= 10000,
-                                   lambda : a, lambda : b)
+                                   zero_grad_function,
+                                   in_grad_function)
                 #in_grads = tf.cond(sync_token_queue.size() >= 0,
                 #                   in_grad_function,
                 #                   zero_grad_function)
