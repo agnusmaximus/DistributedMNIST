@@ -103,7 +103,7 @@ def inference(images, train=True):
   tf.logging.info(conv1_weights.device)
   tf.logging.info(conv1_biases.device)
   tf.logging.info(conv2_weights.device)
-  tf.logging.info(conv3_biases.device)
+  tf.logging.info(conv2_biases.device)
   tf.logging.info(fc1_weights.device)
   tf.logging.info(fc1_biases.device)
   tf.logging.info(fc2_weights.device)
