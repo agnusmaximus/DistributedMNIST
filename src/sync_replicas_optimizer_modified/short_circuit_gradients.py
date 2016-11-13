@@ -566,7 +566,7 @@ def gradients_short_circuited(ys,
                 #                   zero_grad_function,
                 #                   in_grad_function)
                 in_grads = tf.cond(local_global_step >= 10000,
-                                   a, b)
+                                   lambda : a, lambda : b)
                 #in_grads = tf.cond(sync_token_queue.size() >= 0,
                 #                   in_grad_function,
                 #                   zero_grad_function)
