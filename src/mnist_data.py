@@ -36,30 +36,6 @@ import numpy
 from scipy.ndimage.interpolation import map_coordinates
 from scipy.ndimage.filters import gaussian_filter
 
-def elastic_transform(image, alpha, sigma, random_state=None):
-    """Elastic deformation of images as described in [Simard2003]_.
-    .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
-       Convolutional Neural Networks applied to Visual Document Analysis", in
-       Proc. of the International Conference on Document Analysis and
-       Recognition, 2003.
-    """
-    orig_shape = image.shape
-    image = np.reshape(image, (image.shape[0], image.shape[1]))
-    assert len(image.shape)==2
-
-    if random_state is None:
-        random_state = np.random.RandomState(None)
-
-    shape = image.shape
-
-    dx = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
-    dy = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
-
-    x, y = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
-    indices = np.reshape(x+dx, (-1, 1)), np.reshape(y+dy, (-1, 1))
-
-    return map_coordinates(image, indices, order=1).reshape(orig_shape)
-
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 
 class DataSet(object):
@@ -149,11 +125,6 @@ class DataSet(object):
       self._index_in_epoch = batch_size
       assert batch_size <= self._num_examples
     end = self._index_in_epoch
-
-    batch = self._images[start:end]
-    for i in range(len(batch)):
-      if np.random.rand() > .8:
-        batch[i] = elastic_transform(batch[i], 36, 5.5)
 
     # Most of the time return the non distorted image
     return batch, self._labels[start:end]
