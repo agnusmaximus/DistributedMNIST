@@ -510,12 +510,12 @@ def gradients_short_circuited(ys,
 
         # Short circuiting return zero function.
         # Make sure dimension and datatypes match those of op.outputs
-        def zero_grad_function():
+        def zero_grad_function(inp):
             zero_grads = []
             #with ops.name_scope(op.name + "_grad"):
               # pylint: disable=protected-access
               #with ops.get_default_graph()._original_op(op):
-            for index, input in enumerate(op.inputs):
+            for index, input in enumerate(inp):
                 zero_grad = tf.zeros(tf.shape(input), dtype=input.dtype)
                 if index == 0:
                     zero_grad = logging_ops.Print(zero_grad, [zero_grad], message="I'm a straggler; Piping up zeros.")
@@ -524,7 +524,7 @@ def gradients_short_circuited(ys,
 
         # Original gradient computation function in a wrapper
         # Assume none_gradient = False
-        def in_grad_function():
+        def in_grad_function(inp):
             with ops.name_scope(op.name + "_grad"):
               with ops.get_default_graph()._original_op(op):
                 if grad_fn:
@@ -534,7 +534,7 @@ def gradients_short_circuited(ys,
                 else:
                   # For function call ops, we add a 'SymbolicGradient'
                   # node to the graph to compute gradients.
-                  f_in = [x for x in op.inputs] + out_grads
+                  f_in = [x for x in inp] + out_grads
                   f_types = [x.dtype for x in op.inputs]
                   in_grads = _AsList(functional_ops._symbolic_gradient(
                       f_in, f_types, op.type))
@@ -555,8 +555,8 @@ def gradients_short_circuited(ys,
                 #in_grads = tf.cond(new_global_step > local_global_step.ref(),
                 #in_grads = tf.cond(sync_token_queue.size() >= 10000,
                 in_grads = tf.cond(local_global_step >= 10000,
-                                   in_grad_function,
-                                   zero_grad_function)
+                                   lambda : in_grad_function(op.inputs),
+                                   lambda : zero_grad_function(op.inputs))
                 #in_grads = tf.cond(sync_token_queue.size() >= 0,
                 #                   in_grad_function,
                 #                   zero_grad_function)
