@@ -525,23 +525,23 @@ def gradients_short_circuited(ys,
         # Assume none_gradient = False
         def in_grad_function():
             with ops.name_scope(op.name + "_grad"):
-                if grad_fn:
-                  # If grad_fn was found, do not use SymbolicGradient even for
-                  # functions.
-                  in_grads = _AsList(grad_fn(op, *out_grads))
-                else:
-                  # For function call ops, we add a 'SymbolicGradient'
-                  # node to the graph to compute gradients.
-                  f_in = [x for x in op.inputs] + out_grads
-                  f_types = [x.dtype for x in op.inputs]
-                  in_grads = _AsList(functional_ops._symbolic_gradient(
-                      f_in, f_types, op.type))
-                _VerifyGeneratedGradients(in_grads, op)
-                if gate_gradients and len(
+              if grad_fn:
+                # If grad_fn was found, do not use SymbolicGradient even for
+                # functions.
+                in_grads = _AsList(grad_fn(op, *out_grads))
+              else:
+                # For function call ops, we add a 'SymbolicGradient'
+                # node to the graph to compute gradients.
+                f_in = [x for x in op.inputs] + out_grads
+                f_types = [x.dtype for x in op.inputs]
+                in_grads = _AsList(functional_ops._symbolic_gradient(
+                    f_in, f_types, op.type))
+              _VerifyGeneratedGradients(in_grads, op)
+              if gate_gradients and len(
 
-                    [x for x in in_grads if x is not None]) > 1:
-                  in_grads = control_flow_ops.tuple(in_grads)
-              _LogOpGradients(op, out_grads, in_grads)
+                  [x for x in in_grads if x is not None]) > 1:
+                in_grads = control_flow_ops.tuple(in_grads)
+            _LogOpGradients(op, out_grads, in_grads)
             in_grads = [x if x is not None else tf.zeros(tf.shape(op.inputs[i]), dtype=op.inputs[i].dtype) for i, x in enumerate(in_grads)]
             return in_grads
 
