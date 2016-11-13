@@ -100,6 +100,15 @@ def inference(images, train=True):
   fc2_biases = tf.Variable(tf.constant(
       0.1, shape=[NUM_LABELS], dtype=tf.float32))
 
+  tf.logging.Info(conv1_weights.device)
+  tf.logging.Info(conv1_biases.device)
+  tf.logging.Info(conv2_weights.device)
+  tf.logging.Info(conv3_biases.device)
+  tf.logging.Info(fc1_weights.device)
+  tf.logging.Info(fc1_biases.device)
+  tf.logging.Info(fc2_weights.device)
+  tf.logging.Info(fc2_biases.device)
+
   """The Model definition."""
   # 2D convolution, with 'SAME' padding (i.e. the output feature map has
   # the same size as the input). Note that {strides} is a 4D array whose
