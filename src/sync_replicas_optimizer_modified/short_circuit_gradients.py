@@ -513,14 +513,11 @@ def gradients_short_circuited(ys,
         def zero_grad_function():
             zero_grads = []
             with ops.name_scope(op.name + "_grad"):
-                # pylint: disable=protected-access
-                with ops.get_default_graph()._original_op(op):
-
-                    for index, input in enumerate(op.inputs):
-                        zero_grad = tf.zeros(tf.shape(input), dtype=input.dtype)
-                        if index == 0:
-                            zero_grad = logging_ops.Print(zero_grad, [zero_grad], message="I'm a straggler; Piping up zeros.")
-                        zero_grads.append(zero_grad)
+                for index, input in enumerate(op.inputs):
+                    zero_grad = tf.zeros(tf.shape(input), dtype=input.dtype)
+                    if index == 0:
+                        zero_grad = logging_ops.Print(zero_grad, [zero_grad], message="I'm a straggler; Piping up zeros.")
+                    zero_grads.append(zero_grad)
 
             return zero_grads
 
@@ -528,28 +525,23 @@ def gradients_short_circuited(ys,
         # Assume none_gradient = False
         def in_grad_function():
             with ops.name_scope(op.name + "_grad"):
-                # pylint: disable=protected-access
-                with ops.get_default_graph()._original_op(op):
-                  # pylint: enable=protected-access
-                  if grad_fn:
-                    # If grad_fn was found, do not use SymbolicGradient even for
-                    # functions.
-                    in_grads = _AsList(grad_fn(op, *out_grads))
-                  else:
-                    # For function call ops, we add a 'SymbolicGradient'
-                    # node to the graph to compute gradients.
-                    f_in = [x for x in op.inputs] + out_grads
-                    f_types = [x.dtype for x in op.inputs]
-                    # pylint: disable=protected-access
-                    in_grads = _AsList(functional_ops._symbolic_gradient(
-                        f_in, f_types, op.type))
-                    # pylint: enable=protected-access
-                  _VerifyGeneratedGradients(in_grads, op)
-                  if gate_gradients and len(
+                if grad_fn:
+                  # If grad_fn was found, do not use SymbolicGradient even for
+                  # functions.
+                  in_grads = _AsList(grad_fn(op, *out_grads))
+                else:
+                  # For function call ops, we add a 'SymbolicGradient'
+                  # node to the graph to compute gradients.
+                  f_in = [x for x in op.inputs] + out_grads
+                  f_types = [x.dtype for x in op.inputs]
+                  in_grads = _AsList(functional_ops._symbolic_gradient(
+                      f_in, f_types, op.type))
+                _VerifyGeneratedGradients(in_grads, op)
+                if gate_gradients and len(
 
-                      [x for x in in_grads if x is not None]) > 1:
-                    in_grads = control_flow_ops.tuple(in_grads)
-                _LogOpGradients(op, out_grads, in_grads)
+                    [x for x in in_grads if x is not None]) > 1:
+                  in_grads = control_flow_ops.tuple(in_grads)
+              _LogOpGradients(op, out_grads, in_grads)
             in_grads = [x if x is not None else tf.zeros(tf.shape(op.inputs[i]), dtype=op.inputs[i].dtype) for i, x in enumerate(in_grads)]
             return in_grads
 
@@ -560,8 +552,6 @@ def gradients_short_circuited(ys,
                 new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
                 #in_grads = tf.cond(new_global_step > local_global_step.ref(),
                 #in_grads = tf.cond(sync_token_queue.size() >= 10000,
-                tf.logging.info("YOOOO\n")
-                tf.logging.info(local_global_step.device)
                 in_grads = tf.cond(local_global_step >= 10000,
                                    zero_grad_function,
                                    in_grad_function)
