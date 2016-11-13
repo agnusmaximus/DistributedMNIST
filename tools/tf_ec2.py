@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
-    "name" : "mnist_cnn_4_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_15_workers",      # Unique name for this specific configuration
     "key_name": "DistributedSGD",         # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 3,
-    "n_ps" : 1,
+    "n_workers" : 14,
+    "n_ps" : 5,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "4",
+    "num_replicas_to_aggregate" : "15",
 
     # Region speficiation
     "region" : "us-west-2",

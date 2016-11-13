@@ -109,9 +109,8 @@ def train(target, dataset, cluster_spec):
   # Ops are assigned to worker by default.
   with tf.device(
       tf.train.replica_device_setter(
-          worker_device='/job:worker/task:%d' % FLAGS.task_id,
-          ps_device="/job:ps/cpu:0",
-          cluster=cluster_spec)):
+        worker_device='/job:worker/task:%d' % FLAGS.task_id,
+        cluster=cluster_spec)):
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
