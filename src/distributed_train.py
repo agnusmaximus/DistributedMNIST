@@ -121,7 +121,10 @@ def train(target, dataset, cluster_spec):
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
 
     # Decay steps need to be divided by the number of replicas to aggregate.
-    decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
+    # This was the old decay schedule. Don't want this since it decays too fast with a fixed learning rate.
+    # decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
+    # New decay schedule. Decay every few steps.
+    decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay)
 
     # Decay the learning rate exponentially based on the number of steps.
     lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,

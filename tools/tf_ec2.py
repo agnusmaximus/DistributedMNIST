@@ -24,18 +24,18 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
-    "name" : "mnist_cnn_20_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_28_workers",      # Unique name for this specific configuration
     "key_name": "DistributedSGD",         # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 19,
+    "n_workers" : 27,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2b",
+    "availability_zone" : "us-west-2a",
 
     # Machine type - instance type configuration.
     "master_type" : "m4.2xlarge",
@@ -45,7 +45,7 @@ configuration = Cfg({
     "image_id" : "ami-4749ea27",          # US west
 
     # Launch specifications
-    "spot_price" : ".17",                 # Has to be a string
+    "spot_price" : ".12",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -54,8 +54,8 @@ configuration = Cfg({
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
     #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
-    #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    "nfs_ip_address" : "172.31.35.0",          # us-west-2a
+    #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -76,8 +76,8 @@ configuration = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "32",
-    "initial_learning_rate" : "0.03",
+    "batch_size" : "128",
+    "initial_learning_rate" : "0.08",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
 
