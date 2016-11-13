@@ -150,15 +150,15 @@ def train(target, dataset, cluster_spec):
     #opt = tf.train.AdamOptimizer(.01)
 
     # Use V2 optimizer
-    """opt = SyncReplicasOptimizerV2(
+    opt = SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
-      global_step=global_step)"""
-    opt = tf.train.SyncReplicasOptimizerV2(
+      global_step=global_step)
+    """opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)
+      total_num_replicas=num_workers)"""
 
     # Compute gradients with respect to the loss.
     #grads = opt.compute_gradients(total_loss)
