@@ -551,14 +551,14 @@ def gradients_short_circuited(ys,
         # If none gradient, no need to do anything
         if not none_gradient:
           with ops.control_dependencies(out_grads):
-                #new_global_step = tf.identity(global_step.ref())
-                #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-                #in_grads = tf.cond(new_global_step > local_global_step.ref(),
-                #in_grads = tf.cond(sync_token_queue.size() >= 10000,
+            new_global_step = tf.identity(global_step.ref())
+            new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
+            #in_grads = tf.cond(new_global_step > local_global_step.ref(),
+            #in_grads = tf.cond(sync_token_queue.size() >= 10000,
             prefetch_inputs = [tf.identity(x) for x in out_grads]
             in_grads = tf.cond(local_global_step >= 10000,
-                               lambda : in_grad_function(prefetch_inputs),
-                               lambda : zero_grad_function(prefetch_inputs))
+                               lambda : zero_grad_function(prefetch_inputs),
+                               lambda : in_grad_function(prefetch_inputs))
                 #in_grads = tf.cond(sync_token_queue.size() >= 0,
                 #                   in_grad_function,
                 #                   zero_grad_function)
