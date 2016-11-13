@@ -533,6 +533,9 @@ def gradients_short_circuited(ys,
                   # For function call ops, we add a 'SymbolicGradient'
                   # node to the graph to compute gradients.
                   f_in = [x for x in op.inputs] + out_grads
+                  for kk in f_in:
+                    if "ps" in kk.device:
+                      print("WTF MANE: %s" % kk.device)
                   f_types = [x.dtype for x in op.inputs]
                   in_grads = _AsList(functional_ops._symbolic_gradient(
                       f_in, f_types, op.type))
@@ -551,17 +554,18 @@ def gradients_short_circuited(ys,
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
             prefetch_inputs = [tf.identity(x) for x in out_grads] + [tf.identity(x) for x in op.inputs]
-            #for kk in prefetch_inputs:
-            #  tf.logging.info("YOOO: %s" % kk.device)
-            #in_grads = tf.cond(local_global_step >= 10000,
-            #                   lambda : zero_grad_function(prefetch_inputs),
-            #                   lambda : in_grad_function(prefetch_inputs))
-
-            b = in_grad_function(prefetch_inputs)
-            a = zero_grad_function(prefetch_inputs)
+            for kk in prefetch_inputs:
+              if "ps" in kk.device:
+                tf.logging.info("YOOO: %s" % kk.device)
             in_grads = tf.cond(local_global_step >= 10000,
-                               lambda : a,
-                               lambda : b)
+                               lambda : zero_grad_function(prefetch_inputs),
+                               lambda : in_grad_function(prefetch_inputs))
+
+            #b = in_grad_function(prefetch_inputs)
+            #a = zero_grad_function(prefetch_inputs)
+            #in_grads = tf.cond(local_global_step >= 10000,
+            #                   lambda : a,
+            #                   lambda : b)
             if type(in_grads) == tf.Tensor:
                 in_grads = [in_grads]
             for t_in, in_grad in zip(op.inputs, in_grads):
