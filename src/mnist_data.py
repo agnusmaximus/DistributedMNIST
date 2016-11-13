@@ -148,7 +148,8 @@ class DataSet(object):
     if numpy.random.uniform() < .8:
       return self._images[start:end], self._labels[start:end]
     # Sometimes return the elastic transformed image
-    return elastic_transform(self._images[start:end], 37, 5.5)
+    #return elastic_transform(self._images[start:end], 37, 5.5)
+    return [elastic_tranform(x, 37, 5.5) for x in self._images[start:end]]
 
 def extract_data(filename, num_images):
   """Extract the images into a 4D tensor [image index, y, x, channels].
