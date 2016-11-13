@@ -546,6 +546,7 @@ def gradients_short_circuited(ys,
                     # pylint: enable=protected-access
                   _VerifyGeneratedGradients(in_grads, op)
                   if gate_gradients and len(
+
                       [x for x in in_grads if x is not None]) > 1:
                     in_grads = control_flow_ops.tuple(in_grads)
                 _LogOpGradients(op, out_grads, in_grads)
@@ -554,13 +555,21 @@ def gradients_short_circuited(ys,
 
         # If none gradient, no need to do anything
         if not none_gradient:
-            new_global_step = tf.identity(global_step.ref())
-            new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-            #in_grads = tf.cond(new_global_step > local_global_step.ref(),
-            #in_grads = tf.cond(sync_token_queue.size() >= 10000,
-            in_grads = tf.cond(local_global_step >= 10000,
-                               zero_grad_function,
-                               in_grad_function)
+            with ops.control_dependencies(out_grads):
+                new_global_step = tf.identity(global_step.ref())
+                new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
+                #in_grads = tf.cond(new_global_step > local_global_step.ref(),
+                #in_grads = tf.cond(sync_token_queue.size() >= 10000,
+                a = in_grad_function()
+                b = zero_grad_function()
+                #in_grads = tf.cond(local_global_step >= 10000,
+                #                   zero_grad_function,
+                #                   in_grad_function)
+                in_grads = tf.cond(local_global_step >= 10000,
+                                   a, b)
+                #in_grads = tf.cond(sync_token_queue.size() >= 0,
+                #                   in_grad_function,
+                #                   zero_grad_function)
             if type(in_grads) == tf.Tensor:
                 in_grads = [in_grads]
             for t_in, in_grad in zip(op.inputs, in_grads):
