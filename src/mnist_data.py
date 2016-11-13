@@ -43,17 +43,22 @@ def elastic_transform(image, alpha, sigma, random_state=None):
        Proc. of the International Conference on Document Analysis and
        Recognition, 2003.
     """
+    orig_shape = image.shape
+    image = np.reshape(image, (image.shape[0], image.shape[1]))
+    assert len(image.shape)==2
+
     if random_state is None:
-        random_state = numpy.random.RandomState(None)
+        random_state = np.random.RandomState(None)
 
     shape = image.shape
+
     dx = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
     dy = gaussian_filter((random_state.rand(*shape) * 2 - 1), sigma, mode="constant", cval=0) * alpha
 
-    x, y = numpy.meshgrid(numpy.arange(shape[0]), numpy.arange(shape[1]))
-    indices = numpy.reshape(y+dy, (-1, 1)), numpy.reshape(x+dx, (-1, 1))
+    x, y = np.meshgrid(np.arange(shape[0]), np.arange(shape[1]), indexing='ij')
+    indices = np.reshape(x+dx, (-1, 1)), np.reshape(y+dy, (-1, 1))
 
-    return map_coordinates(image, indices, order=1).reshape(shape)
+    return map_coordinates(image, indices, order=1).reshape(orig_shape)
 
 SOURCE_URL = 'http://yann.lecun.com/exdb/mnist/'
 
@@ -144,12 +149,14 @@ class DataSet(object):
       self._index_in_epoch = batch_size
       assert batch_size <= self._num_examples
     end = self._index_in_epoch
+
+    batch = self._images[start:end]
+    for i in range(len(batch)):
+      if np.random.rand() > .8:
+        batch[i] = elastic_transform(batch[i], 36, 5.5)
+
     # Most of the time return the non distorted image
-    if numpy.random.uniform() < .8:
-      return self._images[start:end], self._labels[start:end]
-    # Sometimes return the elastic transformed image
-    #return elastic_transform(self._images[start:end], 37, 5.5)
-    return [elastic_transform(x, 37, 5.5) for x in self._images[start:end]]
+    return batch, self._labels[start:end]
 
 def extract_data(filename, num_images):
   """Extract the images into a 4D tensor [image index, y, x, channels].
@@ -163,6 +170,7 @@ def extract_data(filename, num_images):
 
     data = (data - (PIXEL_DEPTH / 2.0)) / PIXEL_DEPTH
     data = data.reshape(num_images, IMAGE_SIZE, IMAGE_SIZE, 1)
+
     return data
 
 def extract_labels(filename, num_images):
