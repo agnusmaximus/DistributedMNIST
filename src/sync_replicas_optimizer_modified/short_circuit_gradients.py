@@ -553,12 +553,12 @@ def gradients_short_circuited(ys,
           with ops.control_dependencies(out_grads):
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-            #prefetch_inputs = [tf.identity(x) for x in out_grads]
+            prefetch_inputs = [tf.identity(x) for x in out_grads]
             #in_grads = tf.cond(local_global_step >= 10000,
                                #lambda : in_grad_function(prefetch_inputs),
                                #lambda : zero_grad_function(prefetch_inputs))
-            a = in_grad_function()
-            b = zero_grad_function()
+            a = in_grad_function(prefetch_inputs)
+            b = zero_grad_function(prefetch_inputs)
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : a,
                                lambda : b)
