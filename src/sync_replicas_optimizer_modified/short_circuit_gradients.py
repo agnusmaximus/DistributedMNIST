@@ -550,7 +550,7 @@ def gradients_short_circuited(ys,
           with ops.control_dependencies(out_grads):
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-            prefetch_inputs = [tf.identity(x) for x in out_grads] + [tf.identity(x) for x in op.inputs] + [tf.identity(x) for x in op.control_inputs]
+            prefetch_inputs = [tf.identity(x.ref()) for x in out_grads] + [tf.identity(x.ref()) for x in op.inputs] + [tf.identity(x.ref()) for x in op.control_inputs]
             #prefetch_inputs = out_grads + op.inputs + op.control_inputs
             for kk in op.inputs:
               tf.logging.info("YOOO: %s, %s" % (kk.name, kk.device))
