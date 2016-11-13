@@ -508,12 +508,12 @@ def gradients_short_circuited(ys,
 
         # Short circuiting return zero function.
         # Make sure dimension and datatypes match those of op.outputs
-        def zero_grad_function(prefetch_data):
+        def zero_grad_function(prefetch_inputs):
             zero_grads = []
             #with ops.name_scope(op.name + "_grad"):
               # pylint: disable=protected-access
               #with ops.get_default_graph()._original_op(op):
-            for index, input in enumerate(op.inputs):
+            for index, input in enumerate(prefetch_inputs):
                 zero_grad = tf.zeros(tf.shape(input), dtype=input.dtype)
                 if index == 0:
                     zero_grad = logging_ops.Print(zero_grad, [zero_grad], message="I'm a straggler; Piping up zeros.")
@@ -522,7 +522,7 @@ def gradients_short_circuited(ys,
 
         # Original gradient computation function in a wrapper
         # Assume none_gradient = False
-        def in_grad_function(prefetch_data):
+        def in_grad_function(prefetch_inputs):
             with ops.name_scope(op.name + "_grad"):
               with ops.get_default_graph()._original_op(op):
                 if grad_fn:
@@ -532,7 +532,8 @@ def gradients_short_circuited(ys,
                 else:
                   # For function call ops, we add a 'SymbolicGradient'
                   # node to the graph to compute gradients.
-                  f_in = [x for x in op.inputs] + out_grads
+                  #f_in = [x for x in op.inputs] + out_grads
+                  f_in = [x for x in prefetch_inputs] + out_grads
                   f_types = [x.dtype for x in op.inputs]
                   in_grads = _AsList(functional_ops._symbolic_gradient(
                       f_in, f_types, op.type))
@@ -550,9 +551,9 @@ def gradients_short_circuited(ys,
           with ops.control_dependencies(out_grads):
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-            #prefetch_inputs = out_grads + op.inputs + op.control_inputs
-            for i in range(len(op.inputs)):
-              op.inputs[i] = tf.identity(op.inputs[i])
+            prefetch_inputs = [tf.identity(x) for x in op.inputs]
+            #for i in range(len(op.inputs)):
+            #  op.inputs[i] = tf.identity(op.inputs[i])
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : zero_grad_function(prefetch_inputs),
                                lambda : in_grad_function(prefetch_inputs))
