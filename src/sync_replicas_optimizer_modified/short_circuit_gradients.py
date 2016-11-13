@@ -520,7 +520,7 @@ def gradients_short_circuited(ys,
                 #if index == 0:
                 #    zero_grad = logging_ops.Print(zero_grad, [zero_grad], message="I'm a straggler; Piping up zeros.")
                 #zero_grads.append(zero_grad)
-              zero_grads.append(tf.zeros(tf.shape(input), dtype=dtypes.float32))
+              zero_grads.append(tf.zeros(tf.shape(input), dtype=input.dtype))
             return zero_grads
 
         # Original gradient computation function in a wrapper
@@ -551,10 +551,12 @@ def gradients_short_circuited(ys,
         # If none gradient, no need to do anything
         if not none_gradient:
             with ops.control_dependencies(out_grads):
-                new_global_step = tf.identity(global_step.ref())
-                new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
+                #new_global_step = tf.identity(global_step.ref())
+                #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
                 #in_grads = tf.cond(new_global_step > local_global_step.ref(),
                 #in_grads = tf.cond(sync_token_queue.size() >= 10000,
+                tf.logging.info("YOOO")
+                tf.logging.info(local_global_step.device)
                 in_grads = tf.cond(local_global_step >= 10000,
                                    lambda : in_grad_function(op.inputs),
                                    lambda : zero_grad_function(op.inputs))
