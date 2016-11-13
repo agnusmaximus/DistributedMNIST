@@ -145,7 +145,7 @@ class DataSet(object):
       assert batch_size <= self._num_examples
     end = self._index_in_epoch
     # Most of the time return the non distorted image
-    if np.random() < .8:
+    if numpy.random() < .8:
       return self._images[start:end], self._labels[start:end]
     # Sometimes return the elastic transformed image
     return elastic_transform(self._images[start:end], 37, 5.5)
