@@ -552,8 +552,7 @@ def gradients_short_circuited(ys,
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
             prefetch_inputs = [tf.identity(x) for x in out_grads] + [tf.identity(x) for x in op.inputs]
             for kk in prefetch_inputs:
-              if "ps" in kk.device:
-                tf.logging.info("YOOO: %s" % kk.device)
+              tf.logging.info("YOOO: %s" % kk.device)
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : zero_grad_function(prefetch_inputs),
                                lambda : in_grad_function(prefetch_inputs))
