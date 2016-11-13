@@ -359,7 +359,7 @@ def gradients_short_circuited(ys,
     ValueError: if the arguments are invalid.
 
   """
-  """assert sync_token_queue is not None
+  assert sync_token_queue is not None
   assert global_step is not None
   ys = _AsList(ys)
   xs = _AsList(xs)
@@ -474,28 +474,28 @@ def gradients_short_circuited(ys,
                 out_grads[i] = control_flow_ops.ZerosLikeOutsideLoop(op, i)
 
           # Pull this whole portion into the lambda
-          with ops.name_scope(op.name + "_grad"):
-            # pylint: disable=protected-access
-            with ops.get_default_graph()._original_op(op):
-              # pylint: enable=protected-access
-              if grad_fn:
-                # If grad_fn was found, do not use SymbolicGradient even for
-                # functions.
-                in_grads = _AsList(grad_fn(op, *out_grads))
-              else:
-                # For function call ops, we add a 'SymbolicGradient'
-                # node to the graph to compute gradients.
-                f_in = [x for x in op.inputs] + out_grads
-                f_types = [x.dtype for x in op.inputs]
-                # pylint: disable=protected-access
-                in_grads = _AsList(functional_ops._symbolic_gradient(
-                    f_in, f_types, op.type))
-                # pylint: enable=protected-access
-              _VerifyGeneratedGradients(in_grads, op)
-              if gate_gradients and len(
-                  [x for x in in_grads if x is not None]) > 1:
-                in_grads = control_flow_ops.tuple(in_grads)
-          _LogOpGradients(op, out_grads, in_grads)
+          #with ops.name_scope(op.name + "_grad"):
+          #  # pylint: disable=protected-access
+          #  with ops.get_default_graph()._original_op(op):
+          #    # pylint: enable=protected-access
+          #    if grad_fn:
+          #      # If grad_fn was found, do not use SymbolicGradient even for
+          #      # functions.
+          #      in_grads = _AsList(grad_fn(op, *out_grads))
+          #    else:
+          #      # For function call ops, we add a 'SymbolicGradient'
+          #      # node to the graph to compute gradients.
+          #      f_in = [x for x in op.inputs] + out_grads
+          #      f_types = [x.dtype for x in op.inputs]
+          #      # pylint: disable=protected-access
+          #      in_grads = _AsList(functional_ops._symbolic_gradient(
+          #          f_in, f_types, op.type))
+          #      # pylint: enable=protected-access
+          #    _VerifyGeneratedGradients(in_grads, op)
+          #    if gate_gradients and len(
+          #        [x for x in in_grads if x is not None]) > 1:
+          #      in_grads = control_flow_ops.tuple(in_grads)
+          #_LogOpGradients(op, out_grads, in_grads)
         else:
           # If no grad_fn is defined or none of out_grads is available,
           # just propagates a list of None backwards.
@@ -550,15 +550,16 @@ def gradients_short_circuited(ys,
           with ops.control_dependencies(out_grads):
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
-            prefetch_inputs = [tf.identity(x) for x in out_grads]
-            #in_grads = tf.cond(local_global_step >= 10000,
-                               #lambda : in_grad_function(prefetch_inputs),
-                               #lambda : zero_grad_function(prefetch_inputs))
-            a = in_grad_function(prefetch_inputs)
-            b = zero_grad_function(prefetch_inputs)
+            prefetch_inputs = [tf.identity(x) for x in out_grads] + [tf.identity(x) for x in op.inputs]
             in_grads = tf.cond(local_global_step >= 10000,
-                               lambda : a,
-                               lambda : b)
+                               lambda : zero_grad_function(prefetch_inputs)
+                               lambda : in_grad_function(prefetch_inputs))
+
+            #a = in_grad_function(prefetch_inputs)
+            #b = zero_grad_function(prefetch_inputs)
+            #in_grads = tf.cond(local_global_step >= 10000,
+            #                   lambda : a,
+            #                   lambda : b)
             if type(in_grads) == tf.Tensor:
                 in_grads = [in_grads]
             for t_in, in_grad in zip(op.inputs, in_grads):
@@ -578,8 +579,8 @@ def gradients_short_circuited(ys,
 
   if loop_state:
     loop_state.PostProcessing()
-  return [_GetGrad(grads, x) for x in xs]"""
-  ys = _AsList(ys)
+  return [_GetGrad(grads, x) for x in xs]
+  """ys = _AsList(ys)
   xs = _AsList(xs)
   if grad_ys is None:
     grad_ys = [None] * len(ys)
@@ -720,7 +721,7 @@ def gradients_short_circuited(ys,
 
   if loop_state:
     loop_state.PostProcessing()
-  return [_GetGrad(grads, x) for x in xs]
+  return [_GetGrad(grads, x) for x in xs]"""
 
 def _HasAnyNotNoneGrads(grads, op):
   """Return true iff op has real gradient."""
