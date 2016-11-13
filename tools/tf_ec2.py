@@ -76,9 +76,9 @@ configuration = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "128",
-    "initial_learning_rate" : "0.08",
-    "learning_rate_decay_factor" : ".95",
+    "batch_size" : "256",
+    "initial_learning_rate" : "0.05",
+    "learning_rate_decay_factor" : ".98",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
