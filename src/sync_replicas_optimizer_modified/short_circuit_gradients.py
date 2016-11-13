@@ -474,7 +474,6 @@ def gradients_short_circuited(ys,
                 out_grads[i] = control_flow_ops.ZerosLikeOutsideLoop(op, i)
 
           # Pull this whole portion into the lambda
-          """
           with ops.name_scope(op.name + "_grad"):
             # pylint: disable=protected-access
             with ops.get_default_graph()._original_op(op):
@@ -497,7 +496,6 @@ def gradients_short_circuited(ys,
                   [x for x in in_grads if x is not None]) > 1:
                 in_grads = control_flow_ops.tuple(in_grads)
           _LogOpGradients(op, out_grads, in_grads)
-          """
         else:
           # If no grad_fn is defined or none of out_grads is available,
           # just propagates a list of None backwards.
