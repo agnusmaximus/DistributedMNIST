@@ -547,7 +547,7 @@ def gradients_short_circuited(ys,
 
         # If none gradient, no need to do anything
         if not none_gradient:
-          prefetch_inputs = [tf.identity(x.ref()) for x in out_grads] + [tf.identity(x.ref()) for x in op.inputs] + [tf.identity(x.ref()) for x in op.control_inputs]
+          prefetch_inputs = [tf.identity(x) for x in out_grads] + [tf.identity(x) for x in op.inputs] + [tf.identity(x) for x in op.control_inputs]
           with ops.control_dependencies(out_grads):
             #new_global_step = tf.identity(global_step.ref())
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
