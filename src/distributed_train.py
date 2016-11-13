@@ -127,7 +127,7 @@ def train(target, dataset, cluster_spec):
     decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay)
 
     # Decay the learning rate exponentially based on the number of steps.
-    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
+    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate * num_replicas_to_aggregate,
                                     global_step,
                                     decay_steps,
                                     FLAGS.learning_rate_decay_factor,
@@ -153,8 +153,7 @@ def train(target, dataset, cluster_spec):
     # Use V2 optimizer
     opt = SyncReplicasOptimizerV2(
       opt,
-      replicas_to_aggregate=int(num_replicas_to_aggregate * 87.0 / 100.0),
-      #replicas_to_aggregate=num_replicas_to_aggregate,
+      replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
       global_step=global_step)
     """opt = tf.train.SyncReplicasOptimizerV2(
