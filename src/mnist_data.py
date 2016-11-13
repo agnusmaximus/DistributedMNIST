@@ -127,7 +127,7 @@ class DataSet(object):
     end = self._index_in_epoch
 
     # Most of the time return the non distorted image
-    return batch, self._labels[start:end]
+    return self._images[start:end], self._labels[start:end]
 
 def extract_data(filename, num_images):
   """Extract the images into a 4D tensor [image index, y, x, channels].
