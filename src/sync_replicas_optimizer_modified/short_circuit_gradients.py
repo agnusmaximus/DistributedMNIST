@@ -605,7 +605,7 @@ def _HasAnyNotNoneGrads(grads, op):
 def _UpdatePendingAndEnqueueReady(grads, op, queue, pending_count, loop_state):
   """Update pending count for the inputs of op and enqueue ready ops."""
   for x in op.inputs:
-    if x.op._id >= len(pending_count):
+    while x.op._id >= len(pending_count):
       x = x.op.inputs[0]
 
     # pylint: disable=protected-access
