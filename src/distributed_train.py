@@ -142,6 +142,7 @@ class WorkerStatusServer(pb.Root):
     return 0
 
   def notify_ready_to_start(self):
+    tf.logging.info("Server ready to start!")
     self.ready_to_start = True
 
 class WorkerStatusClient:
