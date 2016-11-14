@@ -119,7 +119,10 @@ class WorkerStatusServer(pb.Root):
     # To account for this, the cluster state is stable when all workers
     # are at > N iterations.
     STABLE_ITERATION = 20
-    return sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track]) == self.n_total_workers
+    n_stable_required =  self.n_total_workers
+    n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
+    print("Is stable: %d vs %d" % (n_stable, n_stable_required))
+    return n_stable_required == n_stable
 
   def check_is_straggler(self):
     if not self.is_stable():
