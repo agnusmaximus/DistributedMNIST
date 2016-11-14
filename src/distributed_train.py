@@ -175,7 +175,7 @@ def train(target, dataset, cluster_spec):
   # machine is a straggler.
   rpc_server = pb.PBServerFactory(WorkerStatusServer())
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
-  #rpc_client = WorkerStatusClient()
+  rpc_client = WorkerStatusClient()
   reactor.run()
   #Thread(target=reactor.run, args=(False,)).start()
 
