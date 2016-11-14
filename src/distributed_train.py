@@ -144,7 +144,7 @@ class WorkerStatusServer(pb.Root):
 class WorkerStatusClient:
   def __init__(self):
     self.worker_id = FLAGS.task_id
-    hosts = len(FLAGS.worker_hosts.split(","))
+    hosts = FLAGS.worker_hosts.split(",")
     self.factories = []
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
