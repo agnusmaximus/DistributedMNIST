@@ -45,7 +45,7 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
 tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
-tf.app.flags.DEFINE_integer('rpc_port', 4242,
+tf.app.flags.DEFINE_integer('rpc_port', 1235,
                            """Port for rpc communication""")
 
 tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
