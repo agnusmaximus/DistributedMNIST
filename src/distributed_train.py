@@ -163,7 +163,7 @@ class WorkerStatusClient:
       else:
         factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host], errbackKeywords=[])
 
-  def ready_to_start(self):
+  def remote_ready_to_start(self):
     if not self.ready:
       return False
 
