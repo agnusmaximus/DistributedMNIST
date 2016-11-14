@@ -169,7 +169,11 @@ class WorkerStatusClient:
 
   def signal_server_ready(self):
     tf.logging.info("Signalling ready to self's server")
-    self.self_perspective.callRemote(notify_ready_to_start)
+    self.self_perspective.callRemote(notify_ready_to_start).addCallbacks(self.success, self.signal_server_fail)
+
+  def signal_server_fail(self, _):
+    tf.logging.info("Signalling server ready failed")
+    tf.logging.info(_)
 
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
