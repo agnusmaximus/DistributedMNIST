@@ -556,7 +556,7 @@ def gradients_short_circuited(ys,
             #for i in range(len(op.inputs)):
             #  op.inputs[i] = tf.identity(op.inputs[i])
             for i, inp in enumerate(op.inputs):
-              #dat_transfer = tf.identity(inp)
+              dat_transfer = tf.identity(inp)
               #op._update_input(i, dat_transfer)
               virtual_id[dat_transfer.op._id] = inp.op._id
 
