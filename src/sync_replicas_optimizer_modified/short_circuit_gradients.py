@@ -573,7 +573,7 @@ def gradients_short_circuited(ys,
                 # they are set to 0 tensors.
                 if isinstance(in_grad, ops.Tensor):
                     in_grad.set_shape(t_in.get_shape())
-                _SetGrad(grads, t_in.op.inputs[0].op, in_grad)
+                _SetGrad(grads, t_in.op.inputs[0], in_grad)
 
 ###########################################################################
 
