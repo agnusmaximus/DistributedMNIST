@@ -128,14 +128,14 @@ class WorkerStatusServer(pb.Root):
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
 
-  def notify_starting(self, worker_id, iteration):
+  def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
     tf.logging.info("Worker %d: Was notified that worker %d started iteration %d" % (self.worker_id, worker_id, iteration))
     self.iteration_track[worker_id] = iteration
     self.check_is_straggler()
     return 0
 
-  def notify_finished(self, worker_id, iteration):
+  def remote_notify_finished(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it finished a given iteration.
     tf.logging.info("Worker %d: Wa snotified that worker %d finished iteration %d" % (self.worker_id, worker_id, iteration))
     self.iteration_finished[worker_id] = iteration
@@ -177,11 +177,11 @@ class WorkerStatusClient:
 
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
-      persp.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
+      persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def broadcast_finished(self, iteration):
     for persp in self.perspectives:
-      persp.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
+      persp.callRemote("notify_finished", self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
