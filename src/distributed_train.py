@@ -149,8 +149,8 @@ class WorkerStatusClient:
     for i, host in enumerate(hosts):
         factory = pb.PBClientFactory()
         tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-        reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=600)
-        factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=(host))
+        reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+        factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host])
 
   def broadcast_starting(self, iteration):
     for factory in self.factories:
@@ -170,7 +170,11 @@ class WorkerStatusClient:
   def failure(self, *args):
     tf.logging.info("RPC error, something failed: ")
     tf.logging.info(args)
-
+    host = args[1]
+    factory = pb.PBClientFactory()
+    tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
+    reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+    factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=(host))
 
 def train(target, dataset, cluster_spec):
 
