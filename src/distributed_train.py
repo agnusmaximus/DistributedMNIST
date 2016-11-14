@@ -106,7 +106,6 @@ signal.signal(signal.SIGINT, signal_handler)
 ##################
 class WorkerStatusServer(pb.Root):
   def __init__(self):
-    self.mid = mid
     self.worker_id = FLAGS.task_id
     self.n_total_workers = len(FLAGS.worker_hosts.split(","))
     self.iteration_track = [0] * self.n_total_workers
