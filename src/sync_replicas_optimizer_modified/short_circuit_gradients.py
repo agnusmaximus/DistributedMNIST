@@ -556,9 +556,7 @@ def gradients_short_circuited(ys,
             prefetch = []
             for j, inp in enumerate(op.inputs):
               for i, inpp in enumerate(inp.op.inputs):
-                #prefetch.append(tf.identity(inpp))
-                dat_transfer = tf.identity(inpp)
-                inp.op._update_input(i, dat_transfer)
+                prefetch.append(inpp)
 
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : in_grad_function(prefetch),
