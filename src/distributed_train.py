@@ -175,7 +175,8 @@ def train(target, dataset, cluster_spec):
   rpc_client = WorkerStatusClient()
   rpc_server = pb.PBServerFactory(WorkerStatusServer())
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
-  Thread(target=reactor.run, args=(False,)).start()
+  #Thread(target=reactor.run, args=(False,)).start()
+  reactor.run()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
