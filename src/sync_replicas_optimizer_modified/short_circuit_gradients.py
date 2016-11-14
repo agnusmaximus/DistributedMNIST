@@ -388,8 +388,6 @@ def gradients_short_circuited(ys,
     pending_count, loop_state = _PendingCount(ops.get_default_graph(),
                                               to_ops, from_ops,
                                               colocate_gradients_with_ops)
-    virtual_id = {}
-
     # Iterate over the collected ops.
     #
     # grads: op => list of gradients received on each output endpoint of the
@@ -557,8 +555,7 @@ def gradients_short_circuited(ys,
             #  op.inputs[i] = tf.identity(op.inputs[i])
             for i, inp in enumerate(op.inputs):
               dat_transfer = tf.identity(inp)
-              #op._update_input(i, dat_transfer)
-              virtual_id[dat_transfer.op._id] = inp.op._id
+              op._update_input(i, dat_transfer)
 
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : in_grad_function(op.inputs),
@@ -584,7 +581,7 @@ def gradients_short_circuited(ys,
           loop_state.ExitGradWhileContext(op, before=False)
 
       # Update pending count for the inputs of op and enqueue ready ops.
-      _UpdatePendingAndEnqueueReady(grads, op, queue, pending_count, loop_state, virtual_id)
+      _UpdatePendingAndEnqueueReady(grads, op, queue, pending_count, loop_state)
 
   if loop_state:
     loop_state.PostProcessing()
@@ -744,18 +741,17 @@ def _HasAnyNotNoneGrads(grads, op):
   return False
 
 
-def _UpdatePendingAndEnqueueReady(grads, op, queue, pending_count, loop_state, virtual_id_map):
+def _UpdatePendingAndEnqueueReady(grads, op, queue, pending_count, loop_state):
   """Update pending count for the inputs of op and enqueue ready ops."""
   for x in op.inputs:
-    opid = x.op._id
-    if opid >= len(pending_count):
-      opid = virtual_id_map[opid]
+    if x.op._id >= len(pending_count):
+      x = x.op.inputs[0]
 
     # pylint: disable=protected-access
-    pending_count[opid] -= 1
-    ready = (pending_count[opid] == 0)
+    pending_count[x.op._id] -= 1
+    ready = (pending_count[x.op._id] == 0)
     if loop_state and not ready:
-      ready = (pending_count[opid] > 0 and
+      ready = (pending_count[x.op._id] > 0 and
                control_flow_ops.IsLoopSwitch(x.op))
     # pylint: enable=protected-access
     if ready:
