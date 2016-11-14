@@ -553,13 +553,16 @@ def gradients_short_circuited(ys,
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
             #for i in range(len(op.inputs)):
             #  op.inputs[i] = tf.identity(op.inputs[i])
-            for i, inp in enumerate(op.inputs):
-              dat_transfer = tf.identity(inp)
-              op._update_input(i, dat_transfer)
+            prefetch = []
+            for j, inp in enumerate(op.inputs):
+              for i, inpp in enumerate(inp.op.inputs):
+                prefetch.append(tf.identity(inpp))
+                #dat_transfer = tf.identity(inpp)
+                #op._update_input(i, dat_transfer)
 
             in_grads = tf.cond(local_global_step >= 10000,
-                               lambda : in_grad_function(op.inputs),
-                               lambda : zero_grad_function(op.inputs))
+                               lambda : in_grad_function(prefetch),
+                               lambda : zero_grad_function(prefetch))
 
             #b = in_grad_function(prefetch_inputs)
             #a = zero_grad_function(prefetch_inputs)
@@ -573,7 +576,7 @@ def gradients_short_circuited(ys,
                 # they are set to 0 tensors.
                 if isinstance(in_grad, ops.Tensor):
                     in_grad.set_shape(t_in.get_shape())
-                _SetGrad(grads, t_in.op.inputs[0], in_grad)
+                _SetGrad(grads, t_in, in_grad)
 
 ###########################################################################
 
