@@ -84,12 +84,6 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
-def signal_handler(signal, frame):
-  print('You pressed Ctrl+C!')
-  sys.exit(0)
-
-signal.signal(signal.SIGINT, signal_handler)
-
 def train(target, dataset, cluster_spec):
 
   """Train Inception on a dataset for a number of steps."""
@@ -157,15 +151,15 @@ def train(target, dataset, cluster_spec):
     #opt = tf.train.AdamOptimizer(.01)
 
     # Use V2 optimizer
-    opt = SyncReplicasOptimizerV2(
+    """opt = SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
-      global_step=global_step)
-    """opt = tf.train.SyncReplicasOptimizerV2(
+      global_step=global_step)"""
+    opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)"""
+      total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
     #grads = opt.compute_gradients(total_loss)
@@ -238,6 +232,7 @@ def train(target, dataset, cluster_spec):
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
     while not sv.should_stop():
+      print("Iterating...")
       try:
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -285,8 +280,7 @@ def train(target, dataset, cluster_spec):
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-          #sess.run(clean_up_op)
-        raise
+        continue
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
