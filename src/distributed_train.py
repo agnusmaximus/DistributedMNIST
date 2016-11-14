@@ -168,6 +168,8 @@ class WorkerStatusClient:
     self.ready = len(self.hosts) == len(self.perspectives)
     if self.ready:
       print("Ready!")
+    else:
+      print("%d of %d" % (len(self.perspectives), len(self.hosts)))
 
   def success(self, result):
     tf.logging.info("Success!")
