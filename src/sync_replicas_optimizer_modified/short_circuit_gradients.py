@@ -385,15 +385,6 @@ def gradients_short_circuited(ys,
     to_ops = [t.op for t in ys]
     from_ops = [t.op for t in xs]
 
-    # Forcibly transfer input tensors to the device.
-    tf.logging.info("=-----------------------------------")
-    for op in to_ops + from_ops:
-      for i,inp in enumerate(op.inputs):
-        tf.logging.info("ORIG: %s" % inp.name)
-        op._update_input(i, tf.identity(inp))
-      for inp in op.inputs:
-        tf.logging.info("YAYO: %s" % inp.name)
-
     pending_count, loop_state = _PendingCount(ops.get_default_graph(),
                                               to_ops, from_ops,
                                               colocate_gradients_with_ops)
@@ -421,6 +412,10 @@ def gradients_short_circuited(ys,
       # pylint: disable=protected-access
       ready = (pending_count[op._id] == 0)
       if ready and op._id not in to_ops_set:
+
+        for i, inp in enumerate(op.inputs):
+          op._update_input(i, tf.identity(inp))
+
         to_ops_set.add(op._id)
         queue.append(op)
       # pylint: enable=protected-access
@@ -429,6 +424,10 @@ def gradients_short_circuited(ys,
       loop_exits = loop_state.ProcessUnusedLoopExits(pending_count, to_ops_set)
       for y in loop_exits:
         if _IsTrainable(y):
+
+          for i, inp in enumerate(y.op.inputs):
+            y.op._update_input(i, tf.identity(inp))
+
           _SetGrad(grads, y, loop_state.ZerosLikeForExit(y))
           queue.append(y.op)
 
