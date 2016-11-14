@@ -13,6 +13,7 @@ import time
 import numpy as np
 import tensorflow as tf
 import signal
+import sys
 
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
@@ -86,6 +87,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 def signal_handler(signal, frame):
   print('SIGINT RECEIVED')
+  sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 
