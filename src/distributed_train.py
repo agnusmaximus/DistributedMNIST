@@ -114,7 +114,7 @@ class WorkerStatusServer(pb.Root):
     self.iteration_finished = [-1] * self.n_total_workers
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
-  def check_is_straggler():
+  def check_is_straggler(self):
     self_iteration = self.iteration_track[self.worker_id]
     max_iteration = max(self.iteration_track)
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
