@@ -425,8 +425,8 @@ def gradients_short_circuited(ys,
       for y in loop_exits:
         if _IsTrainable(y):
 
-          for i, inp in enumerate(y.op.inputs):
-            y.op._update_input(i, tf.identity(inp))
+          #for i, inp in enumerate(y.op.inputs):
+            #y.op._update_input(i, tf.identity(inp))
 
           _SetGrad(grads, y, loop_state.ZerosLikeForExit(y))
           queue.append(y.op)
