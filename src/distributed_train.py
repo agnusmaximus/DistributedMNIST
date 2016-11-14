@@ -139,14 +139,14 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
-    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%d" % (self.worker_id, worker_id, iteration, int(time.time())))
+    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_track[worker_id] = iteration
     self.check_is_straggler()
     return 0
 
   def remote_notify_finished(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it finished a given iteration.
-    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%d" % (self.worker_id, worker_id, iteration, int(time.time())))
+    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_finished[worker_id] = iteration
     return 0
 
