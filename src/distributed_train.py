@@ -145,7 +145,9 @@ class WorkerStatusClient:
     self.worker_id = FLAGS.task_id
     hosts = FLAGS.worker_hosts.split(",")
     hosts = [x.split(":")[0] for x in hosts]
+    self.hosts = hosts
     self.perspectives = []
+    self.ready = False
     for i, host in enumerate(hosts):
         factory = pb.PBClientFactory()
         tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
@@ -163,6 +165,9 @@ class WorkerStatusClient:
   def connected(self, perspective):
     self.perspectives.append(perspective)
     tf.logging.info("Connected!")
+    self.ready = len(self.hosts) == self.perspectives
+    if self.ready:
+      print("Ready!")
 
   def success(self, result):
     tf.logging.info("Success!")
@@ -183,6 +188,9 @@ def train(target, dataset, cluster_spec):
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
+
+  while not rpc_client.ready():
+    sleep(1)
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
