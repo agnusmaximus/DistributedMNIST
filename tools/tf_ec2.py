@@ -32,7 +32,7 @@ configuration = Cfg({
     "n_workers" : 14,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "10",
+    "num_replicas_to_aggregate" : "15",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -43,7 +43,7 @@ configuration = Cfg({
     "worker_type" : "m4.2xlarge",
     "ps_type" : "m4.2xlarge",
     "evaluator_type" : "m4.2xlarge",
-    "image_id" : "ami-56d97b36",          # US west
+    "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
     "spot_price" : ".12",                 # Has to be a string
