@@ -114,7 +114,16 @@ class WorkerStatusServer(pb.Root):
     self.iteration_finished = [-1] * self.n_total_workers
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
+  def is_stable(self):
+    # In the beginning, workers start at different times.
+    # To account for this, the cluster state is stable when all workers
+    # are at > N iterations.
+    STABLE_ITERATION = 20
+    return sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track]) == self.n_total_workers
+
   def check_is_straggler(self):
+    if not self.is_stable():
+      return False
     self_iteration = self.iteration_track[self.worker_id]
     max_iteration = max(self.iteration_track)
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
