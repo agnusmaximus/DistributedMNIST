@@ -162,7 +162,7 @@ class WorkerStatusClient:
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
       tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-      reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+      reactor.connectTCP(host, FLAGS.rpc_port, factory)
       if i == self.worker_id:
         factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       else:
@@ -184,10 +184,6 @@ class WorkerStatusClient:
   def signal_server_ready(self):
     tf.logging.info("Signaling ready to self's server")
     self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
-
-  def fail(self, _):
-    tf.logging.info("Fail")
-    tf.logging.info(_)
 
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
@@ -214,13 +210,17 @@ class WorkerStatusClient:
   def success(self, result):
     tf.logging.info("Success!")
 
+  def fail(self, _):
+    tf.logging.info("Fail")
+    tf.logging.info(_)
+
   def connect_failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
     time.sleep(1)
     host = "".join(args[1:])
     factory = pb.PBClientFactory()
     tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
-    reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+    reactor.connectTCP(host, FLAGS.rpc_port, factory)
     factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=(host))
 
 def train(target, dataset, cluster_spec):
