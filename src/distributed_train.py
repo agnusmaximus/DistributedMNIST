@@ -150,7 +150,7 @@ class WorkerStatusClient:
         factory = pb.PBClientFactory()
         tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
         reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=600)
-        factory.getRootObject().addCallbacks(self.connected, self.failure)
+        factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=(host))
 
   def broadcast_starting(self, iteration):
     for factory in self.factories:
