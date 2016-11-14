@@ -168,15 +168,16 @@ class WorkerStatusClient:
     tf.logging.info("RPC error, something failed: ")
     tf.logging.info(_)
 
+
 def train(target, dataset, cluster_spec):
 
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
-  rpc_client = WorkerStatusClient()
   rpc_server = pb.PBServerFactory(WorkerStatusServer())
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
-  #Thread(target=reactor.run, args=(False,)).start()
+  #rpc_client = WorkerStatusClient()
   reactor.run()
+  #Thread(target=reactor.run, args=(False,)).start()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
