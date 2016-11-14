@@ -386,8 +386,10 @@ def gradients_short_circuited(ys,
     from_ops = [t.op for t in xs]
 
     # Forcibly transfer input tensors to the device.
+    tf.logging.info("=-----------------------------------")
     for op in to_ops + from_ops:
       for i,inp in enumerate(op.inputs):
+        tf.logging.info("ORIG: %s" % inp.name)
         op._update_input(i, tf.identity(inp))
       for inp in op.inputs:
         tf.logging.info("YAYO: %s" % inp.name)
