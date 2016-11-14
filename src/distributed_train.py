@@ -281,6 +281,7 @@ def train(target, dataset, cluster_spec):
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
           sys.stdout.flush()
+        raise
         continue
 
     if is_chief:
