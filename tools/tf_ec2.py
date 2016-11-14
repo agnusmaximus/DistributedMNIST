@@ -24,19 +24,19 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
-    "name" : "mnist_cnn_15_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_5_workers",      # Unique name for this specific configuration
     "key_name": "DistributedSGD",         # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 14,
+    "n_workers" : 4,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "15",
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2a",
+    "availability_zone" : "us-west-2c",
 
     # Machine type - instance type configuration.
     "master_type" : "m4.2xlarge",
@@ -46,7 +46,7 @@ configuration = Cfg({
     "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
-    "spot_price" : ".12",                 # Has to be a string
+    "spot_price" : ".15",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -54,8 +54,8 @@ configuration = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
-    "nfs_ip_address" : "172.31.35.0",          # us-west-2a
+    "nfs_ip_address" : "172.31.3.173",         # us-west-2c
+    #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
     #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
@@ -244,12 +244,14 @@ def tf_ec2_run(argv, configuration):
     # TODO: Use waiter class
     def wait_until_instance_request_status_fulfilled(method="spot"):
         if method == "spot":
-            requests_fulfilled, at_least_one_open_or_active = False, False
-            while not requests_fulfilled or not at_least_one_open_or_active:
+            requests_fulfilled = False
+            n_active_or_open = 0
+            while not requests_fulfilled or n_active_or_open == 0:
                 requests_fulfilled = True
                 statuses = client.describe_spot_instance_requests()
                 print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
                 print("-------------------------------------------")
+                n_active_or_open = 0
                 for instance_request in statuses["SpotInstanceRequests"]:
                     sid = instance_request["SpotInstanceRequestId"]
                     machine_type = instance_request["LaunchSpecification"]["InstanceType"]
@@ -257,7 +259,7 @@ def tf_ec2_run(argv, configuration):
                     state = instance_request["State"]
                     status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
                     if state == "active" or state == "open":
-                        at_least_one_open_or_active = True
+                        n_active_or_open += 1
                         print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
                         if state != "active":
                             requests_fulfilled = False
@@ -610,9 +612,14 @@ def tf_ec2_run(argv, configuration):
 
     # Setup nfs on all instances
     def setup_nfs():
-        print("Installing nfs on all running instances...")
+        print("Clearing previous nfs file system...")
         live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
         live_instances_string = ",".join([x.instance_id for x in live_instances])
+        rm_command = "rm -rf %s" % configuration["nfs_mount_point"]
+        argv = ["python", "inception_ec2.py", live_instances_string, rm_command]
+        run_command(argv, quiet=True)
+
+        print("Installing nfs on all running instances...")
         update_command = "sudo apt-get -y update"
         install_nfs_command = "sudo apt-get -y install nfs-common"
         create_mount_command = "mkdir %s" % configuration["nfs_mount_point"]
