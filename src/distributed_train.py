@@ -382,7 +382,8 @@ def train(target, dataset, cluster_spec):
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
     while not sv.should_stop():
-      tf.logging.info("Starting iteration...")
+      tf.logging.info("Starting iteration... %d" % int(global_step))
+      rpc_client.broadcast_starting(int(global_step))
       try:
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -393,6 +394,7 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
+        rpc_client.broadcast_finished(int(global_step)-1)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
