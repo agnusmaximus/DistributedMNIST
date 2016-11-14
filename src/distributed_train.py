@@ -121,7 +121,6 @@ class WorkerStatusServer(pb.Root):
     STABLE_ITERATION = 20
     n_stable_required =  self.n_total_workers
     n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
-    tf.logging.info("Is stable: %d vs %d" % (n_stable, n_stable_required))
     return n_stable_required == n_stable
 
   def check_is_straggler(self):
@@ -132,6 +131,7 @@ class WorkerStatusServer(pb.Root):
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
     finished_iteration = self_iteration == self.iteration_finished[self.worker_id]
     assert(self_iteration >= self.iteration_finished[self.worker_id])
+    tf.logging.info("Checking if straggler...")
     if n_ahead >= self.n_to_collect and not finished_iteration:
       # Clean up
       #self.remote_notify_finished(self.worker_id, max_iteration-1)
@@ -149,7 +149,7 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_finished(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it finished a given iteration.
-    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
+    #tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_finished[worker_id] = iteration
     return 0
 
