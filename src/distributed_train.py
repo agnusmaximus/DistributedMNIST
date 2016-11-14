@@ -152,17 +152,21 @@ class WorkerStatusClient:
         tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
         reactor.connectTCP(host, FLAGS.rpc_port, factory)
         factory.getRootObject().addCallbacks(self.connected, self.failure)
+
         self.factories.append(factory)
 
   def broadcast_starting(self, iteration):
     for factory in self.factories:
-      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.connected, self.failure)
+      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def broadcast_finished(self, iteration):
     for factory in self.factories:
-      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.connected, self.failure)
+      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
-  def connected(self):
+  def connected(self, perspective):
+    tf.logging.info("Connected!")
+
+  def success(self, perspective):
     tf.logging.info("Success!")
 
   def failure(self, _):
