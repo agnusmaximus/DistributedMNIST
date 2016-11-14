@@ -148,7 +148,7 @@ class WorkerStatusClient:
     self.factories = []
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
-      reactor.connectTCP(host + ":" + FLAGS.rpc_port, factory)
+      reactor.connectTCP(host, FLAGS.rpc_port, factory)
       factory.getRootObject().addCallbacks(self.connected, self.failure)
       self.factories.append(factory)
 
