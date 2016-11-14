@@ -216,11 +216,12 @@ class WorkerStatusClient:
 
   def connect_failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
+    time.sleep(1)
     host = "".join(args[1:])
     factory = pb.PBClientFactory()
     tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
     reactor.connectTCP(host, FLAGS.rpc_port, factory)
-    factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=(host))
+    factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
 def train(target, dataset, cluster_spec):
 
