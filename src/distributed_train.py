@@ -164,9 +164,9 @@ class WorkerStatusClient:
       tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
       reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
       if i == self.worker_id:
-        factory.getRootObject().addCallbacks(self.connected_self, self.failure, errbackArgs=[host], errbackKeywords=[])
+        factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       else:
-        factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host], errbackKeywords=[])
+        factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
 
   def server_ready_to_start(self, *args):
     wid, ready = args[0]
@@ -176,26 +176,26 @@ class WorkerStatusClient:
 
   def check_ready_to_start(self):
     for persp in self.perspectives:
-      persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.failure)
+      persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.fail)
 
   def ready_to_start(self):
     return self.ready and len(self.servers_ready) == len(self.hosts)
 
   def signal_server_ready(self):
-    tf.logging.info("Signalling ready to self's server")
-    self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.signal_server_fail)
+    tf.logging.info("Signaling ready to self's server")
+    self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
 
-  def signal_server_fail(self, _):
-    tf.logging.info("Signalling server ready failed")
+  def fail(self, _):
+    tf.logging.info("Fail")
     tf.logging.info(_)
 
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
-      persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.failure)
+      persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
 
   def broadcast_finished(self, iteration):
     for persp in self.perspectives:
-      persp.callRemote("notify_finished", self.worker_id, iteration).addCallbacks(self.success, self.failure)
+      persp.callRemote("notify_finished", self.worker_id, iteration).addCallbacks(self.success, self.fail)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
@@ -214,7 +214,7 @@ class WorkerStatusClient:
   def success(self, result):
     tf.logging.info("Success!")
 
-  def failure(self, *args, **kwargs):
+  def connect_failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
     time.sleep(1)
     host = "".join(args[1:])
