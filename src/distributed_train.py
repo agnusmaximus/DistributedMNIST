@@ -189,7 +189,7 @@ def train(target, dataset, cluster_spec):
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
 
-  while not rpc_client.ready():
+  while not rpc_client.ready:
     sleep(1)
 
   """Train Inception on a dataset for a number of steps."""
