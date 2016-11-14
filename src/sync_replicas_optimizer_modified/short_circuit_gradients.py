@@ -389,7 +389,7 @@ def gradients_short_circuited(ys,
     for op in to_ops + from_ops:
       for i,inp in enumerate(op.inputs):
         op._update_input(i, tf.identity(inp))
-      for inp in enumerate(op.inputs):
+      for inp in op.inputs:
         tf.logging.info("YAYO: %s" % inp.name)
 
     pending_count, loop_state = _PendingCount(ops.get_default_graph(),
