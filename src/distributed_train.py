@@ -232,7 +232,7 @@ def train(target, dataset, cluster_spec):
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
     while not sv.should_stop():
-      print("Iterating...")
+      tf.logging.info("Iterating...")
       try:
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -280,7 +280,7 @@ def train(target, dataset, cluster_spec):
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-
+          sys.stdout.flush()
         continue
 
     if is_chief:
