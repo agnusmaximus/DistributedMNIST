@@ -84,6 +84,11 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
+def signal_handler(signal, frame):
+  print('SIGINT RECEIVED')
+
+signal.signal(signal.SIGINT, signal_handler)
+
 def train(target, dataset, cluster_spec):
 
   """Train Inception on a dataset for a number of steps."""
@@ -232,7 +237,7 @@ def train(target, dataset, cluster_spec):
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
     while not sv.should_stop():
-      tf.logging.info("Iterating...")
+      tf.logging.info("Starting iteration...")
       try:
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -280,8 +285,7 @@ def train(target, dataset, cluster_spec):
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-          sys.stdout.flush()
-        raise
+          #sess.run(clean_up_op)
         continue
 
     if is_chief:
