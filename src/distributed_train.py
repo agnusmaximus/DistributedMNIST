@@ -146,7 +146,7 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_finished(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it finished a given iteration.
-    #tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
+    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_finished[worker_id] = iteration
     return 0
 
