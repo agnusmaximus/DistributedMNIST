@@ -165,11 +165,11 @@ class WorkerStatusClient:
   def connected(self, perspective):
     self.perspectives.append(perspective)
     tf.logging.info("Connected!")
-    self.ready = len(self.hosts) == len(self.perspectives)
+    self.ready = (len(self.hosts) == len(self.perspectives))
     if self.ready:
-      print("Ready!")
+      tf.logging.info("Ready!")
     else:
-      print("%d of %d" % (len(self.perspectives), len(self.hosts)))
+      tf.logging.info("%d of %d" % (len(self.perspectives), len(self.hosts)))
 
   def success(self, result):
     tf.logging.info("Success!")
