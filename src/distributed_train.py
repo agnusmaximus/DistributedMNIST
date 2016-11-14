@@ -169,7 +169,7 @@ class WorkerStatusClient:
 
   def failure(self, *args):
     tf.logging.info("RPC error, something failed: ")
-    tf.logging.info(_)
+    tf.logging.info(args)
 
 
 def train(target, dataset, cluster_spec):
