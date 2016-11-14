@@ -167,7 +167,7 @@ class WorkerStatusClient:
   def success(self, result):
     tf.logging.info("Success!")
 
-  def failure(self, _, *args):
+  def failure(self, *args):
     tf.logging.info("RPC error, something failed: ")
     tf.logging.info(_)
 
