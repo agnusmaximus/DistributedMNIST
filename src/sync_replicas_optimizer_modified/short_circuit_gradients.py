@@ -385,9 +385,11 @@ def gradients_short_circuited(ys,
     to_ops = [t.op for t in ys]
     from_ops = [t.op for t in xs]
 
+    # Forcibly transfer input tensors to the device.
     for op in to_ops + from_ops:
       for i,inp in enumerate(op.inputs):
         op._update_input(i, tf.identity(inp))
+
     pending_count, loop_state = _PendingCount(ops.get_default_graph(),
                                               to_ops, from_ops,
                                               colocate_gradients_with_ops)
@@ -557,9 +559,11 @@ def gradients_short_circuited(ys,
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
             #for i in range(len(op.inputs)):
             #  op.inputs[i] = tf.identity(op.inputs[i])
+            for opp in op.inputs:
+              tf.logging.info("YOOO %s" % opp.name)
             in_grads = tf.cond(local_global_step >= 10000,
-                               lambda : zero_grad_function(op.inputs),
-                               lambda : in_grad_function(op.inputs))
+                               lambda : in_grad_function(op.inputs),
+                               lambda : zero_grad_function(op.inputs))
 
             #b = in_grad_function(prefetch_inputs)
             #a = zero_grad_function(prefetch_inputs)
