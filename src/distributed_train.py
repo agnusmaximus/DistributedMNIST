@@ -22,6 +22,10 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 import mnist
 
+from twisted.spread import pb
+from twisted.internet import reactor
+from threading import Thread
+
 np.set_printoptions(threshold=np.nan)
 
 FLAGS = tf.app.flags.FLAGS
@@ -41,6 +45,9 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
 tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
+tf.app.flags.DEFINE_string('rpc_port', '4242',
+                           """Port for rpc communication""")
+
 tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
 tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size.')
 tf.app.flags.DEFINE_string('subset', 'train', 'Either "train" or "validation".')
@@ -85,13 +92,89 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
+##########################################
+# Signal handling for killing iterations #
+##########################################
 def signal_handler(signal, frame):
-  print('SIGINT RECEIVED')
+  tf.logging.info('SIGINT RECEIVED')
   sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
 
+##################
+# RPC procedures #
+##################
+class WorkerStatusServer(pb.Root):
+  def __init__(self):
+    self.mid = mid
+    self.worker_id = FLAGS.task_id
+    self.n_total_workers = len(FLAGS.worker_hosts.split(","))
+    self.iteration_track = [0] * self.n_total_workers
+    self.n_to_collect = FLAGS.num_replicas_to_aggregate
+    self.iteration_finished = [-1] * self.n_total_workers
+    tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
+
+  def check_is_straggler():
+    self_iteration = self.iteration_track[self.worker_id]
+    max_iteration = max(self.iteration_track)
+    n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
+    finished_iteration = self_iteration == self.iteration_finished[self.worker_id]
+    assert(self_iteration >= self.iteration_finished[self.worker_id])
+    if n_ahead >= self.n_to_collect and not finished_iteration:
+      # Clean up
+      self.notify_finished(self.worker_id, max_iteration-1)
+      self.notify_starting(self.worker_id, max_iteration)
+
+      # KILL PROCESS
+      tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
+
+  def notify_starting(self, worker_id, iteration):
+    # Called when worker_id notifies this machine that it is starting iteration.
+    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d" % (self.worker_id, worker_id, iteration))
+    self.iteration_track[worker_id] = iteration
+    self.check_is_straggler()
+    return 0
+
+  def notify_finished(self, worker_id, iteration):
+    # Called when worker_id notifies this machine that it finished a given iteration.
+    tf.logging.info("Worker %d: Wa snotified that worker %d finished iteration %d" % (self.worker_id, worker_id, iteration))
+    self.iteration_finished[worker_id] = iteration
+    return 0
+
+class WorkerStatusClient:
+  def __init__(self):
+    self.worker_id = FLAGS.task_id
+    hosts = len(FLAGS.worker_hosts.split(","))
+    self.factories = []
+    for i, host in enumerate(hosts):
+      factory = pb.PBClientFactory()
+      reactor.connectTCP(host + ":" + FLAGS.rpc_port, factory)
+      factory.getRootObject().addCallbacks(self.connected, self.failure)
+      self.factories.append(factory)
+
+  def broadcast_starting(self, iteration):
+    for factory in self.factories:
+      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.connected, self.failure)
+
+  def broadcast_finished(self, iteration):
+    for factory in self.factories:
+      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.connected, self.failure)
+
+  def connected(self):
+    pass
+
+  def failure(self, _):
+    tf.logging.info("RPC error, something failed: ")
+    tf.logging.info(_)
+
 def train(target, dataset, cluster_spec):
+
+  # Launch a separate thread in the background that checks whether the
+  # machine is a straggler.
+  rpc_client = WorkerStatusClient()
+  rpc_server = pb.PBServerFactory(WorkerStatusServer())
+  reactor.listenTCP(FLAGS.rpc_port, rpc_server)
+  Thread(target=reactor.run, args=(False,)).start()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
