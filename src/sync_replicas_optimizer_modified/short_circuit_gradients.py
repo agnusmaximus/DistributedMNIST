@@ -413,8 +413,9 @@ def gradients_short_circuited(ys,
       ready = (pending_count[op._id] == 0)
       if ready and op._id not in to_ops_set:
 
-        #for i, inp in enumerate(op.inputs):
-          #op._update_input(i, tf.identity(inp))
+        for i, inp in enumerate(op.inputs):
+          tf.logging.info("ORIG: %s" % inp.name)
+          op._update_input(i, tf.identity(inp))
 
         to_ops_set.add(op._id)
         queue.append(op)
