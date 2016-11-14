@@ -131,8 +131,8 @@ class WorkerStatusServer(pb.Root):
     assert(self_iteration >= self.iteration_finished[self.worker_id])
     if n_ahead >= self.n_to_collect and not finished_iteration:
       # Clean up
-      self.remote_notify_finished(self.worker_id, max_iteration-1)
-      self.remote_notify_starting(self.worker_id, max_iteration)
+      #self.remote_notify_finished(self.worker_id, max_iteration-1)
+      #self.remote_notify_starting(self.worker_id, max_iteration)
 
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
