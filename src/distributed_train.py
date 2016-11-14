@@ -145,15 +145,12 @@ class WorkerStatusClient:
     self.worker_id = FLAGS.task_id
     hosts = FLAGS.worker_hosts.split(",")
     hosts = [x.split(":")[0] for x in hosts]
-    self.factories = []
+    self.perspectives = []
     for i, host in enumerate(hosts):
-      if i == self.worker_id:
         factory = pb.PBClientFactory()
         tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-        reactor.connectTCP(host, FLAGS.rpc_port, factory)
+        reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=600)
         factory.getRootObject().addCallbacks(self.connected, self.failure)
-
-        self.factories.append(factory)
 
   def broadcast_starting(self, iteration):
     for factory in self.factories:
@@ -164,9 +161,10 @@ class WorkerStatusClient:
       factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def connected(self, perspective):
+    self.perspectives.append(perspective)
     tf.logging.info("Connected!")
 
-  def success(self, perspective):
+  def success(self, result):
     tf.logging.info("Success!")
 
   def failure(self, _):
