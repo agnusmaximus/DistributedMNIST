@@ -165,7 +165,7 @@ class WorkerStatusClient:
   def connected(self, perspective):
     self.perspectives.append(perspective)
     tf.logging.info("Connected!")
-    self.ready = len(self.hosts) == self.perspectives
+    self.ready = len(self.hosts) == len(self.perspectives)
     if self.ready:
       print("Ready!")
 
@@ -188,9 +188,6 @@ def train(target, dataset, cluster_spec):
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
-
-  while not rpc_client.ready:
-    sleep(1)
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
