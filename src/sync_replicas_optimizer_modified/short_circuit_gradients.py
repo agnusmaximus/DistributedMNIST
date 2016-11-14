@@ -412,11 +412,6 @@ def gradients_short_circuited(ys,
       # pylint: disable=protected-access
       ready = (pending_count[op._id] == 0)
       if ready and op._id not in to_ops_set:
-
-        for i, inp in enumerate(op.inputs):
-          tf.logging.info("ORIG: %s" % inp.name)
-          op._update_input(i, tf.identity(inp))
-
         to_ops_set.add(op._id)
         queue.append(op)
       # pylint: enable=protected-access
@@ -425,10 +420,6 @@ def gradients_short_circuited(ys,
       loop_exits = loop_state.ProcessUnusedLoopExits(pending_count, to_ops_set)
       for y in loop_exits:
         if _IsTrainable(y):
-
-          for i, inp in enumerate(y.op.inputs):
-            y.op._update_input(i, tf.identity(inp))
-
           _SetGrad(grads, y, loop_state.ZerosLikeForExit(y))
           queue.append(y.op)
 
@@ -563,8 +554,8 @@ def gradients_short_circuited(ys,
             #new_global_step = logging_ops.Print(new_global_step, [new_global_step], message="CHECKING global step")
             #for i in range(len(op.inputs)):
             #  op.inputs[i] = tf.identity(op.inputs[i])
-            for opp in op.inputs:
-              tf.logging.info("YOOO %s" % opp.name)
+            for i, inp in enumerate(op.inputs):
+              op._update_input(i, tf.identity(inp))
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : in_grad_function(op.inputs),
                                lambda : zero_grad_function(op.inputs))
