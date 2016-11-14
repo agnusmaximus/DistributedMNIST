@@ -169,8 +169,7 @@ class WorkerStatusClient:
 
   def failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
-    tf.logging.info(args)
-    host = args[1]
+    host = "".join(args[1:])
     factory = pb.PBClientFactory()
     tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
     reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
@@ -183,8 +182,7 @@ def train(target, dataset, cluster_spec):
   rpc_server = pb.PBServerFactory(WorkerStatusServer())
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
-  reactor.run()
-  #Thread(target=reactor.run, args=(False,)).start()
+  Thread(target=reactor.run, args=(False,)).start()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
