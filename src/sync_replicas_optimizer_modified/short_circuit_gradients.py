@@ -556,7 +556,7 @@ def gradients_short_circuited(ys,
             #  op.inputs[i] = tf.identity(op.inputs[i])
             for i, inp in enumerate(op.inputs):
               dat_transfer = tf.identity(inp)
-              dat_transfer._id_value = inp._id
+              dat_transfer.op._id_value = inp.op._id
               op._update_input(i, dat_transfer)
             in_grads = tf.cond(local_global_step >= 10000,
                                lambda : in_grad_function(op.inputs),
