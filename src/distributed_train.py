@@ -169,7 +169,7 @@ class WorkerStatusClient:
 
   def signal_server_ready(self):
     tf.logging.info("Signalling ready to self's server")
-    self.self_perspective.callRemote(notify_ready_to_start).addCallbacks(self.success, self.signal_server_fail)
+    self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.signal_server_fail)
 
   def signal_server_fail(self, _):
     tf.logging.info("Signalling server ready failed")
@@ -202,6 +202,7 @@ class WorkerStatusClient:
 
   def failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
+    time.sleep(1)
     host = "".join(args[1:])
     factory = pb.PBClientFactory()
     tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
