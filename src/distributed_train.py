@@ -147,11 +147,12 @@ class WorkerStatusClient:
     hosts = [x.split(":")[0] for x in hosts]
     self.factories = []
     for i, host in enumerate(hosts):
-      factory = pb.PBClientFactory()
-      tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-      reactor.connectTCP(host, FLAGS.rpc_port, factory)
-      factory.getRootObject().addCallbacks(self.connected, self.failure)
-      self.factories.append(factory)
+      if i == self.worker_id:
+        factory = pb.PBClientFactory()
+        tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
+        reactor.connectTCP(host, FLAGS.rpc_port, factory)
+        factory.getRootObject().addCallbacks(self.connected, self.failure)
+        self.factories.append(factory)
 
   def broadcast_starting(self, iteration):
     for factory in self.factories:
