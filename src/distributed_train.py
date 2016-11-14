@@ -121,7 +121,7 @@ class WorkerStatusServer(pb.Root):
     STABLE_ITERATION = 20
     n_stable_required =  self.n_total_workers
     n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
-    print("Is stable: %d vs %d" % (n_stable, n_stable_required))
+    tf.logging.info("Is stable: %d vs %d" % (n_stable, n_stable_required))
     return n_stable_required == n_stable
 
   def check_is_straggler(self):
