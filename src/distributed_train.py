@@ -110,6 +110,7 @@ class WorkerStatusServer(pb.Root):
     self.n_total_workers = len(FLAGS.worker_hosts.split(","))
     self.iteration_track = [0] * self.n_total_workers
     self.n_to_collect = FLAGS.num_replicas_to_aggregate
+    self.ready_to_start = False
     self.iteration_finished = [-1] * self.n_total_workers
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
@@ -140,27 +141,38 @@ class WorkerStatusServer(pb.Root):
     self.iteration_finished[worker_id] = iteration
     return 0
 
+  def notify_ready_to_start(self):
+    self.ready_to_start = True
+
 class WorkerStatusClient:
   def __init__(self):
     self.worker_id = FLAGS.task_id
     hosts = FLAGS.worker_hosts.split(",")
     hosts = [x.split(":")[0] for x in hosts]
     self.hosts = hosts
+    self.self_perspective = None
     self.perspectives = []
     self.ready = False
+    self.ready_to_start = False
     for i, host in enumerate(hosts):
-        factory = pb.PBClientFactory()
-        tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-        reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+      factory = pb.PBClientFactory()
+      tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
+      reactor.connectTCP(host, FLAGS.rpc_port, factory, timeout=60)
+      if i == self.worker_id:
+        factory.getRootObject().addCallbacks(self.connected_self, self.failure, errbackArgs=[host], errbackKeywords=[])
+      else:
         factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host], errbackKeywords=[])
 
+  def signal_server_ready(self):
+    self.self_perspective.callRemote(notify_ready_to_start)
+
   def broadcast_starting(self, iteration):
-    for factory in self.factories:
-      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
+    for persp in self.perspectives:
+      persp.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def broadcast_finished(self, iteration):
-    for factory in self.factories:
-      factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
+    for persp in self.perspectives:
+      persp.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.success, self.failure)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
@@ -168,8 +180,13 @@ class WorkerStatusClient:
     self.ready = (len(self.hosts) == len(self.perspectives))
     if self.ready:
       tf.logging.info("Ready!")
+      self.signal_server_ready()
     else:
       tf.logging.info("%d of %d" % (len(self.perspectives), len(self.hosts)))
+
+  def connected_self(self, perspective):
+    self.self_perspective = perspective
+    self.connected(perspective)
 
   def success(self, result):
     tf.logging.info("Success!")
@@ -190,6 +207,9 @@ def train(target, dataset, cluster_spec):
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
+
+  while not rpc_client.ready_to_start:
+    time.sleep(1)
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
