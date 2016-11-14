@@ -148,6 +148,7 @@ class WorkerStatusClient:
     self.factories = []
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
+      tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
       reactor.connectTCP(host, FLAGS.rpc_port, factory)
       factory.getRootObject().addCallbacks(self.connected, self.failure)
       self.factories.append(factory)
@@ -161,7 +162,7 @@ class WorkerStatusClient:
       factory.callRemote(notify_starting, self.worker_id, iteration).addCallbacks(self.connected, self.failure)
 
   def connected(self):
-    pass
+    tf.logging.info("Success!")
 
   def failure(self, _):
     tf.logging.info("RPC error, something failed: ")
