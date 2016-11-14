@@ -396,7 +396,7 @@ def train(target, dataset, cluster_spec):
         else:
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
         rpc_client.broadcast_finished(cur_iteration)
-        cur_iteration = int(global_step)
+        cur_iteration = int(step)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
