@@ -145,6 +145,9 @@ class WorkerStatusServer(pb.Root):
     tf.logging.info("Server ready to start!")
     self.ready_to_start = True
 
+  def remote_is_ready_to_start(self):
+    return (self.worker_id, self.ready_to_start)
+
 class WorkerStatusClient:
   def __init__(self):
     self.worker_id = FLAGS.task_id
@@ -154,6 +157,8 @@ class WorkerStatusClient:
     self.self_perspective = None
     self.perspectives = []
     self.ready = False
+    self.servers_ready = set([])
+
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
       tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
@@ -163,9 +168,17 @@ class WorkerStatusClient:
       else:
         factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host], errbackKeywords=[])
 
-  def remote_ready_to_start(self):
-    if not self.ready:
-      return False
+  def server_ready_to_start(self, host, ready):
+    if ready:
+      tf.logging.info("Worker %d is ready to begin..." % host)
+      self.servers_ready.add(host)
+
+  def check_ready_to_start(self):
+    for persp in self.perspectives:
+      persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.failure)
+
+  def ready_to_start(self):
+    return self.ready and len(self.servers_ready) == len(self.hosts)
 
   def signal_server_ready(self):
     tf.logging.info("Signalling ready to self's server")
@@ -219,6 +232,7 @@ def train(target, dataset, cluster_spec):
   Thread(target=reactor.run, args=(False,)).start()
 
   while not rpc_client.ready_to_start():
+    rpc_client.check_ready_to_start()
     time.sleep(1)
 
   """Train Inception on a dataset for a number of steps."""
