@@ -170,6 +170,7 @@ class WorkerStatusClient:
 
   def server_ready_to_start(self, *args):
     tf.logging.info("YO?")
+    tf.logging.info(args)
     if ready:
       tf.logging.info("Worker %d is ready to begin..." % host)
       self.servers_ready.add(host)
