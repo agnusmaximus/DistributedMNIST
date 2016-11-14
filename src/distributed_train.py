@@ -169,11 +169,10 @@ class WorkerStatusClient:
         factory.getRootObject().addCallbacks(self.connected, self.failure, errbackArgs=[host], errbackKeywords=[])
 
   def server_ready_to_start(self, *args):
-    tf.logging.info("YO?")
-    tf.logging.info(args)
+    wid, ready = args[0]
     if ready:
-      tf.logging.info("Worker %d is ready to begin..." % host)
-      self.servers_ready.add(host)
+      tf.logging.info("Worker %d is ready to begin..." % wid)
+      self.servers_ready.add(wid)
 
   def check_ready_to_start(self):
     for persp in self.perspectives:
