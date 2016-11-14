@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 configuration = Cfg({
-    "name" : "mnist_cnn_5_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_10_workers",      # Unique name for this specific configuration
     "key_name": "DistributedSGD",         # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 4,
+    "n_workers" : 9,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "15",
+    "num_replicas_to_aggregate" : "5",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -46,7 +46,7 @@ configuration = Cfg({
     "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
-    "spot_price" : ".15",                 # Has to be a string
+    "spot_price" : ".2",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
