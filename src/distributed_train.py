@@ -12,6 +12,7 @@ import time
 
 import numpy as np
 import tensorflow as tf
+import signal
 
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
@@ -82,6 +83,12 @@ tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999,
 RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
+
+def signal_handler(signal, frame):
+  print('You pressed Ctrl+C!')
+  sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 
 def train(target, dataset, cluster_spec):
 
