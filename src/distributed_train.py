@@ -141,7 +141,7 @@ class WorkerStatusServer(pb.Root):
     self.iteration_finished[worker_id] = iteration
     return 0
 
-  def notify_ready_to_start(self):
+  def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
     self.ready_to_start = True
 
