@@ -111,7 +111,6 @@ class WorkerStatusServer(pb.Root):
     self.iteration_track = [0] * self.n_total_workers
     self.n_to_collect = FLAGS.num_replicas_to_aggregate
     self.ready_to_start = False
-    self.iteration_finished = [-1] * self.n_total_workers
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
   def is_stable(self):
@@ -129,7 +128,6 @@ class WorkerStatusServer(pb.Root):
     self_iteration = self.iteration_track[self.worker_id]
     max_iteration = max(self.iteration_track)
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
-    assert(self_iteration >= self.iteration_finished[self.worker_id])
     if n_ahead >= self.n_to_collect:
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
