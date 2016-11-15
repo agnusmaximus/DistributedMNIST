@@ -290,7 +290,7 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
     train_op = state_ops.assign(self._local_step, token)
 
     with ops.name_scope(None, self._name):
-      with ops.control_dependencies(train_op):
+      with ops.control_dependencies([train_op]):
         for grad, var in grads_and_vars:
           var_list.append(var)
           with ops.device(var.device):
