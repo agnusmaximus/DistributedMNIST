@@ -131,7 +131,7 @@ class WorkerStatusServer(pb.Root):
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
     finished_iteration = self_iteration == self.iteration_finished[self.worker_id]
     assert(self_iteration >= self.iteration_finished[self.worker_id])
-    tf.logging.info("Checking if straggler...")
+    tf.logging.info("Checking if straggler... n_ahead:%d vs n_to_collect:%d" % (n_ahead, self.n_to_collect)
     if n_ahead >= self.n_to_collect and not finished_iteration:
       # Clean up
       #self.remote_notify_finished(self.worker_id, max_iteration-1)
