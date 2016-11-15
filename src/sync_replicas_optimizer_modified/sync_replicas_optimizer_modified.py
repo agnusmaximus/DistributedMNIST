@@ -285,8 +285,9 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
         variables.all_variables())
 
-    token = self._sync_token_queue.dequeue()
-    token = logging_ops.Print(token, [token], message="Dequeueing token...")
+    with ops.device(global_step.device), ops.name_scope(""):
+      token = self._sync_token_queue.dequeue()
+      token = logging_ops.Print(token, [token], message="Dequeueing token...")
     train_op = state_ops.assign(self._local_step, token)
 
     with ops.name_scope(None, self._name):
