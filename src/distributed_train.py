@@ -141,12 +141,6 @@ class WorkerStatusServer(pb.Root):
     self.check_is_straggler()
     return 0
 
-  def remote_notify_finished(self, worker_id, iteration):
-    # Called when worker_id notifies this machine that it finished a given iteration.
-    #tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
-    self.iteration_finished[worker_id] = iteration
-    return 0
-
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
     self.ready_to_start = True
@@ -194,10 +188,6 @@ class WorkerStatusClient:
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
       persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
-
-  def broadcast_finished(self, iteration):
-    for persp in self.perspectives:
-      persp.callRemote("notify_finished", self.worker_id, iteration).addCallbacks(self.success, self.fail)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
@@ -391,9 +381,6 @@ def train(target, dataset, cluster_spec):
     cur_iteration = 0
     while not sv.should_stop():
       tf.logging.info("Starting iteration... %d" % cur_iteration)
-      if FLAGS.task_id == 1:
-        print("YO I'm a lazy worker...")
-        time.sleep(5)
       rpc_client.broadcast_starting(cur_iteration)
       try:
         start_time = time.time()
@@ -405,7 +392,6 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
-        rpc_client.broadcast_finished(cur_iteration)
         cur_iteration = int(step)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
