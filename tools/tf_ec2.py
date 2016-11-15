@@ -46,7 +46,7 @@ configuration = Cfg({
     "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
-    "spot_price" : ".2",                 # Has to be a string
+    "spot_price" : ".15",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
