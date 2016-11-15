@@ -367,6 +367,8 @@ def train(target, dataset, cluster_spec):
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
 
+    tf.logging.info("YAAYAYAYAY")
+
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
     sv.start_queue_runners(sess, queue_runners)
