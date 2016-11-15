@@ -380,7 +380,7 @@ def train(target, dataset, cluster_spec):
     begin_time = time.time()
     cur_iteration = 0
     while not sv.should_stop():
-      cur_iteration = int(sess.run([global_step]))
+      cur_iteration = int(sess.run(global_step))
       tf.logging.info("Starting iteration... %d" % cur_iteration)
       rpc_client.broadcast_starting(cur_iteration)
       try:
