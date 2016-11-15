@@ -14,6 +14,7 @@ import numpy as np
 import tensorflow as tf
 import signal
 import sys
+import os
 
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
@@ -131,6 +132,7 @@ class WorkerStatusServer(pb.Root):
     if n_ahead >= self.n_to_collect:
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
+      os.kill(os.getpid(), signal.SIGINT)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
