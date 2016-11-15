@@ -367,21 +367,15 @@ def train(target, dataset, cluster_spec):
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
 
-    tf.logging.info("YAAYAYAYAY")
-    sys.stdout.flush()
-
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
     sv.start_queue_runners(sess, queue_runners)
     tf.logging.info('Started %d queues for processing input data.',
                     len(queue_runners))
-    sys.stdout.flush()
 
     if is_chief:
       sv.start_queue_runners(sess, chief_queue_runners)
-      tf.logging.info("YOAYOAYOAY")
-      sys.stdout.flush()
-      tf.logging.info(init_tokens_op.name)
+      tf.logging.info(init_tokens_op[0].name)
       sess.run(init_tokens_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
