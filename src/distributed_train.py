@@ -112,6 +112,7 @@ class WorkerStatusServer(pb.Root):
     self.iteration_track = [0] * self.n_total_workers
     self.n_to_collect = FLAGS.num_replicas_to_aggregate
     self.ready_to_start = False
+    self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
   def is_stable(self):
@@ -132,7 +133,9 @@ class WorkerStatusServer(pb.Root):
     if n_ahead >= self.n_to_collect:
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
-      os.kill(os.getpid(), signal.SIGINT)
+      if self_iteration not in self.iterations_killed:
+        self.iterations_killed.add(self_iteration)
+        os.kill(os.getpid(), signal.SIGINT)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
