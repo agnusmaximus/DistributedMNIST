@@ -434,8 +434,7 @@ def train(target, dataset, cluster_spec):
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-        sess.run(kill_cleanup_op)
-        continue
+        #sess.run(kill_cleanup_op)
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
