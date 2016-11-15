@@ -135,7 +135,6 @@ class WorkerStatusServer(pb.Root):
     if n_ahead >= self.n_to_collect and not finished_iteration:
       # Clean up
       #self.remote_notify_finished(self.worker_id, max_iteration-1)
-      #self.remote_notify_starting(self.worker_id, max_iteration)
 
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
@@ -149,7 +148,7 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_finished(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it finished a given iteration.
-    #tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
+    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_finished[worker_id] = iteration
     return 0
 
