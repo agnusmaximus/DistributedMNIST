@@ -391,6 +391,9 @@ def train(target, dataset, cluster_spec):
     cur_iteration = 0
     while not sv.should_stop():
       tf.logging.info("Starting iteration... %d" % cur_iteration)
+      if FLAGS.task_id == 1:
+        print("YO I'm a lazy worker...")
+        time.sleep(5)
       rpc_client.broadcast_starting(cur_iteration)
       try:
         start_time = time.time()
