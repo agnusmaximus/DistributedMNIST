@@ -380,6 +380,7 @@ def train(target, dataset, cluster_spec):
     begin_time = time.time()
     cur_iteration = 0
     while not sv.should_stop():
+      cur_iteration = int(sess.run([global_step]))
       tf.logging.info("Starting iteration... %d" % cur_iteration)
       rpc_client.broadcast_starting(cur_iteration)
       try:
@@ -392,7 +393,6 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
-        cur_iteration = int(step)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
