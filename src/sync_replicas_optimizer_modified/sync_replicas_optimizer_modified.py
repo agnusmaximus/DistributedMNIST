@@ -376,7 +376,7 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
       kill_op = state_ops.assign(self._local_step, sync_token_queue.dequeue())
 
       # Also return the sync token queue.
-      return train_op, kill_op
+      return train_ops, kill_op
 
   def get_chief_queue_runner(self):
     """Returns the QueueRunner for the chief to execute.
