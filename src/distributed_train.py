@@ -31,7 +31,7 @@ np.set_printoptions(threshold=np.nan)
 FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
-tf.app.flags.DEFINE_boolean('timeline_logging', True, 'Whether to log timeline of events.')
+tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
 tf.app.flags.DEFINE_string('ps_hosts', '',
                            """Comma-separated list of hostname:port for the """
@@ -131,9 +131,6 @@ class WorkerStatusServer(pb.Root):
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
     assert(self_iteration >= self.iteration_finished[self.worker_id])
     if n_ahead >= self.n_to_collect:
-      # Clean up
-      #self.remote_notify_finished(self.worker_id, max_iteration-1)
-
       # KILL PROCESS
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
 
