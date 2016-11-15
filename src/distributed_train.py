@@ -298,19 +298,19 @@ def train(target, dataset, cluster_spec):
     #opt = tf.train.AdamOptimizer(.01)
 
     # Use V2 optimizer
-    """opt = SyncReplicasOptimizerV2(
+    opt = SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
-      global_step=global_step)"""
-    opt = tf.train.SyncReplicasOptimizerV2(
+      global_step=global_step)
+    """opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)
+      total_num_replicas=num_workers)"""
 
     # Compute gradients with respect to the loss.
     #grads = opt.compute_gradients(total_loss)
-    apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
+    apply_gradients_op, dequeue_op = opt.minimize(total_loss, global_step=global_step)
     #apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
@@ -430,7 +430,7 @@ def train(target, dataset, cluster_spec):
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-          #sess.run(dequeue_op)
+          sess.run(dequeue_op)
           #sess.run(clean_up_op)
         continue
 

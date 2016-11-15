@@ -32,7 +32,7 @@ configuration = Cfg({
     "n_workers" : 17,
     "n_ps" : 8,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "15",
+    "num_replicas_to_aggregate" : "12",
 
     # Region speficiation
     "region" : "us-west-2",
