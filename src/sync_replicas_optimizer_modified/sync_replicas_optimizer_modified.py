@@ -454,7 +454,7 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
 
     tokens_needed = self._replicas_to_aggregate - self._total_num_replicas
     if num_tokens == -1:
-      num_tokens = self._replicas_to_aggregate
+      num_tokens = max(self._replicas_to_aggregate, self._total_num_replicas
     elif num_tokens < tokens_needed:
       raise ValueError(
           "Too few tokens to finish the first step: %d (given) vs %d (needed)" %
