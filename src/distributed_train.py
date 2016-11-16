@@ -135,7 +135,7 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
       if self_iteration not in self.iterations_killed:
         self.iterations_killed.add(self_iteration)
-        os.kill(os.getpid(), signal.SIGINT)
+        #os.kill(os.getpid(), signal.SIGINT)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
