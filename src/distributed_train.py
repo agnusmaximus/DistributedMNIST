@@ -96,11 +96,11 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 ##########################################
 # Signal handling for killing iterations #
 ##########################################
-"""def signal_handler(signal, frame):
+def signal_handler(signal, frame):
   tf.logging.info('SIGINT RECEIVED')
-  sys.exit(0)
+  raise Exception
 
-signal.signal(signal.SIGINT, signal_handler)"""
+signal.signal(signal.SIGINT, signal_handler)
 
 ##################
 # RPC procedures #
@@ -431,12 +431,10 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-      except KeyboardInterrupt:
-        tf.logging.info("RECEIVED SIGNAL... SIGINT")
       except:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
-        tf.logging.info("RECEIVED SIGNAL... NORMAL EXCEPTION")
+        tf.logging.info("RECEIVED SIGNAL... CONTINUING")
         #sess.run(kill_cleanup_op)
 
     if is_chief:
