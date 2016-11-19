@@ -77,7 +77,7 @@ configuration = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "256",
+    "batch_size" : "1024",
     "initial_learning_rate" : "0.001",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
