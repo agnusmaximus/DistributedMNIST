@@ -100,8 +100,8 @@ def signal_handler(signal, frame):
   tf.logging.info('SIGALRM RECEIVED - %f' % time.time())
   raise Exception
 
-#signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGALRM, signal_handler)
+signal.signal(signal.SIGINT, signal_handler)
+#signal.signal(signal.SIGALRM, signal_handler)
 
 ##################
 # RPC procedures #
@@ -137,8 +137,8 @@ class WorkerStatusServer(pb.Root):
       if self_iteration not in self.iterations_killed:
         self.iterations_killed.add(self_iteration)
         tf.logging.info("Committing suicide! - %f" % time.time())
-        #os.kill(os.getpid(), signal.SIGINT)
-        os.kill(os.getpid(), signal.SIGALRM)
+        os.kill(os.getpid(), signal.SIGINT)
+        #os.kill(os.getpid(), signal.SIGALRM)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
