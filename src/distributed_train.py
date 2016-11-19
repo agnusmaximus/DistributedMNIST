@@ -97,10 +97,11 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 # Signal handling for killing iterations #
 ##########################################
 def signal_handler(signal, frame):
-  tf.logging.info('SIGINT RECEIVED - %f' % time.time())
+  tf.logging.info('SIGALRM RECEIVED - %f' % time.time())
   raise Exception
 
 signal.signal(signal.SIGINT, signal_handler)
+#signal.signal(signal.SIGALRM, signal_handler)
 
 ##################
 # RPC procedures #
