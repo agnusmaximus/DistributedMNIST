@@ -97,7 +97,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 # Signal handling for killing iterations #
 ##########################################
 def signal_handler(signal, frame):
-  tf.logging.info('SIGINT RECEIVED')
+  tf.logging.info('SIGINT RECEIVED - %f' % time.time())
   raise Exception
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -135,9 +135,8 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
       if self_iteration not in self.iterations_killed:
         self.iterations_killed.add(self_iteration)
-        tf.logging.info("Committing suicide!")
-        raise Exception
-        #os.kill(os.getpid(), signal.SIGINT)
+        tf.logging.info("Committing suicide! - %f" % time.time())
+        os.kill(os.getpid(), signal.SIGINT)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.

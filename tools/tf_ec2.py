@@ -29,10 +29,10 @@ configuration = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 37,
-    "n_ps" : 15,
+    "n_workers" : 20,
+    "n_ps" : 8,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "30",
+    "num_replicas_to_aggregate" : "15",
 
     # Region speficiation
     "region" : "us-west-2",
