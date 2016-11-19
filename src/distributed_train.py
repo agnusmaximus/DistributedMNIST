@@ -431,10 +431,11 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-      except:
+      except Exception, e:
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
         tf.logging.info("RECEIVED SIGNAL... CONTINUING")
+        tf.logging.info("%s" % e)
         #sess.run(kill_cleanup_op)
 
     if is_chief:
