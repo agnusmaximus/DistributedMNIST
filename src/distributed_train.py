@@ -133,7 +133,7 @@ class WorkerStatusServer(pb.Root):
     n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
     if n_ahead >= self.n_to_collect:
       # KILL PROCESS
-      tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
+      #tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
       if self_iteration not in self.iterations_killed:
         self.iterations_killed.add(self_iteration)
         tf.logging.info("Committing suicide! - %f" % time.time())
@@ -142,7 +142,7 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
-    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
+    #tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_track[worker_id] = iteration
     self.check_is_straggler()
     return 0
