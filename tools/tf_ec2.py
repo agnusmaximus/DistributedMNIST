@@ -91,7 +91,7 @@ configuration = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "strace -r python src/mnist_distributed_train.py "
+        "strace  -T -tt python src/mnist_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
