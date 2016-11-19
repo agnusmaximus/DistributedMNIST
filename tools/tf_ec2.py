@@ -29,14 +29,14 @@ configuration = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 17,
+    "n_workers" : 44,
     "n_ps" : 8,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "12",
+    "num_replicas_to_aggregate" : "38",
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2c",
+    "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
     "master_type" : "m4.2xlarge",
@@ -46,7 +46,7 @@ configuration = Cfg({
     "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
-    "spot_price" : ".18",                 # Has to be a string
+    "spot_price" : ".11",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -54,9 +54,9 @@ configuration = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    "nfs_ip_address" : "172.31.3.173",         # us-west-2c
+    #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
