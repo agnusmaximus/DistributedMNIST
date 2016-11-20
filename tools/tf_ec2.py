@@ -101,7 +101,8 @@ configuration = Cfg({
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
-        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
+        #"--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
+       "--job_name=JOB_NAME > out_ROLE_ID 2>&1 &"
     ],
 
     # Commands to run on the evaluator
