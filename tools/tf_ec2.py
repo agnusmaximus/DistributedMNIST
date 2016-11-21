@@ -76,7 +76,7 @@ configuration = Cfg({
         "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_runtime_us",
         "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
         "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
-        "echo 25 | sudo tee /proc/sys/kernel/sched_time_avg_ms",
+        "echo 10000 | sudo tee /proc/sys/kernel/sched_time_avg_ms",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
