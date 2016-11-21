@@ -362,8 +362,10 @@ def train(target, dataset, cluster_spec):
     tf.logging.info('%s Supervisor' % datetime.now())
 
     sess_config = tf.ConfigProto(
-        allow_soft_placement=True,
-        log_device_placement=FLAGS.log_device_placement)
+      allow_soft_placement=True,
+      log_device_placement=FLAGS.log_device_placement,
+      inter_op_parallelism_threads=NUM_CORES,
+      intra_op_parallelism_threads=NUM_CORES)
 
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
