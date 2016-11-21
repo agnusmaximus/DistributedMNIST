@@ -388,7 +388,7 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        if (FLAGS.task_id + cur_iteration) % 2 == 0:
+        if random.randint(0, 100) % 5 == 0:
           time.sleep(100)
 
         cur_iteration = int(sess.run(global_step))
