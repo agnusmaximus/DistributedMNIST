@@ -115,7 +115,7 @@ def inference(images, train=True):
                       conv1_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
-  conv = tf.nn.conv2d(images,
+  conv = tf.nn.conv2d(conv,
                       conv11_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
@@ -131,7 +131,7 @@ def inference(images, train=True):
                       conv2_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
-  conv = tf.nn.conv2d(images,
+  conv = tf.nn.conv2d(conv,
                       conv22_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
