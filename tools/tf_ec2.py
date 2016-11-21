@@ -64,6 +64,7 @@ configuration = Cfg({
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
+        "echo '25' > sched_time_avg_ms",
         "rm -rf %(base_out_dir)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
@@ -72,6 +73,7 @@ configuration = Cfg({
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
+        "echo '25' > sched_time_avg_ms",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
