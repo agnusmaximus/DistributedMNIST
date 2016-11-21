@@ -90,6 +90,14 @@ def inference(images, train=True):
       tf.truncated_normal([5, 5, 32, 32],  # 5x5 filter, depth 32.
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
+  conv1111_weights = tf.Variable(
+      tf.truncated_normal([5, 5, 32, 32],  # 5x5 filter, depth 32.
+                          stddev=0.1,
+                          seed=SEED, dtype=tf.float32))
+  conv11111_weights = tf.Variable(
+      tf.truncated_normal([5, 5, 32, 32],  # 5x5 filter, depth 32.
+                          stddev=0.1,
+                          seed=SEED, dtype=tf.float32))
   conv1_biases = tf.Variable(tf.zeros([32], dtype=tf.float32))
   conv2_weights = tf.Variable(tf.truncated_normal(
       [5, 5, 32, 64], stddev=0.1,
@@ -98,6 +106,12 @@ def inference(images, train=True):
       [5, 5, 64, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
   conv222_weights = tf.Variable(tf.truncated_normal(
+      [5, 5, 64, 64], stddev=0.1,
+      seed=SEED, dtype=tf.float32))
+  conv2222_weights = tf.Variable(tf.truncated_normal(
+      [5, 5, 64, 64], stddev=0.1,
+      seed=SEED, dtype=tf.float32))
+  conv22222_weights = tf.Variable(tf.truncated_normal(
       [5, 5, 64, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
   conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=tf.float32))
@@ -130,6 +144,14 @@ def inference(images, train=True):
                       conv111_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
+  conv = tf.nn.conv2d(conv,
+                      conv1111_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  conv = tf.nn.conv2d(conv,
+                      conv11111_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
   # Bias and rectified linear non-linearity.
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv1_biases))
   # Max pooling. The kernel size spec {ksize} also follows the layout of
@@ -148,6 +170,14 @@ def inference(images, train=True):
                       padding='SAME')
   conv = tf.nn.conv2d(conv,
                       conv222_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  conv = tf.nn.conv2d(conv,
+                      conv2222_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  conv = tf.nn.conv2d(conv,
+                      conv22222_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv2_biases))
