@@ -387,7 +387,7 @@ def train(target, dataset, cluster_spec):
     cur_iteration = 0
     while not sv.should_stop():
       try:
-        if FLAGS.task_id % 2 == 0:
+        if FLAGS.task_id >= 15:
           time.sleep(100)
         cur_iteration = int(sess.run(global_step))
         tf.logging.info("Starting iteration... %d" % cur_iteration)
