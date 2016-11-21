@@ -137,7 +137,7 @@ class WorkerStatusServer(pb.Root):
         self.iterations_killed.add(self_iteration)
         tf.logging.info("Committing suicide! - %f" % time.time())
         #os.kill(os.getpid(), signal.SIGALRM)
-        #os.kill(os.getpid(), signal.SIGINT)
+        os.kill(os.getpid(), signal.SIGINT)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.

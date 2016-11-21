@@ -64,7 +64,7 @@ configuration = Cfg({
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "rm -rf %(base_out_dir)s/*",
+        "sudo rm -rf %(base_out_dir)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -520,7 +520,7 @@ def tf_ec2_run(argv, configuration):
         q = Queue.Queue()
         for instance in live_instances:
             if instance.instance_id in instance_ids_to_shutdown:
-                commands = ["pkill -9 python"]
+                commands = ["sudo pkill -9 python"]
                 t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
                 t.start()
                 threads.append(t)
@@ -533,7 +533,7 @@ def tf_ec2_run(argv, configuration):
         threads = []
         q = Queue.Queue()
         for instance in live_instances:
-            commands = ["pkill -9 python"]
+            commands = ["sudo pkill -9 python"]
             t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
             t.start()
             threads.append(t)
@@ -615,7 +615,7 @@ def tf_ec2_run(argv, configuration):
         print("Clearing previous nfs file system...")
         live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
         live_instances_string = ",".join([x.instance_id for x in live_instances])
-        rm_command = "rm -rf %s" % configuration["nfs_mount_point"]
+        rm_command = "sudo rm -rf %s" % configuration["nfs_mount_point"]
         argv = ["python", "inception_ec2.py", live_instances_string, rm_command]
         run_command(argv, quiet=True)
 
