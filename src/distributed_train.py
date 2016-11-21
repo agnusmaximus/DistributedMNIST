@@ -364,8 +364,9 @@ def train(target, dataset, cluster_spec):
     sess_config = tf.ConfigProto(
       allow_soft_placement=True,
       log_device_placement=FLAGS.log_device_placement,
-      inter_op_parallelism_threads=2,
-      intra_op_parallelism_threads=2)
+      inter_op_parallelism_threads=1,
+      intra_op_parallelism_threads=1,
+      use_per_session_threads=True)
 
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
