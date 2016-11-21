@@ -79,16 +79,23 @@ def inference(images, train=True):
   # initial value which will be assigned when we call:
   # {tf.initialize_all_variables().run()}
   conv1_weights = tf.Variable(
-      tf.truncated_normal([5, 5, NUM_CHANNELS, 32*2],  # 5x5 filter, depth 32.
+      tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
-  conv1_biases = tf.Variable(tf.zeros([32*2], dtype=tf.float32))
+  conv11_weights = tf.Variable(
+      tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
+                          stddev=0.1,
+                          seed=SEED, dtype=tf.float32))
+  conv1_biases = tf.Variable(tf.zeros([32], dtype=tf.float32))
   conv2_weights = tf.Variable(tf.truncated_normal(
-      [5, 5, 32*2, 64*2], stddev=0.1,
+      [5, 5, 32, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
-  conv2_biases = tf.Variable(tf.constant(0.1, shape=[64*2], dtype=tf.float32))
+  conv22_weights = tf.Variable(tf.truncated_normal(
+      [5, 5, 32, 64], stddev=0.1,
+      seed=SEED, dtype=tf.float32))
+  conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=tf.float32))
   fc1_weights = tf.Variable(  # fully connected, depth 512.
-      tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64 * 2, 512],
+      tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64, 512],
                           stddev=0.1,
                           seed=SEED,
                           dtype=tf.float32))
@@ -108,6 +115,10 @@ def inference(images, train=True):
                       conv1_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
+  conv = tf.nn.conv2d(images,
+                      conv11_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
   # Bias and rectified linear non-linearity.
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv1_biases))
   # Max pooling. The kernel size spec {ksize} also follows the layout of
@@ -118,6 +129,10 @@ def inference(images, train=True):
                         padding='SAME')
   conv = tf.nn.conv2d(pool,
                       conv2_weights,
+                      strides=[1, 1, 1, 1],
+                      padding='SAME')
+  conv = tf.nn.conv2d(images,
+                      conv22_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv2_biases))
