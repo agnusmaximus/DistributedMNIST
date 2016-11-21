@@ -64,10 +64,6 @@ configuration = Cfg({
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_runtime_us",
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
-        "echo 10000 | sudo tee /proc/sys/kernel/sched_time_avg_ms",
         "rm -rf %(base_out_dir)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
@@ -76,10 +72,6 @@ configuration = Cfg({
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_runtime_us",
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
-        "echo 25000 | sudo tee /proc/sys/kernel/sched_rt_period_us",
-        "echo 10000 | sudo tee /proc/sys/kernel/sched_time_avg_ms",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -99,7 +91,7 @@ configuration = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "nice -n 19 strace -T -tt python src/mnist_distributed_train.py "
+        "chrt --rr 99 python src/mnist_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
