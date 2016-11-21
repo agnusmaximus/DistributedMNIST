@@ -83,7 +83,7 @@ def inference(images, train=True):
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
   conv11_weights = tf.Variable(
-      tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
+      tf.truncated_normal([5, 5, 32, 32],  # 5x5 filter, depth 32.
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
   conv1_biases = tf.Variable(tf.zeros([32], dtype=tf.float32))
@@ -91,7 +91,7 @@ def inference(images, train=True):
       [5, 5, 32, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
   conv22_weights = tf.Variable(tf.truncated_normal(
-      [5, 5, 32, 64], stddev=0.1,
+      [5, 5, 64, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
   conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=tf.float32))
   fc1_weights = tf.Variable(  # fully connected, depth 512.
