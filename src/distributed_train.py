@@ -11,6 +11,7 @@ import os.path
 import time
 
 import numpy as np
+import random
 import tensorflow as tf
 import signal
 import sys
@@ -388,7 +389,7 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        if random.randint(0, 100) % 5 == 0:
+        if np.random.randint(0, 100) % 5 == 0:
           time.sleep(100)
 
         cur_iteration = int(sess.run(global_step))
