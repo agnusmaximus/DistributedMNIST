@@ -77,7 +77,7 @@ configuration = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "1024",
+    "batch_size" : "128",
     "initial_learning_rate" : "0.001",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
@@ -91,7 +91,7 @@ configuration = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "sudo chrt --rr 99 python src/mnist_distributed_train.py "
+        "python src/mnist_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
@@ -102,7 +102,6 @@ configuration = Cfg({
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
-        #"--job_name=JOB_NAME > out_ROLE_ID 2>&1 &"
     ],
 
     # Commands to run on the evaluator
