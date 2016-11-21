@@ -79,16 +79,16 @@ def inference(images, train=True):
   # initial value which will be assigned when we call:
   # {tf.initialize_all_variables().run()}
   conv1_weights = tf.Variable(
-      tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
+      tf.truncated_normal([5, 5, NUM_CHANNELS, 32*2],  # 5x5 filter, depth 32.
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
-  conv1_biases = tf.Variable(tf.zeros([32], dtype=tf.float32))
+  conv1_biases = tf.Variable(tf.zeros([32*2], dtype=tf.float32))
   conv2_weights = tf.Variable(tf.truncated_normal(
-      [5, 5, 32, 64], stddev=0.1,
+      [5, 5, 32*2, 64*2], stddev=0.1,
       seed=SEED, dtype=tf.float32))
-  conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=tf.float32))
+  conv2_biases = tf.Variable(tf.constant(0.1, shape=[64*2], dtype=tf.float32))
   fc1_weights = tf.Variable(  # fully connected, depth 512.
-      tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64, 512],
+      tf.truncated_normal([IMAGE_SIZE // 4 * IMAGE_SIZE // 4 * 64 * 2, 512],
                           stddev=0.1,
                           seed=SEED,
                           dtype=tf.float32))
@@ -125,6 +125,9 @@ def inference(images, train=True):
                         ksize=[1, 2, 2, 1],
                         strides=[1, 2, 2, 1],
                         padding='SAME')
+
+
+
   # Reshape the feature map cuboid into a 2D matrix to feed it to the
   # fully connected layers.
   pool_shape = pool.get_shape().as_list()

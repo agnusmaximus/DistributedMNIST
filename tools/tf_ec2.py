@@ -391,11 +391,11 @@ def tf_ec2_run(argv, configuration):
         idle_instances = get_idle_instances()
 
         # Clear the nfs
-        instances_string = ",".join([x.instance_id for x in idle_instances])
-        clear_outdir_argv = ["python", "inception_ec2.py", instances_string, "rm -rf %s" % configuration["base_out_dir"]]
-        run_command(clear_outdir_argv, quiet=True)
-        make_outdir_argv = ["python", "inception_ec2.py", instances_string, "mkdir %s" % configuration["base_out_dir"]]
-        run_command(make_outdir_argv, quiet=True)
+        #instances_string = ",".join([x.instance_id for x in idle_instances])
+        #clear_outdir_argv = ["python", "inception_ec2.py", instances_string, "sudo rm -rf %s" % configuration["base_out_dir"]]
+        #run_command(clear_outdir_argv, quiet=True)
+        #make_outdir_argv = ["python", "inception_ec2.py", instances_string, "mkdir %s" % configuration["base_out_dir"]]
+        #run_command(make_outdir_argv, quiet=True)
 
         # Assign instances for worker/ps/etc
         instance_type_to_instance_map = summarize_instances(idle_instances)
