@@ -272,18 +272,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.name_scope(None, self._name):
 
       # Phase 1 gradient computation
-      with ops.device(var.device), ops.control_dependencies([update_local_step_op]):
+      with ops.control_dependencies([update_local_step_op]):
         for grad, var in grads_and_vars:
           var_list.append(var)
-
-          if grad is None:
-            continue
-          elif isinstance(grad, ops.Tensor):
-            grad_accum = data_flow_ops.ConditionalAccumulator(
+          with ops.control_dependencies([ops.device(var.device)]):
+            if grad is None:
+              continue
+            elif isinstance(grad, ops.Tensor):
+              grad_accum = data_flow_ops.ConditionalAccumulator(
                 grad.dtype,
                 shape=var.get_shape(),
                 shared_name=var.name + "/grad_accum")
-            train_ops.append(grad_accum.apply_grad(
+              train_ops.append(grad_accum.apply_grad(
                 grad, local_step=self._local_step))
 
             # Original code - wait for a fixed number of gradients
