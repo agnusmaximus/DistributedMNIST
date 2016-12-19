@@ -299,7 +299,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(var.device):
         finished_phase_1 = []
-        for i in range(self._tokens_per_step):
+        for i in range(self._total_num_replicas):
           dequeue = self._phase1_finished_queue.dequeue()
           dequeue = logging_ops.Print(dequeue, [dequeue], message="dequeued phase 1")
           finished_phase_1.append(dequeue)
