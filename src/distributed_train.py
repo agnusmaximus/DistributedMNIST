@@ -280,7 +280,6 @@ def train(target, dataset, cluster_spec):
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
     global_step = tf.Variable(0, name="global_step", trainable=False)
-    tf.logging.info(global_step.device)
 
     # Calculate the learning rate schedule.
     num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
@@ -389,7 +388,7 @@ def train(target, dataset, cluster_spec):
 
     if is_chief:
       sv.start_queue_runners(sess, chief_queue_runners)
-      tf.logging.info(init_tokens_op[0].name)
+      tf.logging.info("YOOOOOOOOOOO")
       sess.run(init_tokens_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
