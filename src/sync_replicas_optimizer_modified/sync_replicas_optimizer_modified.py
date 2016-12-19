@@ -302,7 +302,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 2 gradient applying
-      with ops.control_dependencies([self._phase1_finished_queue.dequeue() for ii in range(self._tokens_per_step)]):
+      with ops.control_dependencies([self._phase1_finished_queue.dequeue() for i in range(self._tokens_per_step)]):
         for index, (grad, var) in enumerate(grads_and_vars):
           grad_accum = self._accumulator_list[index][0]
           with ops.device(var.device):
@@ -334,10 +334,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
 
           # Worker finished applying gradients. Add token to phase1_finished_queue
-          #with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
-
-          token = sync_token_queue.dequeue()
-          token = logging_ops.Print(token, [token], message="Dequeueing token...")
+          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+            token = sync_token_queue.dequeue()
+            token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
