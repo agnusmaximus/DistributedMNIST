@@ -302,8 +302,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 2 gradient applying
-      #with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step+10000000000)]):
-      for index, (grad, var) in enumerate(grads_and_vars):
+      with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step+10000000000)]):
+        for index, (grad, var) in enumerate(grads_and_vars):
           grad_accum = self._accumulator_list[index][0]
           with ops.device(var.device):
             if grad is None:
