@@ -302,16 +302,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 2 gradient applying
-      with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step)]):
-        for index, (grad, var) in enumerate(grads_and_vars):
+      #with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step+10000000000)]):
+      for index, (grad, var) in enumerate(grads_and_vars):
           grad_accum = self._accumulator_list[index][0]
           with ops.device(var.device):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
+              #aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
+              aggregated_grad.append(grad_accum.take_grad(10000000000000))
             else:
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
+              #aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(100000000000000000))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
@@ -334,10 +336,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
 
           # Worker finished applying gradients. Add token to phase1_finished_queue
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+          #with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
 
-            token = sync_token_queue.dequeue()
-            token = logging_ops.Print(token, [token], message="Dequeueing token...")
+          token = sync_token_queue.dequeue()
+          token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
