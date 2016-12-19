@@ -253,8 +253,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         dtype=global_step.dtype.base_dtype,
         name="sync_rep_local_step")
     self.local_step_init_op = state_ops.assign(self._local_step, global_step)
-    #chief_init_ops = [self.local_step_init_op]
-    chief_init_ops = []
+    chief_init_ops = [self.local_step_init_op]
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
@@ -276,6 +275,22 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
     # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
+
+      # Initialize all accumulators and vars
+      for grad, var in grads_and_vars:
+        if grad is None:
+          continue
+        elif isinstance(grad, ops.Tensor):
+          grad_accum = data_flow_ops.ConditionalAccumulator(
+            grad.dtype,
+            shape=var.get_shape(),
+            shared_name=var.name + "/grad_accum")
+        else:
+          if not isinstance(grad, ops.IndexedSlices):
+            raise ValueError("Unknown grad type!")
+            grad_accum = data_flow_ops.SparseConditionalAccumulator(
+              grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
+        self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
@@ -308,7 +323,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 aggregated_grad.append(grad_accum.take_indexed_slices_grad(
                   self._total_num_replicas))
 
-          self._accumulator_list.append((grad_accum, var.device))
+          #self._accumulator_list.append((grad_accum, var.device))
 
       """with ops.device(var.device):
         finished_phase_1 = []
