@@ -147,7 +147,7 @@ def tf_ec2_run(argv, configuration):
 
     def summarize_running_instances(argv):
         print("Running instances: ")
-        summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}]))
+        summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}]))
 
     # Terminate all request.
     def terminate_all_requests(method="spot"):
@@ -230,7 +230,7 @@ def tf_ec2_run(argv, configuration):
         while not done:
             print("Waiting for instances to be initialized...")
             done = True
-            live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+            live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
             ids = [x.id for x in live_instances]
             resps = client.describe_instance_status(InstanceIds=ids)
             for resp in resps["InstanceStatuses"]:
@@ -254,6 +254,8 @@ def tf_ec2_run(argv, configuration):
                 print("-------------------------------------------")
                 n_active_or_open = 0
                 for instance_request in statuses["SpotInstanceRequests"]:
+                    if instance_request["LaunchSpecification"]["KeyName"] != configuration["key_name"]:
+                       continue
                     sid = instance_request["SpotInstanceRequestId"]
                     machine_type = instance_request["LaunchSpecification"]["InstanceType"]
                     price = instance_request["SpotPrice"]
@@ -317,7 +319,7 @@ def tf_ec2_run(argv, configuration):
     # We check whether an instance is running the inception model by ssh'ing into a running machine,
     # and checking whether python is running.
     def get_idle_instances():
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
 
@@ -558,7 +560,7 @@ def tf_ec2_run(argv, configuration):
 
         # Get a random running instance (does not have to be idle, since
         # might want to download while everything machine is not idle)
-        running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])]
+        running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
         if len(running_instances) == 0:
             print("Error, no running instances")
             sys.exit(0)
@@ -594,7 +596,7 @@ def tf_ec2_run(argv, configuration):
         command = argv[3]
         instance_ids_to_run_command = cluster_instance_string.split(",")
 
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
         for instance in live_instances:
@@ -614,7 +616,7 @@ def tf_ec2_run(argv, configuration):
     # Setup nfs on all instances
     def setup_nfs():
         print("Clearing previous nfs file system...")
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         live_instances_string = ",".join([x.instance_id for x in live_instances])
         rm_command = "sudo rm -rf %s" % configuration["nfs_mount_point"]
         argv = ["python", "inception_ec2.py", live_instances_string, rm_command]
