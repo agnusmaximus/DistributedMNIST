@@ -18,6 +18,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
+import sys
 import tensorflow as tf
 from tensorflow.core.framework import types_pb2
 from tensorflow.python.framework import ops
@@ -284,6 +285,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
             aggregated_grad.append(accumulate)
           else:
+            sys.exit(-1)
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
             grad_accum = data_flow_ops.SparseConditionalAccumulator(
