@@ -46,6 +46,7 @@ tf.app.flags.DEFINE_boolean('run_once', False,
 def do_eval(saver,
             writer,
             val_acc,
+            val_loss,
             images_placeholder,
             labels_placeholder,
             data_set,
@@ -92,15 +93,16 @@ def do_eval(saver,
                                      images_placeholder,
                                      labels_placeholder,
                                      num_examples)
-    acc = sess.run(val_acc, feed_dict=feed_dict)
+    acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
 
-    print('Num examples: %d  Precision @ 1: %0.04f' %
-          (num_examples, acc))
+    print('Num examples: %d  Precision @ 1: %0.04f Loss: %0.04f' %
+          (num_examples, acc, loss))
     sys.stdout.flush()
 
     # Summarize accuracy
     summary = tf.Summary()
     summary.value.add(tag="Validation Accuracy", simple_value=float(acc))
+    summary.value.add(tag="Validation Loss", simple_value=float(loss))
     writer.add_summary(summary, global_step)
 
     return global_step
@@ -113,6 +115,7 @@ def evaluate(dataset):
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
     logits, reg = mnist.inference(images_placeholder, train=False)
     validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(batch_size)
+    validation_loss = mnist.loss(logits, labels_placeholder) + reg
 
     # Reference to sess and saver
     sess = tf.Session()
@@ -124,7 +127,7 @@ def evaluate(dataset):
                                             graph_def=graph_def)
     step = -1
     while True:
-      step = do_eval(saver, summary_writer, validation_accuracy, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
+      step = do_eval(saver, summary_writer, validation_accuracy, validation_loss, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
