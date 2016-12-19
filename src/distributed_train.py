@@ -32,7 +32,7 @@ np.set_printoptions(threshold=np.nan)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('timeout_method', True, 'Use the timeout straggler killing method')
+tf.app.flags.DEFINE_boolean('timeout_method', False, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -379,7 +379,6 @@ def train(target, dataset, cluster_spec):
 
     tf.logging.info("ABCD")
 
-    sys.exit(-1)
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
     tf.logging.info("EFGH")
