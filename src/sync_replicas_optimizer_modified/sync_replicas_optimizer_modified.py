@@ -286,21 +286,21 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_grad(
                 grad, local_step=self._local_step))
 
-            # Original code - wait for a fixed number of gradients
-            accumulate = grad_accum.take_grad(self._total_num_replicas+100)
-            accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
-            aggregated_grad.append(accumulate)
-          else:
-            if not isinstance(grad, ops.IndexedSlices):
-              raise ValueError("Unknown grad type!")
-            grad_accum = data_flow_ops.SparseConditionalAccumulator(
-                grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
-            train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))
+              # Original code - wait for a fixed number of gradients
+              accumulate = grad_accum.take_grad(self._total_num_replicas+100)
+              accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
+              aggregated_grad.append(accumulate)
+            else:
+              if not isinstance(grad, ops.IndexedSlices):
+                raise ValueError("Unknown grad type!")
+                grad_accum = data_flow_ops.SparseConditionalAccumulator(
+                  grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
+                train_ops.append(grad_accum.apply_indexed_slices_grad(
+                  grad, local_step=self._local_step))
 
-            # Original code - wait for a fixed number of gradients
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-              self._total_num_replicas))
+                # Original code - wait for a fixed number of gradients
+                aggregated_grad.append(grad_accum.take_indexed_slices_grad(
+                  self._total_num_replicas))
 
           self._accumulator_list.append((grad_accum, var.device))
 
