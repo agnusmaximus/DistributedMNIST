@@ -32,7 +32,7 @@ np.set_printoptions(threshold=np.nan)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('timeout_method', False, 'Use the timeout straggler killing method')
+tf.app.flags.DEFINE_boolean('timeout_method', True, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -326,8 +326,6 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    #apply_gradients_op, kill_cleanup_op = opt.minimize(total_loss, global_step=global_step)
-    #apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
     if not FLAGS.timeout_method:
       apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
     else:
