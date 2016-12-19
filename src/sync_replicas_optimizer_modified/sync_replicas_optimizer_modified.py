@@ -279,6 +279,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Initialize all accumulators and vars
       for grad, var in grads_and_vars:
         if grad is None:
+          tf.logging.info("WTFF??F?A?SDFASDF?")
           continue
         elif isinstance(grad, ops.Tensor):
           grad_accum = data_flow_ops.ConditionalAccumulator(
