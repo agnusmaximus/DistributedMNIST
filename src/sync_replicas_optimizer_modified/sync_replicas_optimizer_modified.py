@@ -350,13 +350,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           for worker in range(self._total_num_replicas):
             sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
 
-        if self._variable_averages is not None:
-          with ops.control_dependencies([sync_ops]), ops.name_scope(""):
-            sync_op = self._variable_averages.apply(
-                self._variables_to_average)
-
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
-                                                            [sync_op])
+                                                            sync_ops)
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
           chief_init_ops.append(
