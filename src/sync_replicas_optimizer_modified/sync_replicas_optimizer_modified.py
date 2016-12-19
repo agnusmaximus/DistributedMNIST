@@ -381,7 +381,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
-            sync_ops.append([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")])
+            sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             #for worker in range(self._total_num_replicas):
               #sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
 
