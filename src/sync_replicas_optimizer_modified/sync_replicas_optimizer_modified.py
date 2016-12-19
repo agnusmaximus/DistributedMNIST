@@ -269,7 +269,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # BEFORE begining to compute gradients.
     with ops.device('/job:worker/task:%d' % worker_id):
       n_in_q = self._sync_token_queues[worker_id].size()
-      with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="sizeyoooo")]):
+      with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q, worker_id], message="sizeyoooo")]):
         update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
         update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
 
