@@ -336,7 +336,7 @@ def train(target, dataset, cluster_spec):
     # synchronize replicas.
     # More details can be found in sync_replicas_optimizer.
     chief_queue_runners = [opt.get_chief_queue_runner()]
-    init_tokens_op = [opt.get_init_tokens_op()]
+    init_tokens_op = opt.get_init_tokens_op()
     #clean_up_op = opt.get_clean_up_op()
 
     # Create a saver.
