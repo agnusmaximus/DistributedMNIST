@@ -32,6 +32,7 @@ np.set_printoptions(threshold=np.nan)
 
 FLAGS = tf.app.flags.FLAGS
 
+tf.app.flags.DEFINE_booleans('timeout_method', False, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -126,6 +127,9 @@ class WorkerStatusServer(pb.Root):
     return n_stable_required == n_stable
 
   def check_is_straggler(self):
+    # todo: remove
+    return False
+
     if not self.is_stable():
       return False
     self_iteration = self.iteration_track[self.worker_id]
@@ -226,8 +230,8 @@ class WorkerStatusClient:
     reactor.connectTCP(host, FLAGS.rpc_port, factory)
     factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
-def train(target, dataset, cluster_spec):
-
+# Separate manager process to oversee training on workers.
+def launch_manager():
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
   rpc_server = pb.PBServerFactory(WorkerStatusServer())
@@ -238,6 +242,11 @@ def train(target, dataset, cluster_spec):
   while not rpc_client.ready_to_start():
     rpc_client.check_ready_to_start()
     time.sleep(1)
+
+def train(target, dataset, cluster_spec):
+
+  if FLAGS.timeout_method:
+    launch_manager()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
@@ -280,7 +289,7 @@ def train(target, dataset, cluster_spec):
     #decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay)
 
     # Decay the learning rate exponentially based on the number of steps.
-    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate * num_replicas_to_aggregate,
+    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
                                     global_step,
                                     decay_steps,
                                     FLAGS.learning_rate_decay_factor,
@@ -299,25 +308,25 @@ def train(target, dataset, cluster_spec):
     total_loss = mnist.loss(logits, labels) + reg
 
     # Create an optimizer that performs gradient descent.
-    #opt = tf.train.AdamOptimizer(lr)
-    opt = tf.train.MomentumOptimizer(lr, .9)
-    #opt = tf.train.AdamOptimizer(.01)
+    opt = tf.train.AdamOptimizer(lr)
 
     # Use V2 optimizer
-    opt = SyncReplicasOptimizerV2(
-      opt,
-      replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)
-    """opt = tf.train.SyncReplicasOptimizerV2(
-      opt,
-      replicas_to_aggregate=num_replicas_to_aggregate,
-      total_num_replicas=num_workers)"""
+    if not FLAGS.timeout_method:
+      opt = tf.train.SyncReplicasOptimizerV2(
+        opt,
+        replicas_to_aggregate=num_replicas_to_aggregate,
+        total_num_replicas=num_workers)
+    else:
+      opt = SyncReplicasOptimizerV2(
+        opt,
+        replicas_to_aggregate=num_replicas_to_aggregate,
+        total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
-    #grads = opt.compute_gradients(total_loss)
+    grads = opt.compute_gradients(total_loss)
     #apply_gradients_op, kill_cleanup_op = opt.minimize(total_loss, global_step=global_step)
-    apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
-    #apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    #apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
+    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -389,12 +398,10 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        if np.random.randint(0, 100) % 5 == 0:
-          time.sleep(100)
-
         cur_iteration = int(sess.run(global_step))
         tf.logging.info("Starting iteration... %d" % cur_iteration)
-        rpc_client.broadcast_starting(cur_iteration)
+        if FLAGS.timeout_method:
+          rpc_client.broadcast_starting(cur_iteration)
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
