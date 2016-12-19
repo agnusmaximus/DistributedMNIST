@@ -400,7 +400,6 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        tf.logging.info("YOAYOAYOAOYAOYOAYO")
         cur_iteration = int(sess.run(global_step))
         tf.logging.info("Starting iteration... %d" % cur_iteration)
         if FLAGS.timeout_method:
