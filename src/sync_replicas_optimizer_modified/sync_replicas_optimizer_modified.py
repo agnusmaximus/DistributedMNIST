@@ -170,8 +170,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
     super(TimeoutReplicasOptimizer, self).__init__(use_locking, name)
     logging.info(
-        "TimeoutReplicas: replicas_to_aggregate=%s; total_num_replicas=%s",
-        replicas_to_aggregate, total_num_replicas)
+        "TimeoutReplicas: total_num_replicas=%s",
+        total_num_replicas)
     self._opt = opt
     self._gradients_applied = False
     self._variable_averages = variable_averages
