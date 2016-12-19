@@ -145,6 +145,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                variable_averages=None,
                variables_to_average=None,
                use_locking=False,
+               global_step,
                name="sync_replicas"):
     """Construct a sync_replicas optimizer.
     Args:
