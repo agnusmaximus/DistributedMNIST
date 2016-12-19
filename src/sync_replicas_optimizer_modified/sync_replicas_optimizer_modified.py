@@ -306,7 +306,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([self._phase1_finished_queue.dequeue() for i in range(self._tokens_per_step)]):
         for index, (grad, var) in enumerate(grads_and_vars):
           grad_accum = self._accumulator_list[index][0]
-          n_accumulated = grad_accum.num_accumulated()
+          n_accumulated = tf.identity(grad_accum.num_accumulated())
           with ops.device(var.device):
             if grad is None:
               aggregated_grad.append(None)
