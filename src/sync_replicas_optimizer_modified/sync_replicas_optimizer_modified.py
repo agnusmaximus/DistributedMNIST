@@ -311,7 +311,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              with ops.control_dependencies([tf.Assert(n_accumulatd > 0, [n_accumulated])]):
+              with ops.control_dependencies([tf.Assert(n_accumulated > 0, [n_accumulated])]):
                 aggregated_grad.append(grad_accum.take_grad(n_accumulated))
             else:
               aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
