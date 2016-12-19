@@ -337,7 +337,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         # BEFORE begining to compute gradients.
         update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
         update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Dequeueing")
-        with ops.control_dependencies([update_local_step_op])
+        with ops.control_dependencies([update_local_step_op]):
           with ops.control_dependencies(train_ops):
 
             # Worker finished applying gradients. Add token to phase1_finished_queue
