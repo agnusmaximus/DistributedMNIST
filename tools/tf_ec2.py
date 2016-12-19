@@ -530,7 +530,7 @@ def tf_ec2_run(argv, configuration):
         summarize_idle_instances(None)
 
     def kill_all_python(argv):
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},  {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
         for instance in live_instances:
