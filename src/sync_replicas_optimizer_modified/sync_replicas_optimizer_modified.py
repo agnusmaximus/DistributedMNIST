@@ -282,7 +282,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
             # Original code - wait for a fixed number of gradients
             accumulate = grad_accum.take_grad(self._total_num_replicas+100)
-            print(self._total_num_replicas)
+            tf.logging.info(self._total_num_replicas)
             accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
             aggregated_grad.append(accumulate)
           else:
