@@ -38,7 +38,7 @@ from tensorflow.python.training import queue_runner
 # rate according to the number of replicas. This change is introduced to be
 # consistent with how gradients are aggregated (averaged) within a batch in a
 # replica.
-class TimeoutReplicasOptimizerV2(optimizer.Optimizer):
+class TimeoutReplicasOptimizer(optimizer.Optimizer):
   """Class to synchronize, aggregate gradients and pass them to the optimizer.
   In a typical asynchronous training environment, it's common to have some
   stale gradients. For example, with a N-replica asynchronous training,
@@ -168,9 +168,9 @@ class TimeoutReplicasOptimizerV2(optimizer.Optimizer):
     if total_num_replicas is None:
       total_num_replicas = replicas_to_aggregate
 
-    super(SyncReplicasOptimizerV2, self).__init__(use_locking, name)
+    super(TimeoutReplicasOptimizer, self).__init__(use_locking, name)
     logging.info(
-        "SyncReplicasV2: replicas_to_aggregate=%s; total_num_replicas=%s",
+        "TimeoutReplicas: replicas_to_aggregate=%s; total_num_replicas=%s",
         replicas_to_aggregate, total_num_replicas)
     self._opt = opt
     self._replicas_to_aggregate = replicas_to_aggregate

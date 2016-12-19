@@ -6,7 +6,7 @@ from __future__ import division
 from __future__ import print_function
 
 from datetime import datetime
-from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import TimeoutReplicasOptimizerV2
+from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import TimeoutReplicasOptimizer
 import os.path
 import time
 
@@ -319,7 +319,7 @@ def train(target, dataset, cluster_spec):
         replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
     else:
-      opt = TimeoutReplicasOptimizerV2(
+      opt = TimeoutReplicasOptimizer(
         opt,
         replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
