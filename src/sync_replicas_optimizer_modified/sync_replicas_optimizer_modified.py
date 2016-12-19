@@ -323,18 +323,19 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 2 gradient applying
       #with ops.control_dependencies(finished_phase_1):
       for index, (grad, var) in enumerate(grads_and_vars):
-        grad_accum = self._accumulator_list[index][0]
-        n_accumulated = tf.identity(grad_accum.num_accumulated())
-        if grad is None:
-          aggregated_grad.append(None)
-        elif isinstance(grad, ops.Tensor):
-          #with ops.control_dependencies([tf.Assert(tf.greater_equal(n_accumulated, self._tokens_per_step), [n_accumulated])]):
-          #with ops.control_dependencies([tf.Print(n_accumulated, [n_accumulated], message="yo:")]):
-          #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
-          aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
-        else:
-          #aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
-          aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
+        with ops.device(var.device):
+          grad_accum = self._accumulator_list[index][0]
+          n_accumulated = tf.identity(grad_accum.num_accumulated())
+          if grad is None:
+            aggregated_grad.append(None)
+          elif isinstance(grad, ops.Tensor):
+            #with ops.control_dependencies([tf.Assert(tf.greater_equal(n_accumulated, self._tokens_per_step), [n_accumulated])]):
+            #with ops.control_dependencies([tf.Print(n_accumulated, [n_accumulated], message="yo:")]):
+            #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
+            aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+          else:
+            #aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
