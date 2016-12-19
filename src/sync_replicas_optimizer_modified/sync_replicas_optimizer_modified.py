@@ -301,7 +301,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               continue
             else:
               grad_accum = self._accumulator_list[index][0]
-              elif isinstance(grad, ops.Tensor):
+              if isinstance(grad, ops.Tensor):
                 # Original code - wait for a fixed number of gradients
                 accumulate = grad_accum.take_grad(self._total_num_replicas)
                 accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
