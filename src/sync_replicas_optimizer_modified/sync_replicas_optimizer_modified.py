@@ -250,12 +250,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       variables.all_variables())
 
     with ops.name_scope(None, self._name):
+
+      # Phase 1 gradient computation
       for grad, var in grads_and_vars:
         var_list.append(var)
         with ops.device(var.device):
           # Dense gradients.
           if grad is None:
-            aggregated_grad.append(None)  # pass-through.
+            #aggregated_grad.append(None)  # pass-through.
             continue
           elif isinstance(grad, ops.Tensor):
             grad_accum = data_flow_ops.ConditionalAccumulator(
@@ -268,10 +270,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Original code - wait for a fixed number of gradients
             #aggregated_grad.append(grad_accum.take_grad(
             #    self._replicas_to_aggregate))
-
-            # New code - take whatever has been accumulated
-            aggregated_grad.append(grad_accum.take_grad(
-                grad_accum.num_accumulated()))
           else:
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
@@ -284,11 +282,19 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             #aggregated_grad.append(grad_accum.take_indexed_slices_grad(
             #    self._replicas_to_aggregate))
 
-            # New code - take whatever has been accumulated
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-              grad_accum.num_accumulated()))
-
           self._accumulator_list.append((grad_accum, var.device))
+
+      # Phase 2 gradient applying
+      with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step)]):
+        for index, (grad, var) in enumerate(grads_and_vars):
+          grad_accum = self._accumulator_list[index][0]
+          with ops.device(var.device):
+            if grad is None:
+              aggregated_grad.append(None)
+            elif isinstance(grad, ops.Tensor):
+              aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
+            else:
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
