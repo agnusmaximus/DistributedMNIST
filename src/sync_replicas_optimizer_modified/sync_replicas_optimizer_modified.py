@@ -305,7 +305,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               #  grad.dtype,
               #  shape=var.get_shape(),
               #  shared_name=var.name + "/grad_accum")
-              grad_accum = self._acumulator_list[index]
+              grad_accum = self._accumulator_list[index]
 
               train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
               train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
@@ -319,7 +319,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 raise ValueError("Unknown grad type!")
                 #grad_accum = data_flow_ops.SparseConditionalAccumulator(
                 #  grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
-                grad_accum = self._acumulator_list[index]
+                grad_accum = self._accumulator_list[index]
 
                 train_ops.append(grad_accum.apply_indexed_slices_grad(
                   grad, local_step=self._local_step))
