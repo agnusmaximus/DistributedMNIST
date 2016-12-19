@@ -174,14 +174,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         "TimeoutReplicas: replicas_to_aggregate=%s; total_num_replicas=%s",
         replicas_to_aggregate, total_num_replicas)
     self._opt = opt
-    self._replicas_to_aggregate = replicas_to_aggregate
     self._gradients_applied = False
     self._variable_averages = variable_averages
     self._variables_to_average = variables_to_average
     self._total_num_replicas = total_num_replicas
-
-    # In the timeout replicas trainer, we wait for everyone.
-    self._tokens_per_step = total_num_replicas
     self._global_step = None
     self._sync_token_queue = None
 
@@ -209,7 +205,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     """
     return self._opt.compute_gradients(*args, **kwargs)
 
-  def apply_gradients(self, grads_and_vars, global_step=None, name=None):
+  def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None):
     """Apply gradients to variables.
     This contains most of the synchronization implementation and also wraps the
     apply_gradients() from the real optimizer.
@@ -250,32 +246,32 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
-    # Create token queue.
+    # For timeout, we have one token queue per worker. This makes it so that
+    # a worker can not take the work of another worker if it finishes early.
+    self._sync_token_queues = [0] * self._total_num_replicas
+    for worker in self._total_num_replicas:
+      with ops.device('/job:worker/task:%d' % worker):
+        self._sync_token_queues[worker] = data_flow_ops.FIFOQueue(-1,
+                                                                  global_step.dtype.base_dtype,
+                                                                  shapes=(),
+                                                                  shared_name="sync_token_q_%d" % worker)
+
+    # For timeout, we have one phase 1 finished queue which workers add their step
+    # to after computing and applying their gradients to the accumulator.
     with ops.device(global_step.device), ops.name_scope(""):
-      sync_token_queue = (
-        data_flow_ops.FIFOQueue(-1,
-                                global_step.dtype.base_dtype,
-                                shapes=(),
-                                shared_name="sync_token_q"))
-      self._sync_token_queue = sync_token_queue
+      self._phase1_finished_queue = data_flow_ops.FIFOQueue(-1,
+                                                            global_step.dtype.base_dtype,
+                                                            shapes=(),
+                                                            shared_name="phase1_finished_q")
 
-      phase1_finished_queue = (
-        data_flow_ops.FIFOQueue(-1,
-                                global_step.dtype.base_dtype,
-                                shapes=(),
-                                shared_name="phase1_finished_q"))
-      self._phase1_finished_queue = phase1_finished_queue
-
-
+    # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
 
       # Phase 1 gradient computation
       for grad, var in grads_and_vars:
         var_list.append(var)
         with ops.device(var.device):
-          # Dense gradients.
           if grad is None:
-            #aggregated_grad.append(None)  # pass-through.
             continue
           elif isinstance(grad, ops.Tensor):
             grad_accum = data_flow_ops.ConditionalAccumulator(
@@ -345,15 +341,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
           # Worker finished applying gradients. Add token to phase1_finished_queue
           with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
-            token = sync_token_queue.dequeue()
+            token = self._sync_token_queues[worker_id].dequeue()
             token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
-          tokens = array_ops.fill([self._tokens_per_step], global_step.ref())
-          sync_op = sync_token_queue.enqueue_many((tokens,))
+          sync_op = self._sync_token_queues[worker_id].enqueue(global_step.ref())
 
         if self._variable_averages is not None:
           with ops.control_dependencies([sync_op]), ops.name_scope(""):

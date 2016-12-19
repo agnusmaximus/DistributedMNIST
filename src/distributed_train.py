@@ -325,10 +325,10 @@ def train(target, dataset, cluster_spec):
         total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
-    #grads = opt.compute_gradients(total_loss)
+    grads = opt.compute_gradients(total_loss)
     #apply_gradients_op, kill_cleanup_op = opt.minimize(total_loss, global_step=global_step)
-    apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
-    #apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    #apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
+    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
