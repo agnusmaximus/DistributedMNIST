@@ -381,11 +381,11 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             sync_ops)
-      for accum, dev in self._accumulator_list:
+      """for accum, dev in self._accumulator_list:
         with ops.device(dev):
           chief_init_ops.append(
               accum.set_global_step(
-                  global_step, name="SetGlobalStep"))
+                  global_step, name="SetGlobalStep"))"""
       self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
       return train_op
