@@ -340,11 +340,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         # Replicas have to wait until they can get a token from the token queue
         # BEFORE begining to compute gradients.
         update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-        update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Dequeueing")
+        update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
         with ops.control_dependencies([update_local_step_op]):
           with ops.control_dependencies(train_ops):
+            with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
               # Worker finished applying gradients. Add token to phase1_finished_queue
-              train_op = self._phase1_finished_queue.enqueue(global_step.ref())
+              train_op = logging_ops.Print(self._local_step, [self._local_step], message="Finished worker updates")
 
         #train_op = state_ops.assign(self._local_step, token)
 
