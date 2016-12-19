@@ -334,9 +334,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
 
           # Worker finished applying gradients. Add token to phase1_finished_queue
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
-            token = sync_token_queue.dequeue()
-            token = logging_ops.Print(token, [token], message="Dequeueing token...")
+          #with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+          token = sync_token_queue.dequeue()
+          token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
