@@ -25,14 +25,14 @@ class Cfg(dict):
 
 configuration = Cfg({
     "name" : "mnist_cnn_25_workers",      # Unique name for this specific configuration
-    "key_name": "DistributedSGD",         # Necessary to ssh into created instances
+    "key_name": "MaxLamKeyPair",         # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 20,
-    "n_ps" : 8,
+    "n_workers" : 4,
+    "n_ps" : 2,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "15",
+    "num_replicas_to_aggregate" : "3",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -155,9 +155,9 @@ def tf_ec2_run(argv, configuration):
             spot_requests = client.describe_spot_instance_requests()
             spot_request_ids = []
             for spot_request in spot_requests["SpotInstanceRequests"]:
-                if spot_request["State"] != "cancelled":
-                    spot_request_id = spot_request["SpotInstanceRequestId"]
-                    spot_request_ids.append(spot_request_id)
+               if spot_request["State"] != "cancelled" and spot_request["LaunchSpecification"]["KeyName"] == configuration["key_name"]:
+                  spot_request_id = spot_request["SpotInstanceRequestId"]
+                  spot_request_ids.append(spot_request_id)
 
             if len(spot_request_ids) != 0:
                 print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
@@ -181,8 +181,9 @@ def tf_ec2_run(argv, configuration):
     # Terminate all instances in the configuration
     # Note: all_instances = ec2.instances.all() to get all intances
     def terminate_all_instances():
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         all_instance_ids = [x.id for x in live_instances]
+        print([x.id for x in live_instances])
         if len(all_instance_ids) != 0:
             print("Terminating instances: %s" % (" ".join([str(x) for x in all_instance_ids])))
             client.terminate_instances(InstanceIds=all_instance_ids)
