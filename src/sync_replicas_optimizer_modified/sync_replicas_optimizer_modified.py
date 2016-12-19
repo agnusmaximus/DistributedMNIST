@@ -336,7 +336,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         # Replicas have to wait until they can get a token from the token queue.
-        with ops.control_dependencies(train_ops):
+        with ops.control_dependencies([train_ops]):
 
           # Worker finished applying gradients. Add token to phase1_finished_queue
           with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
