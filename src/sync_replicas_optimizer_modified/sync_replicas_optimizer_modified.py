@@ -334,14 +334,15 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                     shared_name="dummy_queue"))
 
       with ops.device(global_step.device), ops.name_scope(""):
-        # Replicas have to wait until they can get a token from the token queue.
-        with ops.control_dependencies(train_ops):
+        # Replicas have to wait until they can get a token from the token queue
+        # BEFORE begining to compute gradients.
+        with ops.control_dependencies([self._sync_token_queues[worker_id].dequeue()]):
+          with ops.control_dependencies(train_ops):
 
-          # Worker finished applying gradients. Add token to phase1_finished_queue
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
-            token = self._sync_token_queues[worker_id].dequeue()
-            token = logging_ops.Print(token, [token], message="Dequeueing token...")
-        train_op = state_ops.assign(self._local_step, token)
+            # Worker finished applying gradients. Add token to phase1_finished_queue
+            with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+              train_op = logging_ops.Print(global_step, [global_step], message="Dequeueing token...")
+        #train_op = state_ops.assign(self._local_step, token)
 
         sync_ops = []
         with ops.control_dependencies([update_op]):
