@@ -406,7 +406,6 @@ def train(target, dataset, cluster_spec):
           rpc_client.broadcast_starting(cur_iteration)
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
-        tf.logging.info(feed_dict)
 
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
