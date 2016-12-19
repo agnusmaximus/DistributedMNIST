@@ -444,6 +444,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       tokens = array_ops.fill([num_tokens],
                               self._global_step.ref())
       for i in range(self._total_num_replicas):
-        init_tokens.append(self._sync_token_queues[i].enqueue(self._global_step.ref()))
+        with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
+          init_tokens_op = self._sync_token_queues[i].enqueue(self._global_step.ref()))
+        init_tokens.append(init_tokens_op)
 
     return init_tokens
