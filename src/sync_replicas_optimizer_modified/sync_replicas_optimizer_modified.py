@@ -403,7 +403,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     """
     return self._opt.get_slot_names(*args, **kwargs)
 
-  def get_init_tokens_op(self, n_workers, num_tokens=-1):
+  def get_init_tokens_op(self, num_tokens=-1):
     """Returns the op to fill the sync_token_queue with the tokens.
     This is supposed to be executed in the beginning of the chief/sync thread
     so that even if the total_num_replicas is less than replicas_to_aggregate,
@@ -436,7 +436,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         tokens = array_ops.fill([num_tokens],
                                 self._global_step.ref())
         init_tokens = []
-        for i in range(n_workers):
+        for i in range(self._total_num_replicas):
           init_tokens.append(self._sync_token_queues[i].enqueue(self._global_step.ref()))
     else:
       init_tokens = control_flow_ops.no_op(name="no_init_tokens")
