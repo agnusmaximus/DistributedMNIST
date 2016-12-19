@@ -263,13 +263,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                                             shapes=(),
                                                             shared_name="phase1_finished_q")
 
+    # Replicas have to wait until they can get a token from the token queue
+    # BEFORE begining to compute gradients.
+    update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
+    update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
+
     # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
 
       # Phase 1 gradient computation
       for grad, var in grads_and_vars:
         var_list.append(var)
-        with ops.device(var.device):
+        with ops.device(var.device), ops.control_dependencies([update_local_step_op]):
           if grad is None:
             continue
           elif isinstance(grad, ops.Tensor):
@@ -285,7 +290,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
             aggregated_grad.append(accumulate)
           else:
-            sys.exit(-1)
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
             grad_accum = data_flow_ops.SparseConditionalAccumulator(
@@ -336,15 +340,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                     shared_name="dummy_queue"))
 
       with ops.device(global_step.device), ops.name_scope(""):
-        # Replicas have to wait until they can get a token from the token queue
-        # BEFORE begining to compute gradients.
-        update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-        update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
-        with ops.control_dependencies([update_local_step_op]):
           with ops.control_dependencies(train_ops):
             with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
               # Worker finished applying gradients. Add token to phase1_finished_queue
-              train_op = logging_ops.Print(self._local_step, [x[0].num_accumulated() for x in self._accumulator_list], message="Finished worker updates")
+              train_op = logging_ops.Print(self._local_step,
+                                           [x[0].num_accumulated() for x in self._accumulator_list],
+                                           message="Finished worker updates")
 
         #train_op = state_ops.assign(self._local_step, token)
 
