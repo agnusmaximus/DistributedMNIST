@@ -253,7 +253,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         dtype=global_step.dtype.base_dtype,
         name="sync_rep_local_step")
     self.local_step_init_op = state_ops.assign(self._local_step, global_step)
-    chief_init_ops = [self.local_step_init_op]
+    #chief_init_ops = [self.local_step_init_op]
+    chief_init_ops = []
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
@@ -370,8 +371,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           chief_init_ops.append(
               accum.set_global_step(
                   global_step, name="SetGlobalStep"))
-      #self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
-      self.chief_init_op = [self.local_step_init_op]
+      self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
       return train_op
 
