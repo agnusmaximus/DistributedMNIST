@@ -321,8 +321,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        update_op = self._opt.apply_gradients(aggregated_grads_and_vars,
-                                              global_step)
+        update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
@@ -336,13 +335,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.device(global_step.device), ops.name_scope(""):
         # Replicas have to wait until they can get a token from the token queue
         # BEFORE begining to compute gradients.
-        with ops.control_dependencies([self._sync_token_queues[worker_id].dequeue()]):
+        update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
+        update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Dequeueing")
+        with ops.control_dependencies([update_local_step_op])
           with ops.control_dependencies(train_ops):
 
             # Worker finished applying gradients. Add token to phase1_finished_queue
-            with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
-              train_op = state_ops.assign(self._local_step, tf.add(self._local_step, 1))
-              train_op = logging_ops.Print(train_op, [train_op], message="Dequeueing")
+            train_op = self._phase1_finished_queue.enqueue(global_step.ref())
+
         #train_op = state_ops.assign(self._local_step, token)
 
         sync_ops = []
@@ -350,7 +350,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
           for worker in range(self._total_num_replicas):
-            sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
+            sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref())))
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             sync_ops)
