@@ -275,6 +275,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.device(var.device), ops.control_dependencies([update_local_step_op]):
         for grad, var in grads_and_vars:
           var_list.append(var)
+
           if grad is None:
             continue
           elif isinstance(grad, ops.Tensor):
