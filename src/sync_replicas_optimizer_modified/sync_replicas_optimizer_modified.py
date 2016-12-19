@@ -282,6 +282,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
             # Original code - wait for a fixed number of gradients
             accumulate = grad_accum.take_grad(self._total_num_replicas+100)
+            print(self._total_num_replicas)
             accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
             aggregated_grad.append(accumulate)
           else:
@@ -348,8 +349,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         #train_op = state_ops.assign(self._local_step, token)
 
         sync_ops = []
-        with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
-          with ops.control_dependencies([update_op]):
+        with ops.control_dependencies([update_op]):
+          with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             for worker in range(self._total_num_replicas):
