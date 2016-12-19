@@ -295,61 +295,46 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
-          var_list.append(var)
+          #var_list.append(var)
           with ops.device(var.device):
             if grad is None:
               continue
             elif isinstance(grad, ops.Tensor):
-              #grad_accum = data_flow_ops.ConditionalAccumulator(
-              #  grad.dtype,
-              #  shape=var.get_shape(),
-              #  shared_name=var.name + "/grad_accum")
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
               train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
-              # Original code - wait for a fixed number of gradients
-              #aggregated_grad.append(grad_accum.take_grad(
-              #  self._total_num_replicas))
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
-                #grad_accum = data_flow_ops.SparseConditionalAccumulator(
-                #  grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
                 grad_accum = self._accumulator_list[index][0]
 
                 train_ops.append(grad_accum.apply_indexed_slices_grad(
                   grad, local_step=self._local_step))
 
-                # Original code - wait for a fixed number of gradients
-                #aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-                #  self._total_num_replicas))
 
-          self._accumulator_list.append((grad_accum, var.device))
+      finished_phase_1 = []
+      for i in range(self._total_num_replicas):
+        dequeue = self._phase1_finished_queue.dequeue()
+        dequeue = logging_ops.Print(dequeue, [dequeue], message="dequeued phase 1")
+        finished_phase_1.append(dequeue)
 
-      with ops.device(var.device):
-        finished_phase_1 = []
-        for i in range(self._total_num_replicas):
-          dequeue = self._phase1_finished_queue.dequeue()
-          dequeue = logging_ops.Print(dequeue, [dequeue], message="dequeued phase 1")
-          finished_phase_1.append(dequeue)
-
-        # Phase 2 gradient applying
-        #with ops.control_dependencies(finished_phase_1):
-        for index, (grad, var) in enumerate(grads_and_vars):
-          grad_accum = self._accumulator_list[index][0]
-          n_accumulated = tf.identity(grad_accum.num_accumulated())
-          if grad is None:
-            aggregated_grad.append(None)
-          elif isinstance(grad, ops.Tensor):
-            #with ops.control_dependencies([tf.Assert(tf.greater_equal(n_accumulated, self._tokens_per_step), [n_accumulated])]):
-            #with ops.control_dependencies([tf.Print(n_accumulated, [n_accumulated], message="yo:")]):
-            #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
-            aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
-          else:
-            #aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
+      # Phase 2 gradient applying
+      #with ops.control_dependencies(finished_phase_1):
+      for index, (grad, var) in enumerate(grads_and_vars):
+        grad_accum = self._accumulator_list[index][0]
+        n_accumulated = tf.identity(grad_accum.num_accumulated())
+        if grad is None:
+          aggregated_grad.append(None)
+        elif isinstance(grad, ops.Tensor):
+          #with ops.control_dependencies([tf.Assert(tf.greater_equal(n_accumulated, self._tokens_per_step), [n_accumulated])]):
+          #with ops.control_dependencies([tf.Print(n_accumulated, [n_accumulated], message="yo:")]):
+          #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
+          aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+        else:
+          #aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
+          aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
