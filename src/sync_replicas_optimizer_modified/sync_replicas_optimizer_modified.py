@@ -268,9 +268,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
     n_in_q = self._sync_token_queues[worker_id].size()
-    with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="sizeyoooo")]):
-      update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-      update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
+    with ops.device('/job:worker/task:%d' % worker_id):
+      with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="sizeyoooo")]):
+        update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
+        update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op], message="Starting worker updates")
 
     # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
