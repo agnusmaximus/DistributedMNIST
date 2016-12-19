@@ -274,7 +274,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
     # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
-
       for grad, var in grads_and_vars:
         var_list.append(var)
         with ops.device(var.device):
