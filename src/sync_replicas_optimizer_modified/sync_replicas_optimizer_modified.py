@@ -366,7 +366,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
-                                                            control_flow_ops.group(*(sync_ops)))
+                                                            [control_flow_ops.group(*(sync_ops))])
       """for accum, dev in self._accumulator_list:
         with ops.device(dev):
           chief_init_ops.append(
