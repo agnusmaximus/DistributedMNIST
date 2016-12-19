@@ -302,18 +302,16 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 2 gradient applying
-      with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step+10000000000)]):
+      with ops.control_dependencies([self._phase1_finished_queue.dequeue()]):
         for index, (grad, var) in enumerate(grads_and_vars):
           grad_accum = self._accumulator_list[index][0]
           with ops.device(var.device):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              #aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
-              aggregated_grad.append(grad_accum.take_grad(10000000000000))
+              aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
             else:
-              #aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(100000000000000000))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
