@@ -309,9 +309,11 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           if grad is None:
             aggregated_grad.append(None)
           elif isinstance(grad, ops.Tensor):
-            aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
+            #aggregated_grad.append(grad_accum.take_grad(grad_accum.num_accumulated()))
+            aggregated_grad.append(grad_accum.take_grad(self._replicas_to_aggregate))
           else:
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
+            #aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._replicas_to_aggregate))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
