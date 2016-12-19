@@ -358,7 +358,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         #train_op = state_ops.assign(self._local_step, token)
 
         sync_ops = []
-        with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="WTF MANNNN")]):
+        with ops.control_dependencies(train_ops):
           with ops.control_dependencies([update_op]):
             with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
               # Sync_op needs to insert tokens to the token queue at the end of the
