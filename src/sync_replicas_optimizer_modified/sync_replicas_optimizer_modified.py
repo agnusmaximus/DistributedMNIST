@@ -289,8 +289,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 shared_name=var.name + "/grad_accum")
 
               train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
-              if worker_id != 0:
-                train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
+              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
               # Original code - wait for a fixed number of gradients
               accumulate = grad_accum.take_grad(self._total_num_replicas)
@@ -359,13 +358,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         sync_ops = []
         with ops.control_dependencies([train_op]):
-          with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="Done training, time to try to update...")]):
-            with ops.control_dependencies([update_op]):
-              with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
-                # Sync_op needs to insert tokens to the token queue at the end of the
-                # step so the replicas can fetch them to start the next step.
-                for worker in range(self._total_num_replicas):
-                  sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
+          with ops.control_dependencies([update_op]):
+            with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER")]):
+              # Sync_op needs to insert tokens to the token queue at the end of the
+              # step so the replicas can fetch them to start the next step.
+              for worker in range(self._total_num_replicas):
+                sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
