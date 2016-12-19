@@ -276,53 +276,40 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # Gradient accumulation and applying
     with ops.name_scope(None, self._name):
 
-      # Initialize all accumulators and vars
-      for grad, var in grads_and_vars:
-        if grad is None:
-          tf.logging.info("WTFF??F?A?SDFASDF?")
-          continue
-        elif isinstance(grad, ops.Tensor):
-          grad_accum = data_flow_ops.ConditionalAccumulator(
-            grad.dtype,
-            shape=var.get_shape(),
-            shared_name=var.name + "/grad_accum")
-        else:
-          if not isinstance(grad, ops.IndexedSlices):
-            raise ValueError("Unknown grad type!")
-            grad_accum = data_flow_ops.SparseConditionalAccumulator(
-              grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
-        self._accumulator_list.append((grad_accum, var.device))
-
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
-        for index, (grad, var) in enumerate(grads_and_vars):
+        for grad, var in grads_and_vars:
           var_list.append(var)
           with ops.device(var.device):
             if grad is None:
               continue
-            else:
-              grad_accum = self._accumulator_list[index][0]
-              if isinstance(grad, ops.Tensor):
+            elif isinstance(grad, ops.Tensor):
+              grad_accum = data_flow_ops.ConditionalAccumulator(
+                grad.dtype,
+                shape=var.get_shape(),
+                shared_name=var.name + "/grad_accum")
 
-                train_ops.append(grad_accum.apply_grad(
+              train_ops.append(grad_accum.apply_grad(
+                grad, local_step=self._local_step))
+
+              # Original code - wait for a fixed number of gradients
+              accumulate = grad_accum.take_grad(self._total_num_replicas)
+              accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
+              aggregated_grad.append(accumulate)
+            else:
+              if not isinstance(grad, ops.IndexedSlices):
+                raise ValueError("Unknown grad type!")
+                grad_accum = data_flow_ops.SparseConditionalAccumulator(
+                  grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
+
+                train_ops.append(grad_accum.apply_indexed_slices_grad(
                   grad, local_step=self._local_step))
 
                 # Original code - wait for a fixed number of gradients
-                accumulate = grad_accum.take_grad(self._total_num_replicas)
-                accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
-                aggregated_grad.append(accumulate)
-              else:
-                if not isinstance(grad, ops.IndexedSlices):
-                  raise ValueError("Unknown grad type!")
+                aggregated_grad.append(grad_accum.take_indexed_slices_grad(
+                  self._total_num_replicas))
 
-                  train_ops.append(grad_accum.apply_indexed_slices_grad(
-                    grad, local_step=self._local_step))
-
-                  # Original code - wait for a fixed number of gradients
-                  aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-                    self._total_num_replicas))
-
-          #self._accumulator_list.append((grad_accum, var.device))
+          self._accumulator_list.append((grad_accum, var.device))
 
       """with ops.device(var.device):
         finished_phase_1 = []
