@@ -355,7 +355,6 @@ def train(target, dataset, cluster_spec):
     # GPU memory.
     if is_chief:
       local_init_op = opt.chief_init_op
-      #local_init_op = opt.local_step_init_op
     else:
       local_init_op = opt.local_step_init_op
 
@@ -379,11 +378,8 @@ def train(target, dataset, cluster_spec):
         allow_soft_placement=True,
         log_device_placement=FLAGS.log_device_placement)
 
-    tf.logging.info("ABCD")
-
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
-    tf.logging.info("EFGH")
 
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
@@ -393,7 +389,6 @@ def train(target, dataset, cluster_spec):
 
     if is_chief:
       sv.start_queue_runners(sess, chief_queue_runners)
-      tf.logging.info("YOOOOOOOOOOO")
       sess.run(init_tokens_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
@@ -405,6 +400,7 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
+        tf.logging.info("YOAYOAYOAOYAOYOAYO")
         cur_iteration = int(sess.run(global_step))
         tf.logging.info("Starting iteration... %d" % cur_iteration)
         if FLAGS.timeout_method:
