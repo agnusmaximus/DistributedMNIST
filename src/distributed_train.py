@@ -328,7 +328,10 @@ def train(target, dataset, cluster_spec):
     grads = opt.compute_gradients(total_loss)
     #apply_gradients_op, kill_cleanup_op = opt.minimize(total_loss, global_step=global_step)
     #apply_gradients_op = opt.minimize(total_loss, global_step=global_step)
-    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id)
+    if not FLAGS.timeout_method:
+      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    else:
+      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
