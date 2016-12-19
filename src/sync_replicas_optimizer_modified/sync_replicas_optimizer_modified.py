@@ -140,7 +140,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
   def __init__(self,
                opt,
-               replicas_to_aggregate,
                total_num_replicas=None,
                variable_averages=None,
                variables_to_average=None,
@@ -281,8 +280,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 grad, local_step=self._local_step))
 
             # Original code - wait for a fixed number of gradients
-            #aggregated_grad.append(grad_accum.take_grad(
-            #    self._replicas_to_aggregate))
+            aggregated_grad.append(grad_accum.take_grad(
+              self._total_num_replicas))
           else:
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
@@ -292,12 +291,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 grad, local_step=self._local_step))
 
             # Original code - wait for a fixed number of gradients
-            #aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-            #    self._replicas_to_aggregate))
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(
+              self._total_num_replicas))
 
           self._accumulator_list.append((grad_accum, var.device))
 
-      with ops.device(var.device):
+      """with ops.device(var.device):
         finished_phase_1 = []
         for i in range(self._total_num_replicas):
           dequeue = self._phase1_finished_queue.dequeue()
@@ -316,7 +315,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               with ops.control_dependencies([tf.Print(n_accumulated, [n_accumulated], message="yo:")]):
                 aggregated_grad.append(grad_accum.take_grad(n_accumulated))
             else:
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))"""
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 

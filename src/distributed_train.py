@@ -321,7 +321,6 @@ def train(target, dataset, cluster_spec):
     else:
       opt = TimeoutReplicasOptimizer(
         opt,
-        replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
