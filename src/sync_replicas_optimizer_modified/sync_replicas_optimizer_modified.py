@@ -289,6 +289,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 shape=var.get_shape(),
                 shared_name=var.name + "/grad_accum")
 
+              if worker_id == 0:
+                tf.logging.info("ASDFSADF I'M WORKER 0")
               train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
               train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
