@@ -82,16 +82,9 @@ def inference(images, train=True):
       tf.truncated_normal([5, 5, NUM_CHANNELS, 32],  # 5x5 filter, depth 32.
                           stddev=0.1,
                           seed=SEED, dtype=tf.float32))
-  conv11_weights = tf.Variable(
-      tf.truncated_normal([5, 5, 32, 32],  # 5x5 filter, depth 32.
-                          stddev=0.1,
-                          seed=SEED, dtype=tf.float32))
   conv1_biases = tf.Variable(tf.zeros([32], dtype=tf.float32))
   conv2_weights = tf.Variable(tf.truncated_normal(
       [5, 5, 32, 64], stddev=0.1,
-      seed=SEED, dtype=tf.float32))
-  conv22_weights = tf.Variable(tf.truncated_normal(
-      [5, 5, 64, 64], stddev=0.1,
       seed=SEED, dtype=tf.float32))
   conv2_biases = tf.Variable(tf.constant(0.1, shape=[64], dtype=tf.float32))
   fc1_weights = tf.Variable(  # fully connected, depth 512.
@@ -115,10 +108,6 @@ def inference(images, train=True):
                       conv1_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
-  conv = tf.nn.conv2d(conv,
-                      conv11_weights,
-                      strides=[1, 1, 1, 1],
-                      padding='SAME')
   # Bias and rectified linear non-linearity.
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv1_biases))
   # Max pooling. The kernel size spec {ksize} also follows the layout of
@@ -131,18 +120,11 @@ def inference(images, train=True):
                       conv2_weights,
                       strides=[1, 1, 1, 1],
                       padding='SAME')
-  conv = tf.nn.conv2d(conv,
-                      conv22_weights,
-                      strides=[1, 1, 1, 1],
-                      padding='SAME')
   relu = tf.nn.relu(tf.nn.bias_add(conv, conv2_biases))
   pool = tf.nn.max_pool(relu,
                         ksize=[1, 2, 2, 1],
                         strides=[1, 2, 2, 1],
                         padding='SAME')
-
-
-
   # Reshape the feature map cuboid into a 2D matrix to feed it to the
   # fully connected layers.
   pool_shape = pool.get_shape().as_list()
