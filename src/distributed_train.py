@@ -382,6 +382,7 @@ def train(target, dataset, cluster_spec):
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
     tf.logging.info("EFGH")
+    sys.exit(-1)
 
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
