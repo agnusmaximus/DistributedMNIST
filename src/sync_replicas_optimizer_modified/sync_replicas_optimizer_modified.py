@@ -439,14 +439,11 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           "Too few tokens to finish the first step: %d (given) vs %d (needed)" %
           (num_tokens, tokens_needed))
 
-    if num_tokens > 0:
-      with ops.device(self._global_step.device), ops.name_scope(""):
-        tokens = array_ops.fill([num_tokens],
-                                self._global_step.ref())
-        init_tokens = []
-        for i in range(self._total_num_replicas):
-          init_tokens.append(self._sync_token_queues[i].enqueue(self._global_step.ref()))
-    else:
-      init_tokens = control_flow_ops.no_op(name="no_init_tokens")
+    init_tokens = []
+    with ops.device(self._global_step.device), ops.name_scope(""):
+      tokens = array_ops.fill([num_tokens],
+                              self._global_step.ref())
+      for i in range(self._total_num_replicas):
+        init_tokens.append(self._sync_token_queues[i].enqueue(self._global_step.ref()))
 
     return init_tokens
