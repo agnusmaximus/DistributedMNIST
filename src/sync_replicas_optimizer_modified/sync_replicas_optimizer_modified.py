@@ -248,7 +248,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # For timeout, we have one token queue per worker. This makes it so that
     # a worker can not take the work of another worker if it finishes early.
     self._sync_token_queues = [0] * self._total_num_replicas
-    for worker in self._total_num_replicas:
+    for worker in range(self._total_num_replicas):
       with ops.device('/job:worker/task:%d' % worker):
         self._sync_token_queues[worker] = data_flow_ops.FIFOQueue(-1,
                                                                   global_step.dtype.base_dtype,
