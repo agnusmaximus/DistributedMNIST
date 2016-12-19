@@ -343,13 +343,15 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
+        sync_ops = []
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
-          sync_op = self._sync_token_queues[worker_id].enqueue(global_step.ref())
+          for worker in range(self._total_num_replicas):
+            sync_ops.append(self._sync_token_queues[worker].enqueue(global_step.ref()))
 
         if self._variable_averages is not None:
-          with ops.control_dependencies([sync_op]), ops.name_scope(""):
+          with ops.control_dependencies([sync_ops]), ops.name_scope(""):
             sync_op = self._variable_averages.apply(
                 self._variables_to_average)
 
