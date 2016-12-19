@@ -189,6 +189,17 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # following format: (accumulator, device).
     self._accumulator_list = []
 
+
+    # For timeout, we have one token queue per worker. This makes it so that
+    # a worker can not take the work of another worker if it finishes early.
+    self._sync_token_queues = [0] * self._total_num_replicas
+    for worker in range(self._total_num_replicas):
+      with ops.device(self._global_step.device):
+        self._sync_token_queues[worker] = data_flow_ops.FIFOQueue(-1,
+                                                                  global_step.dtype.base_dtype,
+                                                                  shapes=(),
+                                                                  shared_name="sync_token_q_%d" % worker)
+
   def compute_gradients(self, *args, **kwargs):
     """Compute gradients of "loss" for the variables in "var_list".
     This simply wraps the compute_gradients() from the real optimizer. The
@@ -244,16 +255,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     chief_init_ops = [self.local_step_init_op]
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
-
-    # For timeout, we have one token queue per worker. This makes it so that
-    # a worker can not take the work of another worker if it finishes early.
-    self._sync_token_queues = [0] * self._total_num_replicas
-    for worker in range(self._total_num_replicas):
-      with ops.device(self._global_step.device):
-        self._sync_token_queues[worker] = data_flow_ops.FIFOQueue(-1,
-                                                                  global_step.dtype.base_dtype,
-                                                                  shapes=(),
-                                                                  shared_name="sync_token_q_%d" % worker)
 
     # For timeout, we have one phase 1 finished queue which workers add their step
     # to after computing and applying their gradients to the accumulator.
