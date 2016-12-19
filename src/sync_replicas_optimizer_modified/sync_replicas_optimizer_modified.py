@@ -272,9 +272,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.name_scope(None, self._name):
 
       # Phase 1 gradient computation
-      for grad, var in grads_and_vars:
-        var_list.append(var)
-        with ops.device(var.device), ops.control_dependencies([update_local_step_op]):
+      with ops.device(var.device), ops.control_dependencies([update_local_step_op]):
+        for grad, var in grads_and_vars:
+          var_list.append(var)
           if grad is None:
             continue
           elif isinstance(grad, ops.Tensor):
