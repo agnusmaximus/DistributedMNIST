@@ -289,9 +289,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 shape=var.get_shape(),
                 shared_name=var.name + "/grad_accum")
 
-              train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING")
-              train_ops.append(grad_accum.apply_grad(
-                grad, local_step=self._local_step))
+              train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
+              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
               # Original code - wait for a fixed number of gradients
               accumulate = grad_accum.take_grad(self._total_num_replicas)
