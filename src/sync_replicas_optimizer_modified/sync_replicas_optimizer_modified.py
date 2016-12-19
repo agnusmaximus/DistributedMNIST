@@ -302,14 +302,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
           self._accumulator_list.append((grad_accum, var.device))
 
-      finished_phase_1 = []
-      for i in range(self._tokens_per_step):
-        dq = self._phase1_finished_queue.dequeue()
-        dq = logging_ops.Print(dq, [dq], message="dequeued p1")
-        finished_phase_1.append(dq)
-
-      # Phase 2 gradient applying
       with ops.device(var.device):
+        finished_phase_1 = []
+        for i in range(self._tokens_per_step):
+          dq = self._phase1_finished_queue.dequeue()
+          dq = logging_ops.Print(dq, [dq], message="dequeued p1")
+          finished_phase_1.append(dq)
+
+        # Phase 2 gradient applying
         with ops.control_dependencies(finished_phase_1):
           for index, (grad, var) in enumerate(grads_and_vars):
             grad_accum = self._accumulator_list[index][0]
