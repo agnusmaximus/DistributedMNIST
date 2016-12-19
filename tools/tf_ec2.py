@@ -170,7 +170,7 @@ def tf_ec2_run(argv, configuration):
                 print("Waiting for all spot requests to be terminated...")
                 done = True
                 spot_requests = client.describe_spot_instance_requests()
-                states = [x["State"] for x in spot_requests["SpotInstanceRequests"]]
+                states = [x["State"] for x in spot_requests["SpotInstanceRequests"] if x["LaunchSpecification"]["KeyName"] == configuration["key_name"]]
                 for state in states:
                     if state != "cancelled":
                         done = False
