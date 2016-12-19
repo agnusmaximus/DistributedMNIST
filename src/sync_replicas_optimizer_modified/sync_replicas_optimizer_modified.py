@@ -373,7 +373,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           chief_init_ops.append(
               accum.set_global_step(
                   global_step, name="SetGlobalStep"))"""
-      self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
+      self.chief_init_op = self.local_step_init_op#control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
       return train_op
 
