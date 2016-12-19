@@ -249,6 +249,23 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
+    # Create token queue.
+    with ops.device(global_step.device), ops.name_scope(""):
+      sync_token_queue = (
+        data_flow_ops.FIFOQueue(-1,
+                                global_step.dtype.base_dtype,
+                                shapes=(),
+                                shared_name="sync_token_q"))
+      self._sync_token_queue = sync_token_queue
+
+      phase1_finished_queue = (
+        data_flow_ops.FIFOQueue(-1,
+                                global_step.dtype.base_dtype,
+                                shapes=(),
+                                shared_name="phase1_finished_q"))
+      self._phase1_finished_queue = phase1_finished_queue
+
+
     with ops.name_scope(None, self._name):
 
       # Phase 1 gradient computation
@@ -297,22 +314,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               aggregated_grad.append(grad_accum.take_indexed_slices_grad(grad_accum.num_accumulated()))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
-
-      # Create token queue.
-      with ops.device(global_step.device), ops.name_scope(""):
-        sync_token_queue = (
-            data_flow_ops.FIFOQueue(-1,
-                                    global_step.dtype.base_dtype,
-                                    shapes=(),
-                                    shared_name="sync_token_q"))
-        self._sync_token_queue = sync_token_queue
-
-        phase1_finished_queue = (
-          data_flow_ops.FIFOQueue(-1,
-                                  global_step.dtype.base_dtype,
-                                  shapes=(),
-                                  shared_name="phase1_finished_q"))
-        self._phase1_finished_queue = phase1_finished_queue
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
