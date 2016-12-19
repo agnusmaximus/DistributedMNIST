@@ -38,7 +38,7 @@ from tensorflow.python.training import queue_runner
 # rate according to the number of replicas. This change is introduced to be
 # consistent with how gradients are aggregated (averaged) within a batch in a
 # replica.
-class SyncReplicasOptimizerV2(optimizer.Optimizer):
+class TimeoutReplicasOptimizerV2(optimizer.Optimizer):
   """Class to synchronize, aggregate gradients and pass them to the optimizer.
   In a typical asynchronous training environment, it's common to have some
   stale gradients. For example, with a N-replica asynchronous training,
@@ -178,7 +178,9 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
     self._variable_averages = variable_averages
     self._variables_to_average = variables_to_average
     self._total_num_replicas = total_num_replicas
-    self._tokens_per_step = max(total_num_replicas, replicas_to_aggregate)
+
+    # In the timeout replicas trainer, we wait for everyone.
+    self._tokens_per_step = total_num_replicas
     self._global_step = None
     self._sync_token_queue = None
 
@@ -262,8 +264,12 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
                 shared_name=var.name + "/grad_accum")
             train_ops.append(grad_accum.apply_grad(
                 grad, local_step=self._local_step))
+
+            # Original code - wait for a fixed number of gradients
             #aggregated_grad.append(grad_accum.take_grad(
             #    self._replicas_to_aggregate))
+
+            # New code - take whatever has been accumulated
             aggregated_grad.append(grad_accum.take_grad(
                 grad_accum.num_accumulated()))
           else:
@@ -273,8 +279,12 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
                 grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
             train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step))
+
+            # Original code - wait for a fixed number of gradients
             #aggregated_grad.append(grad_accum.take_indexed_slices_grad(
             #    self._replicas_to_aggregate))
+
+            # New code - take whatever has been accumulated
             aggregated_grad.append(grad_accum.take_indexed_slices_grad(
               grad_accum.num_accumulated()))
 
@@ -284,8 +294,11 @@ class SyncReplicasOptimizerV2(optimizer.Optimizer):
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        update_op = self._opt.apply_gradients(aggregated_grads_and_vars,
-                                              global_step)
+        # Applying gradients is phase 2. We want to wait for phase 1 to end.
+        # Phase 1 ends when all the workers have pushed their token to phase1_finished_queue.
+        with ops.control_dependencies(phase1_finished_queue.dequeue_many(self._tokens_per_step)):
+          update_op = self._opt.apply_gradients(aggregated_grads_and_vars,
+                                                global_step)
 
       # Create token queue.
       with ops.device(global_step.device), ops.name_scope(""):

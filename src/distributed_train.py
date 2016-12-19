@@ -6,7 +6,7 @@ from __future__ import division
 from __future__ import print_function
 
 from datetime import datetime
-from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import SyncReplicasOptimizerV2
+from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import TimeoutReplicasOptimizerV2
 import os.path
 import time
 
@@ -243,10 +243,12 @@ def launch_manager():
     rpc_client.check_ready_to_start()
     time.sleep(1)
 
+  return rpc_client, rpc_server
+
 def train(target, dataset, cluster_spec):
 
   if FLAGS.timeout_method:
-    launch_manager()
+    rpc_client, rpc_server = launch_manager()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
@@ -317,7 +319,7 @@ def train(target, dataset, cluster_spec):
         replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
     else:
-      opt = SyncReplicasOptimizerV2(
+      opt = TimeoutReplicasOptimizerV2(
         opt,
         replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
