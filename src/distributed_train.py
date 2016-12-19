@@ -388,7 +388,7 @@ def train(target, dataset, cluster_spec):
                     len(queue_runners))
 
     if is_chief:
-      #sv.start_queue_runners(sess, chief_queue_runners)
+      sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
