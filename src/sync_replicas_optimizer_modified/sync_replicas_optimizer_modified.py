@@ -423,9 +423,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       raise ValueError(
           "get_init_tokens_op() should be called after apply_gradients().")
 
-    tokens_needed = self._replicas_to_aggregate - self._total_num_replicas
+    tokens_needed = self._total_num_replicas
     if num_tokens == -1:
-      num_tokens = self._replicas_to_aggregate
+      num_tokens = self._total_num_replicas
     elif num_tokens < tokens_needed:
       raise ValueError(
           "Too few tokens to finish the first step: %d (given) vs %d (needed)" %
