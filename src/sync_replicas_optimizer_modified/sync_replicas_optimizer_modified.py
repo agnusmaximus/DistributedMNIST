@@ -312,7 +312,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.device(global_step.device), ops.name_scope(""):
         # Applying gradients is phase 2. We want to wait for phase 1 to end.
         # Phase 1 ends when all the workers have pushed their token to phase1_finished_queue.
-        with ops.control_dependencies(self._phase1_finished_queue.dequeue_many(self._tokens_per_step)):
+        with ops.control_dependencies([self._phase1_finished_queue.dequeue_many(self._tokens_per_step)]):
           update_op = self._opt.apply_gradients(aggregated_grads_and_vars,
                                                 global_step)
 
@@ -328,8 +328,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.device(global_step.device), ops.name_scope(""):
         # Replicas have to wait until they can get a token from the token queue.
         with ops.control_dependencies(train_ops):
-          token = sync_token_queue.dequeue()
-          token = logging_ops.Print(token, [token], message="Dequeueing token...")
+
+          # Worker finished applying gradients. Add token to phase1_finished_queue
+          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+
+            token = sync_token_queue.dequeue()
+            token = logging_ops.Print(token, [token], message="Dequeueing token...")
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
