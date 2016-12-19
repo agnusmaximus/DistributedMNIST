@@ -310,9 +310,11 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
               # Original code - wait for a fixed number of gradients
-              accumulate = grad_accum.take_grad(self._total_num_replicas)
-              accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
-              aggregated_grad.append(accumulate)
+              #accumulate = grad_accum.take_grad(self._total_num_replicas)
+              #accumulate = logging_ops.Print(accumulate, [grad_accum.num_accumulated()], message="accumulated ")
+              #aggregated_grad.append(accumulate)
+              aggregated_grad.append(grad_accum.take_grad(
+                self._total_num_replicas))
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
