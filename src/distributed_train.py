@@ -354,7 +354,7 @@ def train(target, dataset, cluster_spec):
     # Running summaries and training operations in parallel could run out of
     # GPU memory.
     if is_chief:
-      local_init_op = opt.chief_init_op
+      #local_init_op = opt.chief_init_op
       #local_init_op = opt.local_step_init_op
     else:
       local_init_op = opt.local_step_init_op
