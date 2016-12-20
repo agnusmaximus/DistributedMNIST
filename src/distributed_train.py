@@ -182,7 +182,10 @@ class WorkerStatusServer(pb.Root):
     # How far are we from the earliest start time?
     iteration_elapsed_time = iter_start_time - min(self.iteration_start_times[cur_iteration])
     avg_kill_time_delay = self.compute_avg_kill_time()
-    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
+    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + 1.5 * self.elapsed_stdev_time
+
+    if time_to_suicide <= avg_kill_time:
+      return
 
     tf.logging.info("YOOOOO %f" % time_to_suicide)
 
