@@ -204,7 +204,6 @@ class WorkerStatusServer(pb.Root):
   def remote_notify_finished(self, worker_id, iteration):
 
     cur_time = time.time()
-    tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
 
     # Track end times
     while iteration >= len(self.iteration_end_times):
