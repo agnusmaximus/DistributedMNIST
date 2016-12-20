@@ -330,6 +330,7 @@ def train(target, dataset, cluster_spec):
       apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
     else:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
+      timeout_op = opt.timeout_op
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -452,6 +453,7 @@ def train(target, dataset, cluster_spec):
           tf.logging.info('About to execute sync_clean_up_op!')
         tf.logging.info("RECEIVED SIGNAL... CONTINUING")
         tf.logging.info("%s" % e)
+        sess.run([timeout_op])
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))

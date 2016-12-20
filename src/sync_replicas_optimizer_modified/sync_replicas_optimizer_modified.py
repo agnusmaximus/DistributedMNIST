@@ -375,8 +375,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       # The timeout op just adds a token to the finished phase 1 queue,
       # allowing the given worker to not  have to submit a gradient to the accumulator.
-      timeout_op = self._phase1_finished_queue.enqueue(self._local_step.ref())
-
+      # This is intended so that after killing a worker, the worker can call this and progress
+      # can be continued.
+      self.timeout_op = self._phase1_finished_queue.enqueue(self._local_step.ref())
 
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
