@@ -164,7 +164,7 @@ class WorkerStatusServer(pb.Root):
   # Assumes that we have just started the current iteration.
   def set_suicide_timeout(self, iter_start_time, cur_iteration):
     # If there is not enough data to set a good timeout, continue
-    if self.iteration_avg_time < 0:
+    if self.elapsed_avg_time < 0:
       return
 
     # How far are we from the earliest start time?
