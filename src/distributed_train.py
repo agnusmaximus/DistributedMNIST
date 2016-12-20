@@ -166,7 +166,7 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
       tf.logging.info("Previous starting times:")
       tf.logging.info(sorted(self.iteration_start_times[iteration-1]))
-      elapsed_time = min(self.iteration_start_times[iteration-1]) - cur_time)
+      elapsed_time = cur_time - min(self.iteration_start_times[iteration-1])
       tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time)
       tf.logging.info('-----------------------')
 
