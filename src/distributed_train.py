@@ -232,7 +232,7 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
 
       # Calculate and track elapsed time
-      elapsed_time = max(self.iteration_end_times[iteration-1]) - min(self.iteration_start_times[iteration-1])
+      elapsed_time = max(self.iteration_end_times[iteration-1]) - max(self.iteration_start_times[iteration-1])
       tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
 
       # Start tracking elapsed times after a few iterations
