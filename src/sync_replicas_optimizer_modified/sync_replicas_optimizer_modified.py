@@ -307,7 +307,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               elif isinstance(grad, ops.Tensor):
                 grad_accum = self._accumulator_list[index][0]
 
-                train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
+                train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
 
               else:
                 if not isinstance(grad, ops.IndexedSlices):
@@ -315,7 +315,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 grad_accum = self._accumulator_list[index][0]
 
                 train_ops.append(grad_accum.apply_indexed_slices_grad(
-                  grad, local_step=self._local_step))
+                  grad, local_step=self._local_step.ref()))
 
 
       # Phase 2 gradient applying
@@ -459,7 +459,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                               self._global_step.ref())
       for i in range(self._total_num_replicas):
         with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
-          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step.ref(), 1))
+          init_tokens_op = self._sync_token_queues[i].enqueue(self._global_step.ref())
         init_tokens.append(init_tokens_op)
 
     return init_tokens
