@@ -119,7 +119,7 @@ class WorkerStatusServer(pb.Root):
 
     # When to collect statistico
     self.iteration_start_collect = 5
-    self.iteration_end_collect = 30
+    self.iteration_end_collect = 50
 
     # Statistics tracking
     self.iteration_start_times = []
@@ -180,14 +180,11 @@ class WorkerStatusServer(pb.Root):
       avg_kill_time_delay = sum(self.kill_time_delays) / float(len(self.kill_time_delays))
     time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
 
-    tf.logging.info("YOOOOOO")
-    tf.logging.info("%f %f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time, time.time()))
-
     def commit_suicide():
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
         tf.logging.info("Committing suicide on iteration %d! - %f" % (cur_iteration, time.time()))
-        #os.kill(os.getpid(), signal.SIGINT)
+        os.kill(os.getpid(), signal.SIGINT)
 
     Timer(time_to_suicide, commit_suicide).start()
 
