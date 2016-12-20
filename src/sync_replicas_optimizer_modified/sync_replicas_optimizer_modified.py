@@ -382,7 +382,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())
       with ops.control_dependencies([self.timeout_op]):
-        self.timeout_op = tf.while_loop(lambda x : tf.greater_equal(self._local_step, x.ref()),
+        self.timeout_op = tf.while_loop(lambda x : tf.greater_equal(self._local_step, x),
                                         lambda x : x,
                                         [global_step])
 
