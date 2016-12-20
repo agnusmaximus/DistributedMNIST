@@ -25,14 +25,14 @@ class Cfg(dict):
 
 configuration = Cfg({
     "name" : "mnist_cnn_25_workers",      # Unique name for this specific configuration
-    "key_name": "MaxLamKeyPair",         # Necessary to ssh into created instances
+    "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 10,
+    "n_workers" : 20,
     "n_ps" : 4,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "11",
+    "num_replicas_to_aggregate" : "21",
 
     # Region speficiation
     "region" : "us-west-2",
