@@ -324,7 +324,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         finished_phase_1.append(dequeue)
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
-      with ops.control_dependencies(finished_phase_1):
+      with ops.control_dependencies([finished_phase_1]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
             grad_accum = self._accumulator_list[index][0]
