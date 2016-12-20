@@ -368,7 +368,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
               enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
-            sync_ops.append(enqueue_op)
+              sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
