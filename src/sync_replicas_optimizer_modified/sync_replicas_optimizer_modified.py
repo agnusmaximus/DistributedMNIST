@@ -360,7 +360,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
           with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
-            train_op = logging_ops.Print(self._local_step,
+            train_op = logging_ops.Print(self._local_step.ref(),
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                          message="Finished worker updates")
 
@@ -373,7 +373,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             for worker in range(self._total_num_replicas):
               assert_op = tf.Assert(tf.equal(self._sync_token_queues[worker].size(), 0), [self._sync_token_queues[worker].size()])
               with ops.control_dependencies([assert_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
