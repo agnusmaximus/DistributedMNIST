@@ -508,7 +508,7 @@ def train(target, dataset, cluster_spec):
             cur_iteration = 0
           else:
             cur_iteration = max(iterations_finished) + 1
-          iterations.add(cur_iteration)
+          iterations_finished.add(cur_iteration)
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
 
