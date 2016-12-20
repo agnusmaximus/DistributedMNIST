@@ -26,7 +26,7 @@ import mnist
 
 from twisted.spread import pb
 from twisted.internet import reactor
-from threading import Thread
+from threading import Thread, Timer
 
 np.set_printoptions(threshold=np.nan)
 
@@ -125,6 +125,10 @@ class WorkerStatusServer(pb.Root):
     self.elapsed_avg_time = -1
     self.elapsed_stdev_time = -1
 
+    # There are often times delays between when the kill signal
+    # is sent and when the kill signal is actually received and taken.
+    self.kill_time_delays = []
+
 
   def is_stable(self):
     # In the beginning, workers start at different times.
@@ -135,9 +139,10 @@ class WorkerStatusServer(pb.Root):
     n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
     return n_stable_required == n_stable
 
+  # NOTE THIS IS DEPRECATED.
+  # This relies on killing stragglers after knowing for sure one is a straggler.
+  # This doesn't work due to a lag between kill signal delivery and reception.
   def check_is_straggler(self):
-    # todo: remove
-    return False
 
     if not self.is_stable():
       return False
@@ -152,6 +157,28 @@ class WorkerStatusServer(pb.Root):
         tf.logging.info("Committing suicide! - %f" % time.time())
         #os.kill(os.getpid(), signal.SIGALRM)
         os.kill(os.getpid(), signal.SIGINT)
+
+
+  # Set a timeout upon which we check if we are still computing.
+  # If so, we kill self.
+  # Assumes that we have just started the current iteration.
+  def set_suicide_timeout(self, iter_start_time, cur_iteration):
+    # If there is not enough data to set a good timeout, continue
+    if self.iteration_avg_time < 0:
+      return
+
+    # How far are we from the earliest start time?
+    iteration_elapsed_time = iter_start_time - min(self.iteration_start_times[cur_iteration])
+    avg_kill_time_delay = sum(self.kill_time_delays) / float(len(self.kill_time_delays))
+    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
+
+    def commit_suicide():
+      # Still on the current iteration? Kill self.
+      if self.iteration_track[self.worker_id] == cur_iteration:
+        tf.logging.info("Committing suicide! - %f" % time.time())
+        #os.kill(os.getpid(), signal.SIGINT)
+
+    Timer(time_to_suicide, commit_suicide).start()
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
@@ -183,9 +210,9 @@ class WorkerStatusServer(pb.Root):
       if iteration > 3:
         self.iteration_times.append(elapsed_time)
 
-      # Calculate stats on elapsed time
-      self.elapsed_max_time, self.elapsed_min_time, self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
-                                                                                                     min(self.iteration_times), np.std(self.iteration_times)
+        # Calculate stats on elapsed time
+        self.elapsed_max_time, self.elapsed_min_time, self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
+                                                                                                       min(self.iteration_times), np.std(self.iteration_times)
 
       # Print stats on elapsed time
       if len(self.iteration_times) > 1:
@@ -196,7 +223,9 @@ class WorkerStatusServer(pb.Root):
 
       tf.logging.info('-----------------------')
 
-    self.check_is_straggler()
+    #self.check_is_straggler()
+    if worker_id == self.worker_id:
+      self.set_suicide_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
