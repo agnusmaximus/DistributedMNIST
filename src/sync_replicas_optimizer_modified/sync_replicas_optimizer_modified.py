@@ -270,7 +270,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
       update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-      update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op, worker_id], message="Starting worker updates")
+      update_local_step_op = logging_ops.Print(update_local_step_op, [self._local_step, worker_id], message="Starting worker updates (local_step, worker_id)")
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
