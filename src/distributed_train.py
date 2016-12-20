@@ -200,12 +200,13 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_finished(self, worker_id, iteration):
 
+    cur_time = time.time()
     tf.logging.info("Worker %d: Was notified that worker %d finished iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
 
     # Track end times
     while iteration >= len(self.iteration_end_times):
       self.iteration_end_times.append([])
-    self.iteration_end_times[iteration].append(time.time())
+    self.iteration_end_times[iteration].append(cur_time)
 
     # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
@@ -223,8 +224,7 @@ class WorkerStatusServer(pb.Root):
         self.iteration_times.append(elapsed_time)
 
         # Calculate stats on elapsed time
-        self.elapsed_max_time, self.elapsed_min_time, self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
-                                                                                                       min(self.iteration_times), np.std(self.iteration_times)
+        self.elapsed_max_time, self.elapsed_min_time, self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \                                                                                                       min(self.iteration_times), np.std(self.iteration_times)
 
       # Print stats on elapsed time
       if len(self.iteration_times) > 1:
