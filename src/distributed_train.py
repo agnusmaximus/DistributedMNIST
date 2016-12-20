@@ -496,7 +496,7 @@ def train(target, dataset, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    iterations = set()
+    iterations_finished = set()
     while not sv.should_stop():
       try:
 
