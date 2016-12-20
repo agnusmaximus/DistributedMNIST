@@ -270,7 +270,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
       update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-      update_local_step_op = logging_ops.Print(update_local_step_op, [self._local_step, worker_id], message="Starting worker updates (local_step, worker_id)")
+      with ops.control_dependencies([update_local_step_op]):
+        update_local_step_op = logging_ops.Print(update_local_step_op, [self._local_step, worker_id], message="Starting worker updates (local_step, worker_id)")
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -287,8 +288,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           else:
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
-              grad_accum = data_flow_ops.SparseConditionalAccumulator(
-                grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
+            grad_accum = data_flow_ops.SparseConditionalAccumulator(
+              grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
 
           self._accumulator_list.append((grad_accum, var.device))
 
@@ -310,10 +311,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
-                grad_accum = self._accumulator_list[index][0]
+              grad_accum = self._accumulator_list[index][0]
 
-                train_ops.append(grad_accum.apply_indexed_slices_grad(
-                  grad, local_step=self._local_step))
+              train_ops.append(grad_accum.apply_indexed_slices_grad(
+                grad, local_step=self._local_step))
 
 
       # Phase 2 gradient applying
