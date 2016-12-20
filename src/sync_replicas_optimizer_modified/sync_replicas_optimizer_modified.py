@@ -379,7 +379,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # allowing the given worker to not  have to submit a gradient to the accumulator.
       # This is intended so that after killing a worker, the worker can call this and progress
       # can be continued.
-      self.timeout_op = self._phase1_finished_queue.enqueue(self._local_step.ref())
+      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())
 
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
