@@ -149,20 +149,26 @@ class WorkerStatusServer(pb.Root):
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
-    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
+    cur_time = time.time()
+    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
     self.iteration_track[worker_id] = iteration
 
     # Keep track of statistics of iterations start times
     while iteration >= len(self.iteration_start_times):
       self.iteration_start_times.append([])
-    self.iteration_start_times[iteration].append(time.time())
+    self.iteration_start_times[iteration].append(cur_time)
 
     # Do some tf.logging.info out of the start times of the previous iteration
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
     if is_first_to_start and iteration != 0:
+      tf.logging.info("Statistics")
+      tf.logging.info('-----------------------')
       tf.logging.info("Previous starting times:")
       tf.logging.info(sorted(self.iteration_start_times[iteration-1]))
+      elapsed_time = min(self.iteration_start_times[iteration-1]) - cur_time)
+      tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time)
+      tf.logging.info('-----------------------')
 
     self.check_is_straggler()
     return 0
