@@ -370,7 +370,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
+              enq_op1 = self._sync_token_queues[worker].enqueue(global_step.ref())
+              enq_op2 = self._sync_token_queues[worker].enqueue(global_step.ref())
+              enqueue_op = control_flow_ops.group(*([enq_op1, enq_op2]))
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
@@ -381,9 +383,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())
-      self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   lambda x : x,
-                                   [global_step])
+      self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
