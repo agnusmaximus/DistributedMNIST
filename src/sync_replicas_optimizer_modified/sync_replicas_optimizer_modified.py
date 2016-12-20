@@ -270,7 +270,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
       with ops.control_dependencies([tf.Print(n_in_q, [n_in_q, worker_id], message="(n_in_queue, worker_id)")]):
-        update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
+        update_local_step_op = state_ops.assign(self._local_step.ref(), self._sync_token_queues[worker_id].dequeue())
         #with ops.control_dependencies([update_local_step_op]):
           #update_local_step_op = tf.Assert(tf.greater(self._local_step, 0), [self._local_step])
 
