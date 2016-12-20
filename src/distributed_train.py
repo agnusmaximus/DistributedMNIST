@@ -191,7 +191,7 @@ class WorkerStatusServer(pb.Root):
 
     Timer(time_to_suicide, commit_suicide).start()
 
-  def suicide_signal_received(self, time):
+  def remote_suicide_signal_received(self, time):
     tf.logging.info("Received suicide signal! - %f" % time)
     self.end_kill_times.append(time)
     print("Average delay between kill signal sending and delivery: %f" % self.compute_avg_kill_time())
