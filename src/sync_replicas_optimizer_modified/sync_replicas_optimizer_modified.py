@@ -297,10 +297,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
+            print_op = logging_ops.Print(global_step, [index, self._local_step, worker_id], message="Working on index (index, local_step, id)")
+
             if grad is None:
               continue
-
-            print_op = logging_ops.Print(global_step, [index, self._local_step, worker_id], message="Working on index (index, local_step, id)")
 
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
