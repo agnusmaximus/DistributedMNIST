@@ -158,6 +158,13 @@ class WorkerStatusServer(pb.Root):
         tf.logging.info("Committing suicide! - %f" % time.time())
         os.kill(os.getpid(), signal.SIGINT)
 
+  def compute_avg_kill_time(self):
+    # Computes avg time between signal sent and signal received.
+    times = [self.end_kill_time[i] - self.start_kill_time[i] for i in \
+             range(min(len(self.end_kill_time), len(self.start_kill_time)))]
+    if len(times) == 0:
+      return 0
+    return sum(times) / float(len(times))
 
   # Set a timeout upon which we check if we are still computing.
   # If so, we kill self.
@@ -169,11 +176,7 @@ class WorkerStatusServer(pb.Root):
 
     # How far are we from the earliest start time?
     iteration_elapsed_time = iter_start_time - min(self.iteration_start_times[cur_iteration])
-    if len(self.start_kill_times) == 0 or len(self.end_kill_times) == 0:
-      avg_kill_time_delay = 0
-    else:
-      kill_times = [self.end_kill_times[i]-self.start_kill_times[i] for i in range(min(len(self.start_kill_times), len(self.end_kill_times)))]
-      avg_kill_time_delay = sum(kill_times) / float(len(kill_times))
+    avg_kill_time_delay = self.compute_avg_kill_time()
     time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
 
     def commit_suicide():
@@ -188,6 +191,7 @@ class WorkerStatusServer(pb.Root):
   def suicide_signal_recieved(self, time):
     tf.logging.info("Received suicide signal! - %f" % time)
     self.end_kill_times.append(time)
+    print("Average delay between kill signal sending and delivery: %f" % self.compute_avg_kill_time())
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
