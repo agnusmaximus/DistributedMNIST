@@ -358,7 +358,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step)]):
+          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
             train_op = logging_ops.Print(self._local_step,
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
@@ -459,7 +459,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                               self._global_step.ref())
       for i in range(self._total_num_replicas):
         with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
-          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step, 1))
+          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step.ref(), 1))
         init_tokens.append(init_tokens_op)
 
     return init_tokens
