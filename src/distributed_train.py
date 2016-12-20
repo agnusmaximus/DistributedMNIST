@@ -181,10 +181,7 @@ class WorkerStatusServer(pb.Root):
     # How far are we from iter start time
     avg_kill_time_delay = self.compute_avg_kill_time()
 
-    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
-
-    if time_to_suicide <= avg_kill_time_delay:
-      return
+    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time/4
 
     def commit_suicide():
       # Still on the current iteration? Kill self.
@@ -224,7 +221,6 @@ class WorkerStatusServer(pb.Root):
                        for i in range(self.n_total_workers)]
 
       if min(elapsed_times) < .1:
-        tf.logging.info("YOOOOO")
         tf.logging.info(elapsed_times)
 
       # Start tracking elapsed times after a few iterations
@@ -500,7 +496,7 @@ def train(target, dataset, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    cur_iteration = 0
+    iterations = set()
     while not sv.should_stop():
       try:
 
@@ -508,10 +504,13 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeout_method:
           #sess.run([wait_op])
           #cur_iteration = int(sess.run(global_step))
+          if len(iterations_finished) == 0:
+            cur_iteration = 0
+          else:
+            cur_iteration = max(iterations_finished) + 1
+          iterations.add(cur_iteration)
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
-
-        cur_iteration += 1
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
