@@ -210,8 +210,8 @@ class WorkerStatusServer(pb.Root):
 
     # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_last_to_start = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
-    if is_last_to_start and iteration != 0:
+    is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
+    if is_first_to_start and iteration != 0:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
 
@@ -495,10 +495,10 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        sess.run([wait_op])
-        cur_iteration = int(sess.run(global_step))
-        tf.logging.info("Starting iteration... %d" % cur_iteration)
         if FLAGS.timeout_method:
+          sess.run([wait_op])
+          cur_iteration = int(sess.run(global_step))
+          tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
