@@ -173,7 +173,10 @@ class WorkerStatusServer(pb.Root):
       # Calculate and track elapsed time
       elapsed_time = cur_time - min(self.iteration_start_times[iteration-1])
       tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
-      self.iteration_times.append(elapsed_time)
+
+      # Start tracking elapsed times after a few iterations
+      if iteration > 3:
+        self.iteration_times.append(elapsed_time)
 
       # Calculate stats on elapsed time
       max_time, min_time, avg_time, stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
