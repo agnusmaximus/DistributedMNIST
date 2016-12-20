@@ -553,7 +553,7 @@ def train(target, dataset, cluster_spec):
       except Exception, e:
         rpc_client.notify_self_server_suicide_signal_received(time.time())
         tf.logging.info("%s" % e)
-        sess.run([timeout_op])
+        #sess.run([timeout_op])
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
