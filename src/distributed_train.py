@@ -173,8 +173,6 @@ class WorkerStatusServer(pb.Root):
   # If so, we kill self.
   # Assumes that we have just started the current iteration.
   def set_suicide_timeout(self, iter_start_time, cur_iteration):
-    # REMOVE ME
-    return
 
     # If there is not enough data to set a good timeout, continue
     if cur_iteration < self.iteration_end_collect:
@@ -545,9 +543,6 @@ def train(target, dataset, cluster_spec):
           next_summary_time += FLAGS.save_summaries_secs
       except Exception, e:
         rpc_client.notify_self_server_suicide_signal_received(time.time())
-        if is_chief:
-          tf.logging.info('About to execute sync_clean_up_op!')
-        tf.logging.info("RECEIVED SIGNAL... CONTINUING")
         tf.logging.info("%s" % e)
         sess.run([timeout_op])
 
