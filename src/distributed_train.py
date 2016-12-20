@@ -104,9 +104,6 @@ def signal_handler(signal, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-start_kill_times = []
-end_kill_times = []
-
 ##################
 # RPC procedures #
 ##################
@@ -172,21 +169,25 @@ class WorkerStatusServer(pb.Root):
 
     # How far are we from the earliest start time?
     iteration_elapsed_time = iter_start_time - min(self.iteration_start_times[cur_iteration])
-    if len(start_kill_times) == 0 or len(end_kill_times) == 0:
+    if len(self.start_kill_times) == 0 or len(self.end_kill_times) == 0:
       avg_kill_time_delay = 0
     else:
-      kill_times = [end_kill_times[i]-start_kill_times[i] for i in range(min(len(start_kill_times), len(end_kill_times)))]
+      kill_times = [self.end_kill_times[i]-self.start_kill_times[i] for i in range(min(len(self.start_kill_times), len(self.end_kill_times)))]
       avg_kill_time_delay = sum(kill_times) / float(len(kill_times))
     time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
 
     def commit_suicide():
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
-        tf.logging.info("Committing suicide on iteration %d! - %f" % (cur_iteration, time.time()))
-        start_kill_times.append(time.time())
+        tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
+        self.start_kill_times.append(time.time())
         os.kill(os.getpid(), signal.SIGINT)
 
     Timer(time_to_suicide, commit_suicide).start()
+
+  def suicide_signal_recieved(self, time):
+    tf.logging.info("Received suicide signal! - %f" % time)
+    self.end_kill_times.append(time)
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
@@ -530,7 +531,7 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
       except Exception, e:
-        end_kill_times.append(time.time())
+        rpc_server.suicide_signal_received(time.time())
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
         tf.logging.info("RECEIVED SIGNAL... CONTINUING")
