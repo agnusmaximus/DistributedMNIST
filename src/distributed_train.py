@@ -187,8 +187,6 @@ class WorkerStatusServer(pb.Root):
     if time_to_suicide <= avg_kill_time_delay:
       return
 
-    tf.logging.info("YOOOOO %f" % time_to_suicide)
-
     def commit_suicide():
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
@@ -210,8 +208,8 @@ class WorkerStatusServer(pb.Root):
 
     # Track end times
     while iteration >= len(self.iteration_end_times):
-      self.iteration_end_times.append([])
-    self.iteration_end_times[iteration].append(cur_time)
+      self.iteration_end_times.append([0] * self.n_total_workers)
+    self.iteration_end_times[iteration][worker_id] = cur_time
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
@@ -221,8 +219,8 @@ class WorkerStatusServer(pb.Root):
 
     # Keep track of statistics of iterations start times
     while iteration >= len(self.iteration_start_times):
-      self.iteration_start_times.append([])
-    self.iteration_start_times[iteration].append(cur_time)
+      self.iteration_start_times.append([0] * self.n_total_workers)
+    self.iteration_start_times[iteration][worker_id] = cur_time
 
     # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
@@ -232,12 +230,13 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
 
       # Calculate and track elapsed time
-      elapsed_time = max(self.iteration_end_times[iteration-1]) - min(self.iteration_start_times[iteration-1])
-      tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
+      elapsed_times = [self.iteration_end_times[iteration-1][i] -
+                       self.iteration_start_times[iteration-1][i]
+                       for i in range(len(self.iteration_end_times))]
 
       # Start tracking elapsed times after a few iterations
       if iteration-1 > self.iteration_start_collect and iteration-1 < self.iteration_end_collect:
-        self.iteration_times.append(elapsed_time)
+        self.iteration_times.extend(elapsed_times)
 
         # Calculate stats on elapsed time
         self.elapsed_max_time, self.elapsed_min_time, \
@@ -254,8 +253,8 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
 
     #self.check_is_straggler()
-    if worker_id == self.worker_id:
-      self.set_suicide_timeout(cur_time, iteration)
+    #if worker_id == self.worker_id:
+      #self.set_suicide_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
@@ -512,23 +511,19 @@ def train(target, dataset, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    cur_iteration = -1
+    cur_iteration = 0
     while not sv.should_stop():
       try:
 
-        start_time = time.time()
-        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
-
-        # Timeout method
-        if FLAGS.timeout_method and cur_iteration >= 0:
-          rpc_client.broadcast_finished(cur_iteration)
-
         # Timeout method
         if FLAGS.timeout_method:
-          sess.run([wait_op])
-          cur_iteration = int(sess.run(global_step))
+          #sess.run([wait_op])
+          #cur_iteration = int(sess.run(global_step))
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
+
+        start_time = time.time()
+        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
@@ -538,6 +533,12 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+
+        # Timeout method
+        if FLAGS.timeout_method:
+          rpc_client.broadcast_finished(cur_iteration)
+
+        cur_iteration += 1
 
         # Log the elapsed time per iteration
         finish_time = time.time()
