@@ -299,22 +299,24 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           with ops.device(var.device):
             if grad is None:
               continue
+
+            print_op = logging_ops.Print(global_step, [index, self._local_step, worker_id], message="Working on index (index, local_step, id)")
+
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
 
 
-              with ops.control_dependencies([logging_ops.Print(global_step, [index, self._local_step, worker_id], message="YO WORKING ON INDEX (self local step)")]):
-                application = grad_accum.apply_grad(grad, local_step=self._local_step)
-              #train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
-              train_ops.append(application)
+              with ops.control_dependencies([print_op]):
+                train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
               grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))
+              with ops.control_dependencies([print_op]):
+                train_ops.append(grad_accum.apply_indexed_slices_grad(
+                  grad, local_step=self._local_step))
 
 
       # Phase 2 gradient applying
