@@ -260,10 +260,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # For timeout, we have phase1 finished queues per worker.
     # We continue to phase 2 once from each phase1 queue we successfully dequeue
     # an item.
-    self.p1_finished_queues = []
+    self._p1_finished_queues = []
     with ops.device(global_step.device), ops.name_scope(""):
       for i in range(self._total_num_replicas):
-        self.p1_finished_queues.append(data_flow_ops.FIFOQueue(-1,
+        self._p1_finished_queues.append(data_flow_ops.FIFOQueue(-1,
                                                                global_step.dtype.base_dtype,
                                                                shapes=(),
                                                                shared_name="phase1_finished_q_%d" % i))
