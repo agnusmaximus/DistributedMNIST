@@ -117,6 +117,10 @@ class WorkerStatusServer(pb.Root):
     self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
+    # When to collect statistico
+    self.iteration_start_collect = 5
+    self.iteration_end_collect = 30
+
     # Statistics tracking
     self.iteration_start_times = []
     self.iteration_times = []
@@ -124,6 +128,8 @@ class WorkerStatusServer(pb.Root):
     self.elapsed_min_time = -1
     self.elapsed_avg_time = -1
     self.elapsed_stdev_time = -1
+
+    self.collect_statistics = True
 
     # There are often times delays between when the kill signal
     # is sent and when the kill signal is actually received and taken.
@@ -155,7 +161,6 @@ class WorkerStatusServer(pb.Root):
       if self_iteration not in self.iterations_killed:
         self.iterations_killed.add(self_iteration)
         tf.logging.info("Committing suicide! - %f" % time.time())
-        #os.kill(os.getpid(), signal.SIGALRM)
         os.kill(os.getpid(), signal.SIGINT)
 
 
@@ -164,7 +169,7 @@ class WorkerStatusServer(pb.Root):
   # Assumes that we have just started the current iteration.
   def set_suicide_timeout(self, iter_start_time, cur_iteration):
     # If there is not enough data to set a good timeout, continue
-    if self.elapsed_avg_time < 0:
+    if cur_iteration < self.iteration_end_collect:
       return
 
     # How far are we from the earliest start time?
@@ -174,6 +179,9 @@ class WorkerStatusServer(pb.Root):
     else:
       avg_kill_time_delay = sum(self.kill_time_delays) / float(len(self.kill_time_delays))
     time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
+
+    tf.logging.info("YOOOOOO")
+    tf.logging.info("%f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time))
 
     def commit_suicide():
       # Still on the current iteration? Kill self.
@@ -210,7 +218,7 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
 
       # Start tracking elapsed times after a few iterations
-      if iteration > 3:
+      if iteration > self.iteration_start_collect and iteration < self.iteration_end_collect:
         self.iteration_times.append(elapsed_time)
 
         # Calculate stats on elapsed time
