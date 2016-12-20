@@ -186,7 +186,7 @@ class WorkerStatusServer(pb.Root):
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
         tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
-        self.start_kill_times.append(time.time())
+        self.start_kill_time.append(time.time())
         os.kill(os.getpid(), signal.SIGINT)
 
     Timer(time_to_suicide, commit_suicide).start()
