@@ -204,8 +204,8 @@ class WorkerStatusServer(pb.Root):
 
     # Do some tf.logging.info out of the start times of the previous iteration
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
-    if is_first_to_start and iteration != 0:
+    is_last_to_start = len([x for x in other_worker_iterations if iteration < x]) == len(other_worker_iterations)
+    if is_last_to_start and iteration != 0:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
 
