@@ -160,6 +160,7 @@ class WorkerStatusServer(pb.Root):
     # Do some print out of the start times of the previous iteration
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
+    print("YOOOO")
     if is_first_to_start and iteration != 0:
       print("Previous starting times:")
       print(self.iteration_start_times[iteration-1])

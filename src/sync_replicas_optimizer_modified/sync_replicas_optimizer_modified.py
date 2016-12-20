@@ -320,7 +320,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
         dequeue = self._phase1_finished_queue.dequeue()
-        dequeue = logging_ops.Print(dequeue, [dequeue], message="dequeued phase 1")
         finished_phase_1.append(dequeue)
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
