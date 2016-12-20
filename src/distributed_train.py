@@ -191,7 +191,7 @@ class WorkerStatusServer(pb.Root):
 
     Timer(time_to_suicide, commit_suicide).start()
 
-  def suicide_signal_recieved(self, time):
+  def suicide_signal_received(self, time):
     tf.logging.info("Received suicide signal! - %f" % time)
     self.end_kill_times.append(time)
     print("Average delay between kill signal sending and delivery: %f" % self.compute_avg_kill_time())
@@ -283,6 +283,9 @@ class WorkerStatusClient:
   def signal_server_ready(self):
     tf.logging.info("Signaling ready to self's server")
     self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
+
+  def notify_self_server_suicide_signal_received(self, time):
+    self.self_perspective.callRemote("suicide_signal_received", time)
 
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
@@ -538,7 +541,7 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
       except Exception, e:
-        rpc_server.suicide_signal_received(time.time())
+        rpc_client.notify_self_server_suicide_signal_received(time.time())
         if is_chief:
           tf.logging.info('About to execute sync_clean_up_op!')
         tf.logging.info("RECEIVED SIGNAL... CONTINUING")
