@@ -271,6 +271,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       n_in_q = self._sync_token_queues[worker_id].size()
       with ops.control_dependencies([tf.Print(n_in_q, [n_in_q, worker_id], message="(n_in_queue, worker_id)")]):
         update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
+        with ops.control_dependencies([update_local_step_op]):
+          update_local_step_op = tf.Assert(tf.greater(self._local_step, 0), [self._local_step])
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -356,7 +358,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step.ref())]):
+          with ops.control_dependencies([self._phase1_finished_queue.enqueue(global_step)]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
             train_op = logging_ops.Print(self._local_step,
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
@@ -364,14 +366,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         sync_ops = []
         with ops.control_dependencies([update_op]):
-          with ops.control_dependencies([logging_ops.Print(global_step.ref(), [global_step.ref()], message="QueueRunner enqueueing to start next iteration (global step)...")]):
+          with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration (global step)...")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
               assert_op = tf.Assert(tf.equal(self._sync_token_queues[worker].size(), 0), [self._sync_token_queues[worker].size()])
               with ops.control_dependencies([assert_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
@@ -457,7 +459,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                               self._global_step.ref())
       for i in range(self._total_num_replicas):
         with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
-          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step.ref(), 1))
+          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step, 1))
         init_tokens.append(init_tokens_op)
 
     return init_tokens
