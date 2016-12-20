@@ -232,7 +232,7 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
 
       # Calculate and track elapsed time
-      elapsed_time = max(self.iteration_end_times[iteration-1]) - max(self.iteration_start_times[iteration-1])
+      elapsed_time = max(self.iteration_end_times[iteration-1]) - min(self.iteration_start_times[iteration-1])
       tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
 
       # Start tracking elapsed times after a few iterations
@@ -516,15 +516,15 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
+        start_time = time.time()
+        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
+
         # Timeout method
         if FLAGS.timeout_method:
-          #sess.run([wait_op])
+          sess.run([wait_op])
           cur_iteration = int(sess.run(global_step))
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
-
-        start_time = time.time()
-        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
