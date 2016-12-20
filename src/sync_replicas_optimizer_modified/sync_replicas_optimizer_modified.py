@@ -383,7 +383,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())
       with ops.control_dependencies([self.timeout_op]):
         self.timeout_op = tf.while_loop(lambda x : tf.greater_equal(self._local_step, x),
-                                        lambda x : x,
+                                        lambda x : logging_ops.Print(x, [x], message="WAITING FOR NEXT ITER"),
                                         [global_step])
 
       for accum, dev in self._accumulator_list:
