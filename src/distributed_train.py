@@ -518,7 +518,7 @@ def train(target, dataset, cluster_spec):
 
         # Timeout method
         if FLAGS.timeout_method:
-          sess.run([wait_op])
+          #sess.run([wait_op])
           cur_iteration = int(sess.run(global_step))
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
