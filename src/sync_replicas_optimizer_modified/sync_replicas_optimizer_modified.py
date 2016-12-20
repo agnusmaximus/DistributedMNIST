@@ -271,8 +271,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       n_in_q = self._sync_token_queues[worker_id].size()
       with ops.control_dependencies([tf.Print(n_in_q, [n_in_q, worker_id], message="(n_in_queue, worker_id)")]):
         update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
-        with ops.control_dependencies([update_local_step_op]):
-          update_local_step_op = logging_ops.Print(update_local_step_op, [self._local_step, worker_id], message="Starting worker updates (local_step, worker_id)")
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
