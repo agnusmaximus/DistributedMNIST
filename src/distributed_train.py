@@ -181,8 +181,7 @@ class WorkerStatusServer(pb.Root):
     # How far are we from iter start time
     avg_kill_time_delay = self.compute_avg_kill_time()
 
-    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + 1.5 * self.elapsed_stdev_time
-    tf.logging.info("YOOOOOOOOOOOOOOOOOOOOOOOOOOO %f" % time_to_suicide)
+    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
 
     if time_to_suicide <= avg_kill_time_delay:
       return
@@ -233,15 +232,15 @@ class WorkerStatusServer(pb.Root):
         self.iteration_times.extend(elapsed_times)
 
         # Calculate stats on elapsed time
-        self.elapsed_max_time, self.elapsed_min_time, \
-          self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
+        self.elapsed_max_time, self.elapsed_avg_time, \
+          self.elapsed_min_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
                                                            min(self.iteration_times), np.std(self.iteration_times)
 
       # Print stats on elapsed time
       if len(self.iteration_times) > 1:
         tf.logging.info("Running max of iteration times: %f" % (self.elapsed_max_time))
-        tf.logging.info("Running avg of iteration times: %f" % (self.elapsed_min_time))
-        tf.logging.info("Running min of iteration times: %f" % (self.elapsed_avg_time))
+        tf.logging.info("Running avg of iteration times: %f" % (self.elapsed_avg_time))
+        tf.logging.info("Running min of iteration times: %f" % (self.elapsed_min_time))
         tf.logging.info("Running stdev of iteration times: %f" % (self.elapsed_stdev_time))
 
       tf.logging.info('-----------------------')
