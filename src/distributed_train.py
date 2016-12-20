@@ -181,7 +181,7 @@ class WorkerStatusServer(pb.Root):
     time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
 
     tf.logging.info("YOOOOOO")
-    tf.logging.info("%f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time))
+    tf.logging.info("%f %f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time, time.time()))
 
     def commit_suicide():
       # Still on the current iteration? Kill self.
