@@ -272,7 +272,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
       update_local_step_op = logging_ops.Print(update_local_step_op, [update_local_step_op, worker_id], message="Starting worker updates")
 
-    # Gradient accumulation and applying
+    # Gradient accum creation
     with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
         var_list.append(var)
@@ -295,15 +295,17 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
-          #var_list.append(var)
           with ops.device(var.device):
             if grad is None:
               continue
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(logging_ops.Print(global_step, [global_step, worker_id], message="YOOO I'M WORKKKKING"))
-              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
+
+              with ops.control_dependencies([logging_ops.Print(global_step, [index, self._local_step], message="YO WORKING ON INDEX (self local step)")]):
+                application = grad_accum.apply_grad(grad, local_step=self._local_step)
+              #train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
+              train_ops.append(application)
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
@@ -314,13 +316,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                   grad, local_step=self._local_step))
 
 
+      # Phase 2 gradient applying
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
         dequeue = self._phase1_finished_queue.dequeue()
         dequeue = logging_ops.Print(dequeue, [dequeue], message="dequeued phase 1")
         finished_phase_1.append(dequeue)
 
-      # Phase 2 gradient applying
       #with ops.control_dependencies(finished_phase_1):
       for index, (grad, var) in enumerate(grads_and_vars):
         with ops.device(var.device):
