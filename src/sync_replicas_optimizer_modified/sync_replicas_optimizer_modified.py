@@ -257,13 +257,16 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
-    # For timeout, we have one phase 1 finished queue which workers add their step
-    # to after computing and applying their gradients to the accumulator.
+    # For timeout, we have phase1 finished queues per worker.
+    # We continue to phase 2 once from each phase1 queue we successfully dequeue
+    # an item.
+    self.p1_finished_queues = []
     with ops.device(global_step.device), ops.name_scope(""):
-      self._phase1_finished_queue = data_flow_ops.FIFOQueue(-1,
-                                                            global_step.dtype.base_dtype,
-                                                            shapes=(),
-                                                            shared_name="phase1_finished_q")
+      for i in range(self._total_num_replicas):
+        self.p1_finished_queues.append(data_flow_ops.FIFOQueue(-1,
+                                                               global_step.dtype.base_dtype,
+                                                               shapes=(),
+                                                               shared_name="phase1_finished_q_%d" % i))
 
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
@@ -319,7 +322,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 2 gradient applying
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
-        dequeue = self._phase1_finished_queue.dequeue()
+        dequeue = self._p1_finished_queues[i].dequeue()
         finished_phase_1.append(dequeue)
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
@@ -353,7 +356,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._phase1_finished_queue.enqueue(self._local_step.ref())]):
+          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
             train_op = logging_ops.Print(self._local_step.ref(),
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
@@ -376,7 +379,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # allowing the given worker to not  have to submit a gradient to the accumulator.
       # This is intended so that after killing a worker, the worker can call this and progress
       # can be continued.
-      self.timeout_op = self._phase1_finished_queue.enqueue(self._local_step.ref())
+      #self.timeout_op = self._phase1_finished_queue.enqueue(self._local_step.ref())
+
 
       for accum, dev in self._accumulator_list:
         with ops.device(dev):

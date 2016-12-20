@@ -173,6 +173,9 @@ class WorkerStatusServer(pb.Root):
   # If so, we kill self.
   # Assumes that we have just started the current iteration.
   def set_suicide_timeout(self, iter_start_time, cur_iteration):
+    # REMOVE ME
+    return
+
     # If there is not enough data to set a good timeout, continue
     if cur_iteration < self.iteration_end_collect:
       return
