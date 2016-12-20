@@ -219,7 +219,7 @@ class WorkerStatusServer(pb.Root):
 
       # Calculate and track elapsed time
       elapsed_times = [self.iteration_start_times[iteration-1][i] -
-                       self.iteration_start_times[iteration-2][i]
+                       self.iteration_start_times[iteration][i]
                        for i in range(self.n_total_workers)]
 
       if min(elapsed_times) < .1:
