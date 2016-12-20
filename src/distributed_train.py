@@ -123,7 +123,6 @@ class WorkerStatusServer(pb.Root):
 
     # Statistics tracking
     self.iteration_start_times = []
-    self.iteration_end_times = []
     self.iteration_times = []
     self.elapsed_max_time = -1
     self.elapsed_min_time = -1
@@ -200,15 +199,6 @@ class WorkerStatusServer(pb.Root):
     self.end_kill_time.append(time)
     tf.logging.info("Average delay between kill signal sending and delivery: %f" % self.compute_avg_kill_time())
 
-  def remote_notify_finished(self, worker_id, iteration):
-
-    cur_time = time.time()
-
-    # Track end times
-    while iteration >= len(self.iteration_end_times):
-      self.iteration_end_times.append([0] * self.n_total_workers)
-    self.iteration_end_times[iteration][worker_id] = cur_time
-
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
     cur_time = time.time()
@@ -223,12 +213,12 @@ class WorkerStatusServer(pb.Root):
     # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_last_to_begin = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
-    if is_last_to_begin and iteration != 0:
+    if is_last_to_begin and iteration > self.iteration_start_collect:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
 
       # Calculate and track elapsed time
-      elapsed_times = [self.iteration_end_times[iteration-1][i] -
+      elapsed_times = [self.iteration_start_times[iteration-2][i] -
                        self.iteration_start_times[iteration-1][i]
                        for i in range(self.n_total_workers)]
 
@@ -309,10 +299,6 @@ class WorkerStatusClient:
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
       persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
-
-  def broadcast_finished(self, iteration):
-    for persp in self.perspectives:
-      persp.callRemote("notify_finished", self.worker_id, iteration).addCallbacks(self.success, self.fail)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
@@ -524,6 +510,8 @@ def train(target, dataset, cluster_spec):
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
 
+        cur_iteration += 1
+
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
@@ -535,12 +523,6 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
-
-        # Timeout method
-        if FLAGS.timeout_method:
-          rpc_client.broadcast_finished(cur_iteration)
-
-        cur_iteration += 1
 
         # Log the elapsed time per iteration
         finish_time = time.time()
