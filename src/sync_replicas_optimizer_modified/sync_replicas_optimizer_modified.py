@@ -299,22 +299,20 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           with ops.device(var.device):
             print_op = logging_ops.Print(global_step, [index, self._local_step, worker_id], message="Working on index (index, local_step, id)")
 
-            if grad is None:
-              continue
+            with ops.control_dependencies([print_op]):
+              if grad is None:
+                continue
 
-            elif isinstance(grad, ops.Tensor):
-              grad_accum = self._accumulator_list[index][0]
+              elif isinstance(grad, ops.Tensor):
+                grad_accum = self._accumulator_list[index][0]
 
-
-              with ops.control_dependencies([print_op]):
                 train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
 
-            else:
-              if not isinstance(grad, ops.IndexedSlices):
-                raise ValueError("Unknown grad type!")
-              grad_accum = self._accumulator_list[index][0]
+              else:
+                if not isinstance(grad, ops.IndexedSlices):
+                  raise ValueError("Unknown grad type!")
+                grad_accum = self._accumulator_list[index][0]
 
-              with ops.control_dependencies([print_op]):
                 train_ops.append(grad_accum.apply_indexed_slices_grad(
                   grad, local_step=self._local_step))
 
@@ -367,7 +365,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         sync_ops = []
         with ops.control_dependencies([update_op]):
-          with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration...")]):
+          with ops.control_dependencies([logging_ops.Print(global_step.ref(), [global_step.ref()], message="QueueRunner enqueueing to start next iteration (global step)...")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
