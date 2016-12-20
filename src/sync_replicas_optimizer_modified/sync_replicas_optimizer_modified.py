@@ -302,7 +302,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
 
-              with ops.control_dependencies([logging_ops.Print(global_step, [index, self._local_step], message="YO WORKING ON INDEX (self local step)")]):
+              with ops.control_dependencies([logging_ops.Print(global_step, [index, self._local_step, worker_id], message="YO WORKING ON INDEX (self local step)")]):
                 application = grad_accum.apply_grad(grad, local_step=self._local_step)
               #train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step))
               train_ops.append(application)
