@@ -178,7 +178,7 @@ class WorkerStatusServer(pb.Root):
       avg_kill_time_delay = 0
     else:
       avg_kill_time_delay = sum(self.kill_time_delays) / float(len(self.kill_time_delays))
-    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + 1.5 * self.elapsed_stdev_time
+    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
 
     tf.logging.info("YOOOOOO")
     tf.logging.info("%f %f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time, time.time()))
@@ -202,9 +202,9 @@ class WorkerStatusServer(pb.Root):
       self.iteration_start_times.append([])
     self.iteration_start_times[iteration].append(cur_time)
 
-    # Do some tf.logging.info out of the start times of the previous iteration
+    # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_last_to_start = len([x for x in other_worker_iterations if iteration == x]) == len(other_worker_iterations)
+    is_last_to_start = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
     if is_last_to_start and iteration != 0:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
