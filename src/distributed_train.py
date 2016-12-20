@@ -152,19 +152,17 @@ class WorkerStatusServer(pb.Root):
     tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_track[worker_id] = iteration
 
-    print("ASFASDF")
     # Keep track of statistics of iterations start times
     while iteration >= len(self.iteration_start_times):
       self.iteration_start_times.append([])
     self.iteration_start_times[iteration].append(time.time())
 
-    # Do some print out of the start times of the previous iteration
+    # Do some tf.logging.info out of the start times of the previous iteration
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
-    print("YOOOO")
     if is_first_to_start and iteration != 0:
-      print("Previous starting times:")
-      print(self.iteration_start_times[iteration-1])
+      tf.logging.info("Previous starting times:")
+      tf.logging.info(self.iteration_start_times[iteration-1])
 
     self.check_is_straggler()
     return 0
