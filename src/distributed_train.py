@@ -129,6 +129,9 @@ class WorkerStatusServer(pb.Root):
     self.elapsed_avg_time = -1
     self.elapsed_stdev_time = -1
 
+    self.start_kill_time = []
+    self.end_kill_time = []
+
     self.collect_statistics = True
 
   def is_stable(self):
