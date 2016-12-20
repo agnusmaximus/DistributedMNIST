@@ -178,7 +178,7 @@ class WorkerStatusServer(pb.Root):
       avg_kill_time_delay = 0
     else:
       avg_kill_time_delay = sum(self.kill_time_delays) / float(len(self.kill_time_delays))
-    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + self.elapsed_stdev_time
+    time_to_suicide = self.elapsed_avg_time - iteration_elapsed_time - avg_kill_time_delay + 1.5 * self.elapsed_stdev_time
 
     tf.logging.info("YOOOOOO")
     tf.logging.info("%f %f %f %f" % (iter_start_time, min(self.iteration_start_times[cur_iteration]), self.elapsed_avg_time, time.time()))
