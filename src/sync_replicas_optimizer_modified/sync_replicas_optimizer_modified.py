@@ -369,7 +369,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
-              assert_op = tf.Assert(tf.equal(self._sync_token_queues[worker].size(), 0))
+              assert_op = tf.Assert(tf.equal(self._sync_token_queues[worker].size(), 0), [self._sync_token_queues[worker].size()])
               with ops.control_dependencies([assert_op]):
                 enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
               sync_ops.append(enqueue_op)
