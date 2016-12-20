@@ -272,8 +272,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
-      with ops.control_dependencies([tf.Print(n_in_q, [n_in_q, worker_id], message="(n_in_queue, worker_id)")]):
-        update_local_step_op = state_ops.assign(self._local_step.ref(), self._sync_token_queues[worker_id].dequeue())
+      update_local_step_op = state_ops.assign(self._local_step.ref(), self._sync_token_queues[worker_id].dequeue())
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -299,33 +298,35 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
-            print_op = logging_ops.Print(global_step, [index, self._local_step, worker_id], message="Working on index (index, local_step, id)")
+            if grad is None:
+              continue
 
-            with ops.control_dependencies([print_op]):
-              if grad is None:
-                continue
+            elif isinstance(grad, ops.Tensor):
+              grad_accum = self._accumulator_list[index][0]
 
-              elif isinstance(grad, ops.Tensor):
-                grad_accum = self._accumulator_list[index][0]
+              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
 
-                train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
+            else:
+              if not isinstance(grad, ops.IndexedSlices):
+                raise ValueError("Unknown grad type!")
+              grad_accum = self._accumulator_list[index][0]
 
-              else:
-                if not isinstance(grad, ops.IndexedSlices):
-                  raise ValueError("Unknown grad type!")
-                grad_accum = self._accumulator_list[index][0]
-
-                train_ops.append(grad_accum.apply_indexed_slices_grad(
-                  grad, local_step=self._local_step.ref()))
+              train_ops.append(grad_accum.apply_indexed_slices_grad(
+                grad, local_step=self._local_step.ref()))
 
 
-      # Phase 2 gradient applying
+      # Phase 1 is finished when:
+      # For every worker, we find that their p1_finished_queue contains
+      # a token that is >= the current global step
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
-        dequeue = self._p1_finished_queues[i].dequeue()
+        dequeue = tf.while_loop(lambda : tf.less(self._p1_finished_queues[i].dequeue(), global_step),
+                                lambda : pass,
+                                [])
         finished_phase_1.append(dequeue)
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
+      # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
