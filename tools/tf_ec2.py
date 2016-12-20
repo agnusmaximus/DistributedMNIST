@@ -29,7 +29,7 @@ configuration = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 24,
+    "n_workers" : 10,
     "n_ps" : 4,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "25",
@@ -46,7 +46,7 @@ configuration = Cfg({
     "image_id" : "ami-2d6dcf4d",          # US west
 
     # Launch specifications
-    "spot_price" : ".11",                 # Has to be a string
+    "spot_price" : ".12",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
