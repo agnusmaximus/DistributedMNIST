@@ -383,7 +383,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())
       self.wait_op = tf.while_loop(lambda x : tf.logical_and(tf.greater_equal(self._local_step, x),
                                                              tf.greater(self._local_step, 0)),
-                                   lambda x : x,
+                                   lambda x : logging_ops.Print(x, [self._local_step, x], message="WAITING"),
                                    [global_step])
 
       for accum, dev in self._accumulator_list:
