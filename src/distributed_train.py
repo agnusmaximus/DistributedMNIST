@@ -224,7 +224,9 @@ class WorkerStatusServer(pb.Root):
         self.iteration_times.append(elapsed_time)
 
         # Calculate stats on elapsed time
-        self.elapsed_max_time, self.elapsed_min_time, self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \                                                                                                       min(self.iteration_times), np.std(self.iteration_times)
+        self.elapsed_max_time, self.elapsed_min_time, \
+          self.elapsed_avg_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
+                                                           min(self.iteration_times), np.std(self.iteration_times)
 
       # Print stats on elapsed time
       if len(self.iteration_times) > 1:
