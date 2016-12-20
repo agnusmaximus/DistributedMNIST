@@ -117,8 +117,9 @@ class WorkerStatusServer(pb.Root):
     self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
-    # Keep track of times for each iteration
+    # Statistics tracking
     self.iteration_start_times = []
+    self.iteration_times = []
 
   def is_stable(self):
     # In the beginning, workers start at different times.
@@ -164,10 +165,27 @@ class WorkerStatusServer(pb.Root):
     if is_first_to_start and iteration != 0:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
+
+      # Print previout start times
       tf.logging.info("Previous starting times:")
       tf.logging.info(sorted(self.iteration_start_times[iteration-1]))
+
+      # Calculate and track elapsed time
       elapsed_time = cur_time - min(self.iteration_start_times[iteration-1])
-      tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time)
+      tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
+      self.iteration_times.append(elapsed_time)
+
+      # Calculate stats on elapsed time
+      max_time, min_time, avg_time, stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
+                                                 min(self.iteration_times), np.std(self.iteration_times)
+
+      # Print stats on elapsed time
+      if len(self.iteration_times) > 1:
+        tf.logging.info("Running max of iteration times: %f" % (max_time))
+        tf.logging.info("Running avg of iteration times: %f" % (min_time))
+        tf.logging.info("Running min of iteration times: %f" % (avg_time))
+        tf.logging.info("Running stdev of iteration times: %f" % (stdev_time))
+
       tf.logging.info('-----------------------')
 
     self.check_is_straggler()
