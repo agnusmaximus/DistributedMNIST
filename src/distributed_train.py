@@ -162,7 +162,7 @@ class WorkerStatusServer(pb.Root):
     is_first_to_start = len([x for x in other_worker_iterations if iteration > x]) == len(other_worker_iterations)
     if is_first_to_start and iteration != 0:
       tf.logging.info("Previous starting times:")
-      tf.logging.info(self.iteration_start_times[iteration-1])
+      tf.logging.info(sorted(self.iteration_start_times[iteration-1]))
 
     self.check_is_straggler()
     return 0
