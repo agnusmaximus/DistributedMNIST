@@ -152,6 +152,7 @@ class WorkerStatusServer(pb.Root):
     tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, time.time()))
     self.iteration_track[worker_id] = iteration
 
+    print("ASFASDF")
     # Keep track of statistics of iterations start times
     while iteration >= len(self.iteration_start_times):
       self.iteration_start_times.append([])
