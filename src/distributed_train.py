@@ -452,7 +452,6 @@ def train(target, dataset, cluster_spec):
           tf.logging.info('About to execute sync_clean_up_op!')
         tf.logging.info("RECEIVED SIGNAL... CONTINUING")
         tf.logging.info("%s" % e)
-        #sess.run(kill_cleanup_op)
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))

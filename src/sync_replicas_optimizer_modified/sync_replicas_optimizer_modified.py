@@ -374,7 +374,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
               sync_ops.append(enqueue_op)
 
-
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
       for accum, dev in self._accumulator_list:
@@ -458,7 +457,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                               self._global_step.ref())
       for i in range(self._total_num_replicas):
         with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
-          init_tokens_op = self._sync_token_queues[i].enqueue(self._global_step.ref())
+          init_tokens_op = self._sync_token_queues[i].enqueue(tf.add(self._global_step.ref(), 1))
         init_tokens.append(init_tokens_op)
 
     return init_tokens
