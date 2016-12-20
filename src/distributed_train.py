@@ -208,19 +208,30 @@ class WorkerStatusServer(pb.Root):
       self.iteration_end_times.append([])
     self.iteration_end_times[iteration].append(cur_time)
 
+  def remote_notify_starting(self, worker_id, iteration):
+    # Called when worker_id notifies this machine that it is starting iteration.
+    cur_time = time.time()
+    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
+    self.iteration_track[worker_id] = iteration
+
+    # Keep track of statistics of iterations start times
+    while iteration >= len(self.iteration_start_times):
+      self.iteration_start_times.append([])
+    self.iteration_start_times[iteration].append(cur_time)
+
     # Track statistics
     other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_last_to_finish = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
-    if is_last_to_finish and iteration != 0:
+    is_last_to_begin = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
+    if is_last_to_begin and iteration != 0:
       tf.logging.info("Statistics")
       tf.logging.info('-----------------------')
 
       # Calculate and track elapsed time
-      elapsed_time = max(self.iteration_end_times[iteration]) - min(self.iteration_start_times[iteration])
-      tf.logging.info("Iteration %d elapsed time: %f" % (iteration, elapsed_time))
+      elapsed_time = max(self.iteration_end_times[iteration-1]) - min(self.iteration_start_times[iteration-1])
+      tf.logging.info("Iteration %d elapsed time: %f" % (iteration-1, elapsed_time))
 
       # Start tracking elapsed times after a few iterations
-      if iteration > self.iteration_start_collect and iteration < self.iteration_end_collect:
+      if iteration-1 > self.iteration_start_collect and iteration-1 < self.iteration_end_collect:
         self.iteration_times.append(elapsed_time)
 
         # Calculate stats on elapsed time
@@ -236,18 +247,6 @@ class WorkerStatusServer(pb.Root):
         tf.logging.info("Running stdev of iteration times: %f" % (self.elapsed_stdev_time))
 
       tf.logging.info('-----------------------')
-
-
-  def remote_notify_starting(self, worker_id, iteration):
-    # Called when worker_id notifies this machine that it is starting iteration.
-    cur_time = time.time()
-    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
-    self.iteration_track[worker_id] = iteration
-
-    # Keep track of statistics of iterations start times
-    while iteration >= len(self.iteration_start_times):
-      self.iteration_start_times.append([])
-    self.iteration_start_times[iteration].append(cur_time)
 
     #self.check_is_straggler()
     if worker_id == self.worker_id:
