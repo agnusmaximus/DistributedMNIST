@@ -180,7 +180,7 @@ class WorkerStatusServer(pb.Root):
 
     # How far are we from iter start time
     avg_kill_time_delay = self.compute_avg_kill_time()
-    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
+    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + 1.5 * self.elapsed_stdev_time
 
     if time_to_suicide <= avg_kill_time_delay:
       return
