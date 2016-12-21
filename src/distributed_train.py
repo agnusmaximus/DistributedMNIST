@@ -111,9 +111,6 @@ class WorkerStatusServer(pb.Root):
     self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
-    self.sess = tf_session
-    self.timeout_op = tf_timeout_op
-
     # When to collect statistico
     self.iteration_start_collect = 5
     self.iteration_end_collect = 50
