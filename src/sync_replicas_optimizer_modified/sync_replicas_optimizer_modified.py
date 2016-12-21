@@ -344,7 +344,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        with ops.control_dependencies([aggregated_grads_and_vars]):
+        with ops.control_dependencies(aggregated_grads_and_vars):
           with ops.control_dependencies([logging_ops.Print(global_step,
                                                            [x[0].num_accumulated() for x in self._accumulator_list],
                                                            message="Updating with # of accumulated gradients")]):
