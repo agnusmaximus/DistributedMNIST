@@ -260,7 +260,8 @@ class WorkerStatusServer(pb.Root):
     is_last_to_start = len(other_worker_iters) == len([x for x in other_worker_iters if iteration <= x])
 
 
-    if is_last_to_start:
+    #if is_last_to_start:
+    if worker_id == self.worker_id
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
       self.set_suicide_timeout(cur_time, iteration)
     return 0
