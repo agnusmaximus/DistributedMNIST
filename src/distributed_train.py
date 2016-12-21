@@ -262,7 +262,7 @@ class WorkerStatusServer(pb.Root):
     #if is_last_to_start:
     if worker_id == self.worker_id:
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
-      #self.set_suicide_timeout(cur_time, iteration)
+      self.set_suicide_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
@@ -540,11 +540,7 @@ def train(target, dataset, cluster_spec):
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          if FLAGS.task_id % 2 == 0:
-            loss_value, step = 5, 5
-            sess.run([timeout_op])
-          else:
-            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
+          loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
