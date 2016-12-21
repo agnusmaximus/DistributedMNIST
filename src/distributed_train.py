@@ -213,33 +213,31 @@ class WorkerStatusServer(pb.Root):
 
     self.iteration_track[worker_id] = iteration
 
-    # Keep track of statistics of iterations start times
-    while iteration >= len(self.iteration_start_times):
-      self.iteration_start_times.append([0] * self.n_total_workers)
-    self.iteration_start_times[iteration][worker_id] = cur_time
+    # Keep track of statistics for the statistics collecting region.
+    if iteration > self.iteraiton_start_collect and iteration < self.iteration_end_collect:
 
-    # Track statistics
-    other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_last_to_begin = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
-    if is_last_to_begin and iteration > self.iteration_start_collect:
-      tf.logging.info("Statistics")
-      tf.logging.info('-----------------------')
+      # Keep track of statistics of iterations start times
+      while iteration >= len(self.iteration_start_times):
+        self.iteration_start_times.append([0] * self.n_total_workers)
+      self.iteration_start_times[iteration][worker_id] = cur_time
 
-      # Calculate and track elapsed time
-      #elapsed_times = [self.iteration_start_times[iteration-1][i] -
-      #                 self.iteration_start_times[iteration-2][i]
-      #                 for i in range(self.n_total_workers)]
-      elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
-                       max(self.iteration_start_times[iteration-2])]
+      # Track statistics
+      other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
+      is_last_to_begin = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
+      if is_last_to_begin and iteration > self.iteration_start_collect:
+        tf.logging.info("Statistics")
+        tf.logging.info('-----------------------')
 
+        # Elapsed iteration time = max of worker starting times on one iteration
+        # - max of worker starting times on the previous
+        elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
+                         max(self.iteration_start_times[iteration-2])]
 
-      if min(elapsed_times) < .1:
-        tf.logging.info(self.iteration_start_times[iteration-1])
-        tf.logging.info(self.iteration_start_times[iteration-2])
-        tf.logging.info(elapsed_times)
+        if min(elapsed_times) < .1:
+          tf.logging.info(self.iteration_start_times[iteration-1])
+          tf.logging.info(self.iteration_start_times[iteration-2])
+          tf.logging.info(elapsed_times)
 
-      # Start tracking elapsed times after a few iterations
-      if iteration-1 > self.iteration_start_collect and iteration-1 < self.iteration_end_collect:
         self.iteration_times.extend(elapsed_times)
 
         # Calculate stats on elapsed time
@@ -247,14 +245,14 @@ class WorkerStatusServer(pb.Root):
           self.elapsed_min_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
                                                            min(self.iteration_times), np.std(self.iteration_times)
 
-      # Print stats on elapsed time
-      if len(self.iteration_times) > 1:
-        tf.logging.info("Running max of iteration times: %f" % (self.elapsed_max_time))
-        tf.logging.info("Running avg of iteration times: %f" % (self.elapsed_avg_time))
-        tf.logging.info("Running min of iteration times: %f" % (self.elapsed_min_time))
-        tf.logging.info("Running stdev of iteration times: %f" % (self.elapsed_stdev_time))
+        # Print stats on elapsed time
+        if len(self.iteration_times) > 1:
+          tf.logging.info("Running max of iteration times: %f" % (self.elapsed_max_time))
+          tf.logging.info("Running avg of iteration times: %f" % (self.elapsed_avg_time))
+          tf.logging.info("Running min of iteration times: %f" % (self.elapsed_min_time))
+          tf.logging.info("Running stdev of iteration times: %f" % (self.elapsed_stdev_time))
 
-      tf.logging.info('-----------------------')
+        tf.logging.info('-----------------------')
 
     #self.check_is_straggler()
     #if worker_id == self.worker_id:
