@@ -262,7 +262,7 @@ class WorkerStatusServer(pb.Root):
     #if is_last_to_start:
     if worker_id == self.worker_id:
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
-      self.set_suicide_timeout(cur_time, iteration)
+      #self.set_suicide_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
