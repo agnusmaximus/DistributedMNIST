@@ -108,7 +108,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # RPC procedures #
 ##################
 class WorkerStatusServer(pb.Root):
-  def __init__(self):
+  def __init__(self, tf_session, tf_timeout_op):
     self.worker_id = FLAGS.task_id
     self.n_total_workers = len(FLAGS.worker_hosts.split(","))
     self.iteration_track = [0] * self.n_total_workers
@@ -116,6 +116,9 @@ class WorkerStatusServer(pb.Root):
     self.ready_to_start = False
     self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
+
+    self.sess = tf_session
+    self.timeout_op = tf_timeout_op
 
     # When to collect statistico
     self.iteration_start_collect = 5
@@ -129,9 +132,6 @@ class WorkerStatusServer(pb.Root):
     self.elapsed_avg_time = -1
     self.elapsed_stdev_time = -1
 
-    self.start_kill_time = []
-    self.end_kill_time = []
-
     self.collect_statistics = True
 
   def is_stable(self):
@@ -143,68 +143,25 @@ class WorkerStatusServer(pb.Root):
     n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
     return n_stable_required == n_stable
 
-  # NOTE THIS IS DEPRECATED.
-  # This relies on killing stragglers after knowing for sure one is a straggler.
-  # This doesn't work due to a lag between kill signal delivery and reception.
-  def check_is_straggler(self):
-
-    if not self.is_stable():
-      return False
-    self_iteration = self.iteration_track[self.worker_id]
-    max_iteration = max(self.iteration_track)
-    n_ahead = sum([1 if x > self_iteration else 0 for x in self.iteration_track])
-    if n_ahead >= self.n_to_collect:
-      # KILL PROCESS
-      tf.logging.info("Worker %d: I am a straggler" % self.worker_id)
-      if self_iteration not in self.iterations_killed:
-        self.iterations_killed.add(self_iteration)
-        tf.logging.info("Committing suicide! - %f" % time.time())
-        os.kill(os.getpid(), signal.SIGINT)
-
-  def compute_avg_kill_time(self):
-    # Computes avg time between signal sent and signal received.
-    times = [self.end_kill_time[i] - self.start_kill_time[i] for i in \
-             range(min(len(self.end_kill_time), len(self.start_kill_time)))]
-    if len(times) == 0:
-      return 0
-    return sum(times) / float(len(times))
-
   # Set a timeout upon which we check if we are still computing.
   # If so, we kill self.
   # Assumes that the last worker has just to begun an iteration
-  def set_suicide_timeout(self, iter_start_time, cur_iteration):
+  def set_timeout(self, iter_start_time, cur_iteration):
 
     # Make sure we have collected necessary data
     if cur_iteration <= self.iteration_end_collect:
       return
 
     # How far are we from iter start time
-    avg_kill_time_delay = self.compute_avg_kill_time()
-    #time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay * 2# + self.elapsed_stdev_time/2
-    time_to_suicide = .4
+    time_to_timeout = self.elapsed_avg_time
 
-    # Make sure we get at least the average amount of compute time.
-    #if time_to_suicide <= self.elapsed_avg_time:
-    #  return
-
-    def commit_suicide():
+    def trigger_timeout():
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
-        tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
-        self.start_kill_time.append(time.time())
-        tf.logging.info("YOYOYO I APPPENDING THE SIGNAL")
-        try:
-          os.kill(os.getpid(), signal.SIGINT)
-        except Exception, e:
-          tf.logging.info("WTF HAPPENED? %s" % e)
-        tf.logging.info("YOYOYO I SENT THE SIGNAL")
+        tf.logging.info("Triggering timeout on iteration %d! - %f" % (cur_iteration, time.time()))
+        self.sess.run([self.timeout_op])
 
-    Timer(time_to_suicide, commit_suicide).start()
-
-  def remote_suicide_signal_received(self, time):
-    tf.logging.info("Received suicide signal! - %f" % time)
-    self.end_kill_time.append(time)
-    tf.logging.info("Average delay between kill signal sending and delivery: %f" % self.compute_avg_kill_time())
+    Timer(time_to_timeout, trigger_timeout).start()
 
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
@@ -261,7 +218,7 @@ class WorkerStatusServer(pb.Root):
 
     if is_last_to_start:
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
-      self.set_suicide_timeout(cur_time, iteration)
+      self.set_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
@@ -308,9 +265,6 @@ class WorkerStatusClient:
     tf.logging.info("Signaling ready to self's server")
     self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
 
-  def notify_self_server_suicide_signal_received(self, time):
-    self.self_perspective.callRemote("suicide_signal_received", time)
-
   def broadcast_starting(self, iteration):
     for persp in self.perspectives:
       persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
@@ -347,10 +301,10 @@ class WorkerStatusClient:
     factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
 # Separate manager process to oversee training on workers.
-def launch_manager():
+def launch_manager(sess, timeout_op):
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
-  rpc_server = pb.PBServerFactory(WorkerStatusServer())
+  rpc_server = pb.PBServerFactory(WorkerStatusServer(sess, timeout_op))
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
@@ -362,9 +316,6 @@ def launch_manager():
   return rpc_client, rpc_server
 
 def train(target, dataset, cluster_spec):
-
-  if FLAGS.timeout_method:
-    rpc_client, rpc_server = launch_manager()
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
@@ -509,6 +460,11 @@ def train(target, dataset, cluster_spec):
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
+
+    # RPC client overseer
+    if FLAGS.timeout_method:
+      rpc_client, rpc_server = launch_manager(sess, timeout_op)
+
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
     # simultaneously in order to prevent running out of GPU memory.
@@ -575,7 +531,6 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
       except Exception, e:
-        rpc_client.notify_self_server_suicide_signal_received(time.time())
         tf.logging.info("%s" % e)
         sess.run([timeout_op])
 
