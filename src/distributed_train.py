@@ -191,6 +191,7 @@ class WorkerStatusServer(pb.Root):
       if self.iteration_track[self.worker_id] == cur_iteration:
         tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
         self.start_kill_time.append(time.time())
+        tf.logging.info("YOYOYO I APPPENDING THE SIGNAL")
         os.kill(os.getpid(), signal.SIGINT)
         tf.logging.info("YOYOYO I SENT THE SIGNAL")
 
