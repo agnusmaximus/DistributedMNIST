@@ -158,15 +158,10 @@ class WorkerStatusServer(pb.Root):
 
         # Elapsed iteration time = max of worker starting times on one iteration
         # - max of worker starting times on the previous
-        elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
-                         max(self.iteration_start_times[iteration-2])]
-        #elapsed_times = [self.iteration_start_times[iteration-1][0] - \
-        #                 self.iteration_start_times[iteration-2][0]]
-
-        if min(elapsed_times) < .1:
-          tf.logging.info(self.iteration_start_times[iteration-1])
-          tf.logging.info(self.iteration_start_times[iteration-2])
-          tf.logging.info(elapsed_times)
+        #elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
+                         #max(self.iteration_start_times[iteration-2])]
+        elapsed_times = [self.iteration_start_times[iteration-1][0] - \
+                         self.iteration_start_times[iteration-2][0]]
 
         self.iteration_times.extend(elapsed_times)
 
@@ -444,7 +439,7 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
     while not sv.should_stop():
       try:
-        #sess.run([wait_op])
+        sess.run([wait_op])
 
         # Timeout method
         if FLAGS.timeout_method:
