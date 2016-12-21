@@ -95,20 +95,14 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
-##########################################
-# Signal handling for killing iterations #
-##########################################
-def signal_handler(signal, frame):
-  tf.logging.info('SIGNAL RECEIVED - %f' % time.time())
-  raise Exception
-
-signal.signal(signal.SIGINT, signal_handler)
+# Global timeout
+global_timeout = -1
 
 ##################
 # RPC procedures #
 ##################
 class WorkerStatusServer(pb.Root):
-  def __init__(self, tf_session, tf_timeout_op):
+  def __init__(self):
     self.worker_id = FLAGS.task_id
     self.n_total_workers = len(FLAGS.worker_hosts.split(","))
     self.iteration_track = [0] * self.n_total_workers
@@ -143,27 +137,6 @@ class WorkerStatusServer(pb.Root):
     n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
     return n_stable_required == n_stable
 
-  # Set a timeout upon which we check if we are still computing.
-  # If so, we kill self.
-  # Assumes that the last worker has just to begun an iteration
-  def set_timeout(self, iter_start_time, cur_iteration):
-    return
-
-    # Make sure we have collected necessary data
-    if cur_iteration <= self.iteration_end_collect:
-      return
-
-    # How far are we from iter start time
-    time_to_timeout = self.elapsed_avg_time/2
-
-    def trigger_timeout():
-      # Only trigger timeout if still on the current iteration.
-      if self.iteration_track[self.worker_id] == cur_iteration:
-        tf.logging.info("Triggering timeout on iteration %d! - %f" % (cur_iteration, time.time()))
-        self.sess.run([self.timeout_op])
-
-    Timer(time_to_timeout, trigger_timeout).start()
-
   def remote_notify_starting(self, worker_id, iteration):
     # Called when worker_id notifies this machine that it is starting iteration.
     cur_time = time.time()
@@ -188,8 +161,10 @@ class WorkerStatusServer(pb.Root):
 
         # Elapsed iteration time = max of worker starting times on one iteration
         # - max of worker starting times on the previous
-        elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
-                         max(self.iteration_start_times[iteration-2])]
+        #elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
+        #                 max(self.iteration_start_times[iteration-2])]
+        elapsed_times = [self.iteration_start_times[iteration-1][0] - \
+                         self.iteration_start_times[iteration-2][0]]
 
         if min(elapsed_times) < .1:
           tf.logging.info(self.iteration_start_times[iteration-1])
@@ -212,15 +187,11 @@ class WorkerStatusServer(pb.Root):
 
         tf.logging.info('-----------------------')
 
-    #self.check_is_straggler()
-
     other_worker_iters = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_last_to_start = len(other_worker_iters) == len([x for x in other_worker_iters if iteration <= x])
 
-    #if is_last_to_start:
     if worker_id == self.worker_id:
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
-      self.set_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
@@ -306,7 +277,7 @@ class WorkerStatusClient:
 def launch_manager(sess, timeout_op):
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
-  rpc_server = pb.PBServerFactory(WorkerStatusServer(sess, timeout_op))
+  rpc_server = pb.PBServerFactory(WorkerStatusServer())
   reactor.listenTCP(FLAGS.rpc_port, rpc_server)
   rpc_client = WorkerStatusClient()
   Thread(target=reactor.run, args=(False,)).start()
@@ -476,11 +447,10 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
     while not sv.should_stop():
       try:
+        sess.run([wait_op])
 
         # Timeout method
         if FLAGS.timeout_method:
-          #sess.run([wait_op])
-          #cur_iteration = int(sess.run(global_step))
           if len(iterations_finished) == 0:
             cur_iteration = 0
           else:
@@ -497,8 +467,11 @@ def train(target, dataset, cluster_spec):
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          run_options = tf.RunOptions(timeout_in_ms=int(800))
-          loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+          if global_timeout < 0:
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+          else:
+            run_options = tf.RunOptions(timeout_in_ms=int(global_timeout))
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
