@@ -180,7 +180,7 @@ class WorkerStatusServer(pb.Root):
 
     # How far are we from iter start time
     avg_kill_time_delay = self.compute_avg_kill_time()
-    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay
+    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time/2
     #time_to_suicide = .1
 
     # Make sure we get at least the average amount of compute time.
@@ -259,8 +259,7 @@ class WorkerStatusServer(pb.Root):
     other_worker_iters = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
     is_last_to_start = len(other_worker_iters) == len([x for x in other_worker_iters if iteration <= x])
 
-    #if is_last_to_start:
-    if worker_id == self.worker_id:
+    if is_last_to_start:
       tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
       self.set_suicide_timeout(cur_time, iteration)
     return 0
