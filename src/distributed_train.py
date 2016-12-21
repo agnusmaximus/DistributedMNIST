@@ -164,7 +164,7 @@ class WorkerStatusServer(pb.Root):
         # We need at least 1 accumulated gradient
         if max(self.iteration_track) <= cur_iteration:
           retry_time = self.elapsed_avg_time / 10.0
-          Timer(time_to_timeout, retry_time).start()
+          Timer(retry_time, trigger_timeout).start()
         else:
           self.sess.run([self.timeout_op])
 
