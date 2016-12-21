@@ -189,6 +189,7 @@ class WorkerStatusServer(pb.Root):
         tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
         self.start_kill_time.append(time.time())
         os.kill(os.getpid(), signal.SIGINT)
+        tf.logging.info("YOYOYO I SENT THE SIGNAL")
 
     Timer(time_to_suicide, commit_suicide).start()
 
