@@ -335,6 +335,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
               n_accumulated = tf.identity(grad_accum.num_accumulated())
+              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated], message="accumulated ")
               aggregated_grad.append(grad_accum.take_grad(tf.maximum(n_accumulated, 1)))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
