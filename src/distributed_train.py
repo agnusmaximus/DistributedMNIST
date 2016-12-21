@@ -180,11 +180,11 @@ class WorkerStatusServer(pb.Root):
 
     # How far are we from iter start time
     avg_kill_time_delay = self.compute_avg_kill_time()
-    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
+    time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time/2
 
     # Make sure we get at least the average amount of compute time.
-    if time_to_suicide <= self.elapsed_avg_time:
-      return
+    #if time_to_suicide <= self.elapsed_avg_time:
+    #  return
 
     def commit_suicide():
       # Still on the current iteration? Kill self.
@@ -195,7 +195,7 @@ class WorkerStatusServer(pb.Root):
         try:
           os.kill(os.getpid(), signal.SIGINT)
         except Exception, e:
-          pass
+          tf.logging.info("WTF HAPPENED? %s" % e)
         tf.logging.info("YOYOYO I SENT THE SIGNAL")
 
     Timer(time_to_suicide, commit_suicide).start()
