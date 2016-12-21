@@ -214,7 +214,7 @@ class WorkerStatusServer(pb.Root):
     self.iteration_track[worker_id] = iteration
 
     # Keep track of statistics for the statistics collecting region.
-    if iteration > self.iteraiton_start_collect and iteration < self.iteration_end_collect:
+    if iteration > self.iteration_start_collect and iteration < self.iteration_end_collect:
 
       # Keep track of statistics of iterations start times
       while iteration >= len(self.iteration_start_times):
