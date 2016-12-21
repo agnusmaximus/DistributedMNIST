@@ -99,7 +99,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 # Signal handling for killing iterations #
 ##########################################
 def signal_handler(signal, frame):
-  tf.logging.info('SIGALRM RECEIVED - %f' % time.time())
+  tf.logging.info('SIGNAL RECEIVED - %f' % time.time())
   raise Exception
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -192,7 +192,11 @@ class WorkerStatusServer(pb.Root):
         tf.logging.info("Sending suicide signal on iteration %d! - %f" % (cur_iteration, time.time()))
         self.start_kill_time.append(time.time())
         tf.logging.info("YOYOYO I APPPENDING THE SIGNAL")
-        os.kill(os.getpid(), signal.SIGINT)
+        try:
+          os.kill(os.getpid(), signal.SIGINT)
+        except Exception, e:
+          tf.logging.info("WTF?")
+
         tf.logging.info("YOYOYO I SENT THE SIGNAL")
 
     Timer(time_to_suicide, commit_suicide).start()
