@@ -509,14 +509,20 @@ def train(target, dataset, cluster_spec):
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
     cur_iteration = 0
+    iterations_finished = set()
     while not sv.should_stop():
       try:
 
         # Timeout method
         if FLAGS.timeout_method:
           #sess.run([wait_op])
-          cur_iteration = int(sess.run(global_step))
+          #cur_iteration = int(sess.run(global_step))
+          if len(iterations_finished) == 0:
+            cur_iteration = 0
+          else:
+            cur_iteration = max(iterations_finished) + 1
           tf.logging.info("Starting iteration... %d" % cur_iteration)
+          iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
 
         start_time = time.time()
