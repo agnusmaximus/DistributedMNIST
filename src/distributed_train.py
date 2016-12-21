@@ -147,6 +147,7 @@ class WorkerStatusServer(pb.Root):
   # If so, we kill self.
   # Assumes that the last worker has just to begun an iteration
   def set_timeout(self, iter_start_time, cur_iteration):
+    return
 
     # Make sure we have collected necessary data
     if cur_iteration <= self.iteration_end_collect:
@@ -532,8 +533,8 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-      except Exception, e:
-        tf.logging.info("%s" % e)
+      except tf.errors.DeadlineExceededError:
+        tf.logging.info("Timeout exceeded, running timeout op")
         sess.run([timeout_op])
 
     if is_chief:
