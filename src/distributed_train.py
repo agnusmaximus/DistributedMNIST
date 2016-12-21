@@ -233,6 +233,8 @@ class WorkerStatusServer(pb.Root):
                        for i in range(self.n_total_workers)]
 
       if min(elapsed_times) < .1:
+        tf.logging.info(self.iteration_start_times[iteration-1])
+        tf.logging.info(self.iteration_start_times[iteration-2])
         tf.logging.info(elapsed_times)
 
       # Start tracking elapsed times after a few iterations
