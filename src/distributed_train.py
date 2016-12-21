@@ -156,10 +156,17 @@ class WorkerStatusServer(pb.Root):
     time_to_timeout = self.elapsed_avg_time / 2
 
     def trigger_timeout():
-      # Still on the current iteration? Kill self.
+      # Only trigger timeout if still on the current iteration.
       if self.iteration_track[self.worker_id] == cur_iteration:
         tf.logging.info("Triggering timeout on iteration %d! - %f" % (cur_iteration, time.time()))
-        self.sess.run([self.timeout_op])
+
+        # If no one else has finished yet, try timeout later.
+        # We need at least 1 accumulated gradient
+        if max(self.iteration_track) <= cur_iteration:
+          retry_time = self.elapsed_avg_time / 10.0
+          Timer(time_to_timeout, retry_time).start()
+        else:
+          self.sess.run([self.timeout_op])
 
     Timer(time_to_timeout, trigger_timeout).start()
 
