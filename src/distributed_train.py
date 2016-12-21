@@ -183,7 +183,7 @@ class WorkerStatusServer(pb.Root):
 
     time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
 
-    if time_to_suicide <= self.elapsed_avg_time:
+    if time_to_suicide <= self.elapsed_avg_time - self.elapsed_stdev_time:
       return
 
     def commit_suicide():

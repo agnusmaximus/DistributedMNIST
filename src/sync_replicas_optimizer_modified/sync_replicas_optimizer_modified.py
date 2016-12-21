@@ -385,6 +385,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                    lambda x : x,
                                    [global_step])
 
+      """self.wait_op = tf.while_loop(lambda x : tf.logical_and(tf.less_equal(self._local_step.ref(), global_step.ref()),
+                                                             tf.greater(self._local_step.ref(), 0)),
+                                   lambda x : x,
+                                   [global_step])"""
+
+
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
           chief_init_ops.append(
