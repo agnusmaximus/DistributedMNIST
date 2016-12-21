@@ -153,7 +153,7 @@ class WorkerStatusServer(pb.Root):
       return
 
     # How far are we from iter start time
-    time_to_timeout = self.elapsed_avg_time
+    time_to_timeout = self.elapsed_avg_time / 2
 
     def trigger_timeout():
       # Still on the current iteration? Kill self.
