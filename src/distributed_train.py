@@ -183,6 +183,9 @@ class WorkerStatusServer(pb.Root):
 
     time_to_suicide = self.elapsed_avg_time - avg_kill_time_delay + self.elapsed_stdev_time
 
+    if time_to_suicide <= self.elapsed_avg_time:
+      return
+
     def commit_suicide():
       # Still on the current iteration? Kill self.
       if self.iteration_track[self.worker_id] == cur_iteration:
