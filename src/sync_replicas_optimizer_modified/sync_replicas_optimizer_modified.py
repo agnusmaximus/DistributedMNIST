@@ -335,10 +335,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
               n_accumulated = tf.identity(grad_accum.num_accumulated())
-              aggregated_grad.append(grad_accum.take_grad(n_accumulated))
+              aggregated_grad.append(grad_accum.take_grad(tf.maximum(n_accumulated, 1)))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(n_accumulated))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
