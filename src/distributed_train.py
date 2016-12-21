@@ -210,8 +210,6 @@ class WorkerStatusServer(pb.Root):
     # Called when worker_id notifies this machine that it is starting iteration.
     cur_time = time.time()
     tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
-    if self.iteration_track[worker_id] == iteration and iteration != 0:
-      iteration += 1
 
     self.iteration_track[worker_id] = iteration
 
@@ -256,8 +254,8 @@ class WorkerStatusServer(pb.Root):
       tf.logging.info('-----------------------')
 
     #self.check_is_straggler()
-    if worker_id == self.worker_id:
-      self.set_suicide_timeout(cur_time, iteration)
+    #if worker_id == self.worker_id:
+      #self.set_suicide_timeout(cur_time, iteration)
     return 0
 
   def remote_notify_ready_to_start(self):
