@@ -465,7 +465,7 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           if global_timeout < 0:
-            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
             run_options = tf.RunOptions(timeout_in_ms=int(global_timeout))
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
