@@ -335,7 +335,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
               n_accumulated = tf.identity(grad_accum.num_accumulated())
-              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated], message="accumulated ")
               aggregated_grad.append(grad_accum.take_grad(tf.maximum(n_accumulated, 1)))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
@@ -345,7 +344,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
+        with ops.control_dependencies([logging_ops.Print(global_step,
+                                                         [x[0].num_accumulated() for x in self._accumulator_list],
+                                                         message="Updating with # of accumulated gradients")]):
+          update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
