@@ -254,17 +254,25 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
+        # Check the current iteration
+        if len(iterations_finished) == 0:
+          cur_iteration = 0
+        else:
+          cur_iteration = max(iterations_finished) + 1
+        tf.logging.info("Starting iteration... %d" % cur_iteration)
+        iterations_finished.add(cur_iteration)
+
         # Timeout method
         if FLAGS.timeout_method:
-          if len(iterations_finished) == 0:
-            cur_iteration = 0
-          else:
-            cur_iteration = max(iterations_finished) + 1
-          tf.logging.info("Starting iteration... %d" % cur_iteration)
-          iterations_finished.add(cur_iteration)
-          timeout_client.broadcast_starting(cur_iteration)
 
+          # Broadcast worker starting iteration to other workers.
+          timeout_client.broadcast_worker_starting(cur_iteration)
+
+        # Wait for the queue to have a token before starting.
         sess.run([wait_op])
+
+        # Broadcast the iteration has begun.
+        rpc_server.notify_iteration_starting(cur_iteration)
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)

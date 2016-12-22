@@ -19,37 +19,37 @@ class TimeoutServer(pb.Root):
     self.iterations_killed = set()
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
-    # When to collect statistico
-    self.iteration_start_collect = 10
-    self.iteration_end_collect = 80
-
     # Statistics tracking
     self.worker_start_times = {}
     for i in range(self.n_total_workers):
       self.worker_start_times[i] = {}
+    self.iteration_start_times = {}
 
     # When to timeout
     self.timeout = -1
 
-  def should_collect_statistics(self, iteration):
-    return iteration > self.iteration_start_collect and iteration < self.iteration_end_collect
-
   # Keep track of statistics of iterations start times
-  def track_statistics(self, worker_id, iteration, time):
-    if self.should_collect_statistics(iteration):
-      # Track worker start times.
-      # Worker start time is defined to be the time at which a worker can start
-      # computing gradients. (Note this is not the same as iteration start time,
-      # which is when the parameters have been updated.)
-      self.worker_start_times[worker_id][iteration] = time
+  def track_worker_start_times(self, worker_id, iteration, time):
+    # Track worker start times.
+    # Worker start time is defined to be the time at which a worker can start
+    # computing gradients. (Note this is not the same as iteration start time,
+    # which is when the parameters have been updated.)
+    self.worker_start_times[worker_id][iteration] = time
 
+  def track_iteration_start_times(self, iteration, time):
+    self.iteration_start_times[iteration] = time
 
   # Called when worker_id notifies this machine that it is starting iteration.
-  def remote_notify_starting(self, worker_id, iteration):
+  def remote_notify_worker_starting(self, worker_id, iteration):
     cur_time = time.time()
     tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
     self.iteration_track[worker_id] = iteration
-    self.track_statistics(worker_id, iteration, cur_time)
+    self.track_worker_start_times(worker_id, iteration, cur_time)
+
+  def notify_iteration_starting(self, iteration):
+    cur_time = time.time()
+    tf.logging.info("Beginning of iteration %d (dequeued successfully)" % iteration)
+    self.track_iteration_start_times(iteration, cur_time)
 
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
@@ -95,9 +95,9 @@ class TimeoutClient:
     tf.logging.info("Signaling ready to self's server")
     self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
 
-  def broadcast_starting(self, iteration):
+  def broadcast_worker_starting(self, iteration):
     for persp in self.perspectives:
-      persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
+      persp.callRemote("notify_worker_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
 
   def connected(self, perspective):
     self.perspectives.append(perspective)
