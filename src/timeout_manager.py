@@ -4,6 +4,7 @@ import os
 import time
 
 import tensorflow as tf
+import numpy as np
 from twisted.spread import pb
 from twisted.internet import reactor
 from threading import Thread, Timer
@@ -30,8 +31,9 @@ class TimeoutServer(pb.Root):
 
     # When to timeout
     self.timeout = -1
-    self.ITERATION_TO_START_TIMEOUT = 200
-    self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 30
+    self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 10
+    self.ITERATION_TO_START_TIMEOUT = 80
+    self.HIST_PERCENTILE = 90
 
   def set_timeout(self, iteration):
     if iteration >= self.ITERATION_TO_START_TIMEOUT:
@@ -45,8 +47,10 @@ class TimeoutServer(pb.Root):
         worker_end_times = [x-iteration_start_time for x in worker_end_times]
         histogram.extend(worker_end_times)
 
-      tf.logging.info("HISTOGRAM")
-      tf.logging.info(sorted(histogram))
+      if self.timeout < 0:
+        tf.logging.info("HISTOGRAM")
+        tf.logging.info(sorted(histogram))
+        self.timeout = np.percentile(histogram, self.HIST_PERCENTILE)
 
   # Keep track of statistics of iterations start times
   def track_worker_start_times(self, worker_id, iteration, time):
