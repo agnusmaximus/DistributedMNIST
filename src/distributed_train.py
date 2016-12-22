@@ -363,6 +363,7 @@ def train(target, dataset, cluster_spec):
     else:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
       timeout_op = opt.timeout_op
+      wait_op = opt.wait_op
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
