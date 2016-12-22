@@ -113,7 +113,7 @@ class WorkerStatusServer(pb.Root):
 
     # When to collect statistico
     self.iteration_start_collect = 5
-    self.iteration_end_collect = 50
+    self.iteration_end_collect = 1000
 
     # Statistics tracking
     self.iteration_start_times = []
@@ -438,7 +438,6 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
     while not sv.should_stop():
       try:
-
 
         # Timeout method
         if FLAGS.timeout_method:
