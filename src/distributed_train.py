@@ -24,9 +24,7 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 import mnist
 
-from twisted.spread import pb
-from twisted.internet import reactor
-from threading import Thread, Timer
+from timeout_manager import launch_manager
 
 np.set_printoptions(threshold=np.nan)
 
@@ -48,8 +46,8 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
 tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
-tf.app.flags.DEFINE_integer('rpc_port', 1235,
-                           """Port for rpc communication""")
+tf.app.flags.DEFINE_integer('timeout_port', 1235,
+                           """Port for timeout communication""")
 
 tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
 tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size.')
@@ -94,191 +92,6 @@ tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999,
 RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
-
-# Global timeout
-global_timeout = -1
-
-##################
-# RPC procedures #
-##################
-class WorkerStatusServer(pb.Root):
-  def __init__(self):
-    self.worker_id = FLAGS.task_id
-    self.n_total_workers = len(FLAGS.worker_hosts.split(","))
-    self.iteration_track = [0] * self.n_total_workers
-    self.n_to_collect = FLAGS.num_replicas_to_aggregate
-    self.ready_to_start = False
-    self.iterations_killed = set()
-    tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
-
-    # When to collect statistico
-    self.iteration_start_collect = 100
-    self.iteration_end_collect = 1000
-
-    # Statistics tracking
-    self.iteration_start_times = []
-    self.iteration_times = []
-    self.elapsed_max_time = -1
-    self.elapsed_min_time = -1
-    self.elapsed_avg_time = -1
-    self.elapsed_stdev_time = -1
-
-    self.collect_statistics = True
-
-  def is_stable(self):
-    # In the beginning, workers start at different times.
-    # To account for this, the cluster state is stable when all workers
-    # are at > N iterations.
-    STABLE_ITERATION = 20
-    n_stable_required =  self.n_total_workers
-    n_stable = sum([1 if x > STABLE_ITERATION else 0 for x in self.iteration_track])
-    return n_stable_required == n_stable
-
-  def remote_notify_starting(self, worker_id, iteration):
-    # Called when worker_id notifies this machine that it is starting iteration.
-    cur_time = time.time()
-    tf.logging.info("Worker %d: Was notified that worker %d started iteration %d - t=%f" % (self.worker_id, worker_id, iteration, cur_time))
-
-    self.iteration_track[worker_id] = iteration
-
-    # Keep track of statistics of iterations start times
-    while iteration >= len(self.iteration_start_times):
-      self.iteration_start_times.append([0] * self.n_total_workers)
-    self.iteration_start_times[iteration][worker_id] = cur_time
-
-    # Keep track of statistics for the statistics collecting region.
-    if iteration > self.iteration_start_collect and iteration < self.iteration_end_collect:
-
-      # Track statistics
-      other_worker_iterations = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-      is_last_to_begin = len([x for x in other_worker_iterations if iteration <= x]) == len(other_worker_iterations)
-      if is_last_to_begin and iteration > self.iteration_start_collect:
-        tf.logging.info("Statistics")
-        tf.logging.info('-----------------------')
-
-        # Elapsed iteration time = max of worker starting times on one iteration
-        # - max of worker starting times on the previous
-        elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
-                         max(self.iteration_start_times[iteration-2])]
-        #elapsed_times = [self.iteration_start_times[iteration-1][0] - \
-        #                 self.iteration_start_times[iteration-2][0]]
-
-        self.iteration_times.extend(elapsed_times)
-
-        # Calculate stats on elapsed time
-        self.elapsed_max_time, self.elapsed_avg_time, \
-          self.elapsed_min_time, self.elapsed_stdev_time = max(self.iteration_times), sum(self.iteration_times) / float(len(self.iteration_times)), \
-                                                           min(self.iteration_times), np.std(self.iteration_times)
-
-        # Print stats on elapsed time
-        if len(self.iteration_times) > 1:
-          tf.logging.info("Running max of iteration times: %f" % (self.elapsed_max_time))
-          tf.logging.info("Running avg of iteration times: %f" % (self.elapsed_avg_time))
-          tf.logging.info("Running min of iteration times: %f" % (self.elapsed_min_time))
-          tf.logging.info("Running stdev of iteration times: %f" % (self.elapsed_stdev_time))
-
-        tf.logging.info('-----------------------')
-
-    other_worker_iters = [x for i,x in enumerate(self.iteration_track) if i != worker_id]
-    is_last_to_start = len(other_worker_iters) == len([x for x in other_worker_iters if iteration <= x])
-
-    if worker_id == self.worker_id:
-      tf.logging.info("%d if the last to starter iter %d" % (worker_id, iteration))
-    return 0
-
-  def remote_notify_ready_to_start(self):
-    tf.logging.info("Server ready to start!")
-    self.ready_to_start = True
-
-  def remote_is_ready_to_start(self):
-    return (self.worker_id, self.ready_to_start)
-
-class WorkerStatusClient:
-  def __init__(self):
-    self.worker_id = FLAGS.task_id
-    hosts = FLAGS.worker_hosts.split(",")
-    hosts = [x.split(":")[0] for x in hosts]
-    self.hosts = hosts
-    self.self_perspective = None
-    self.perspectives = []
-    self.ready = False
-    self.servers_ready = set([])
-
-    for i, host in enumerate(hosts):
-      factory = pb.PBClientFactory()
-      tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-      reactor.connectTCP(host, FLAGS.rpc_port, factory)
-      if i == self.worker_id:
-        factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
-      else:
-        factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
-
-  def server_ready_to_start(self, *args):
-    wid, ready = args[0]
-    if ready:
-      tf.logging.info("Worker %d is ready to begin..." % wid)
-      self.servers_ready.add(wid)
-
-  def check_ready_to_start(self):
-    for persp in self.perspectives:
-      persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.fail)
-
-  def ready_to_start(self):
-    return self.ready and len(self.servers_ready) == len(self.hosts)
-
-  def signal_server_ready(self):
-    tf.logging.info("Signaling ready to self's server")
-    self.self_perspective.callRemote("notify_ready_to_start").addCallbacks(self.success, self.fail)
-
-  def broadcast_starting(self, iteration):
-    for persp in self.perspectives:
-      persp.callRemote("notify_starting", self.worker_id, iteration).addCallbacks(self.success, self.fail)
-
-  def connected(self, perspective):
-    self.perspectives.append(perspective)
-    tf.logging.info("Connected!")
-    self.ready = (len(self.hosts) == len(self.perspectives))
-    if self.ready:
-      tf.logging.info("Ready!")
-      self.signal_server_ready()
-    else:
-      tf.logging.info("%d of %d" % (len(self.perspectives), len(self.hosts)))
-
-  def connected_self(self, perspective):
-    self.self_perspective = perspective
-    self.connected(perspective)
-
-  def success(self, result):
-    #tf.logging.info("Success!")
-    pass
-
-  def fail(self, _):
-    tf.logging.info("Fail")
-    tf.logging.info(_)
-
-  def connect_failure(self, *args, **kwargs):
-    tf.logging.info("RPC error, something failed: ")
-    time.sleep(1)
-    host = "".join(args[1:])
-    factory = pb.PBClientFactory()
-    tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
-    reactor.connectTCP(host, FLAGS.rpc_port, factory)
-    factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
-
-# Separate manager process to oversee training on workers.
-def launch_manager(sess, timeout_op):
-  # Launch a separate thread in the background that checks whether the
-  # machine is a straggler.
-  rpc_server = pb.PBServerFactory(WorkerStatusServer())
-  reactor.listenTCP(FLAGS.rpc_port, rpc_server)
-  rpc_client = WorkerStatusClient()
-  Thread(target=reactor.run, args=(False,)).start()
-
-  while not rpc_client.ready_to_start():
-    rpc_client.check_ready_to_start()
-    time.sleep(1)
-
-  return rpc_client, rpc_server
 
 def train(target, dataset, cluster_spec):
 
@@ -427,9 +240,9 @@ def train(target, dataset, cluster_spec):
       sess.run(init_tokens_op)
 
 
-    # RPC client overseer
+    # TIMEOUT client overseer
     if FLAGS.timeout_method:
-      rpc_client, rpc_server = launch_manager(sess, timeout_op)
+      timeout_client, timeout_server = launch_manager(sess, timeout_op)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
@@ -449,7 +262,7 @@ def train(target, dataset, cluster_spec):
             cur_iteration = max(iterations_finished) + 1
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           iterations_finished.add(cur_iteration)
-          rpc_client.broadcast_starting(cur_iteration)
+          timeout_client.broadcast_starting(cur_iteration)
 
         sess.run([wait_op])
 
@@ -461,10 +274,10 @@ def train(target, dataset, cluster_spec):
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          if global_timeout < 0:
+          if timeout_server.timeout < 0:
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
-            run_options = tf.RunOptions(timeout_in_ms=int(global_timeout))
+            run_options = tf.RunOptions(timeout_in_ms=int(timeout_server.timeout))
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
