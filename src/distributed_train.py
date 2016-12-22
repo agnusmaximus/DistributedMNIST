@@ -439,7 +439,7 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
     while not sv.should_stop():
       try:
-        sess.run([wait_op])
+
 
         # Timeout method
         if FLAGS.timeout_method:
@@ -450,6 +450,8 @@ def train(target, dataset, cluster_spec):
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
+
+        sess.run([wait_op])
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
