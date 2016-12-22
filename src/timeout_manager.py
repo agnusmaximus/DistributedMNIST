@@ -32,6 +32,7 @@ class TimeoutServer(pb.Root):
     # When to timeout
     self.timeout = -1
     self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 10
+    self.ITERATION_TO_END_STATISTICS_COLLECTION = 80
     self.ITERATION_TO_START_TIMEOUT = 80
     self.HIST_PERCENTILE = 90
 
@@ -41,7 +42,7 @@ class TimeoutServer(pb.Root):
       # Compute a histogram of when a worker finishes an iteration,
       # with time=0 being the start of the beginning of the iteration.
       histogram = []
-      for it in range(self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION, iteration-1):
+      for it in range(self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION, self.ITERATION_TO_END_STATISTICS_COLLECTION-1):
         iteration_start_time = self.iteration_start_times[it]
         worker_end_times = [start_times[it+1] for start_times in self.worker_start_times]
         worker_end_times = [x-iteration_start_time for x in worker_end_times]
