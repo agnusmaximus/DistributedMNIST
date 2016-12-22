@@ -139,7 +139,7 @@ def launch_manager(sess, timeout_op, tf_flags):
   # machine is a straggler.
   timeout_server = TimeoutServer(tf_flags)
   rpc_server = pb.PBServerFactory(timeout_server)
-  reactor.listenTCP(self.tf_flags.rpc_port, rpc_server)
+  reactor.listenTCP(tf_flags.rpc_port, rpc_server)
   rpc_client = TimeoutClient(tf_flags)
   Thread(target=reactor.run, args=(False,)).start()
 
