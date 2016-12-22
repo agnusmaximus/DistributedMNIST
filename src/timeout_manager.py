@@ -2,6 +2,7 @@ import signal
 import sys
 import os
 
+import tensorflow as tf
 from twisted.spread import pb
 from twisted.internet import reactor
 from threading import Thread, Timer
