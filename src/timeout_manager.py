@@ -41,7 +41,7 @@ class TimeoutServer(pb.Root):
       histogram = []
       for it in range(self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION, iteration-1):
         iteration_start_time = self.iteration_start_times[it]
-        worker_end_times = [start_times[i][it+1] for start_times in self.worker_start_times]
+        worker_end_times = [start_times[it+1] for start_times in self.worker_start_times]
         worker_end_times = [x-iteration_start_time for x in worker_end_times]
         histogram.extend(worker_end_times)
 
