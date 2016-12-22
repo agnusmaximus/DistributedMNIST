@@ -249,10 +249,13 @@ def train(target, dataset, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    cur_iteration = 0
+    cur_iteration = -1
     iterations_finished = set()
     while not sv.should_stop():
       try:
+
+        # Increment current iteration
+        cur_iteration += 1
 
         # Timeout method
         if FLAGS.timeout_method:
@@ -315,7 +318,6 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
 
-        cur_iteration += 1
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
