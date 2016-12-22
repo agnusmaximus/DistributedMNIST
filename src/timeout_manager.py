@@ -48,11 +48,10 @@ class TimeoutServer(pb.Root):
         histogram.extend(worker_end_times)
 
       if self.timeout < 0:
-        pass
-        #tf.logging.info("HISTOGRAM")
-        #tf.logging.info(sorted(histogram))
-        #self.timeout = int(np.percentile(histogram, self.HIST_PERCENTILE) * 1000)
-        #tf.logging.info("Timeout @ %f percentile = %d ms" % (self.HIST_PERCENTILE, self.timeout))
+        tf.logging.info("HISTOGRAM")
+        tf.logging.info(sorted(histogram))
+        self.timeout = int(np.percentile(histogram, self.HIST_PERCENTILE) * 1000)
+        tf.logging.info("Timeout @ %f percentile = %d ms" % (self.HIST_PERCENTILE, self.timeout))
 
   # Keep track of statistics of iterations start times
   def track_worker_start_times(self, worker_id, iteration, time):
