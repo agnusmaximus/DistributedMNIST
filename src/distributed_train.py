@@ -272,7 +272,7 @@ def train(target, dataset, cluster_spec):
         sess.run([wait_op])
 
         # Broadcast the iteration has begun.
-        rpc_server.notify_iteration_starting(cur_iteration)
+        timeout_server.notify_iteration_starting(cur_iteration)
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
