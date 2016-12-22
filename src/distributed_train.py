@@ -158,10 +158,10 @@ class WorkerStatusServer(pb.Root):
 
         # Elapsed iteration time = max of worker starting times on one iteration
         # - max of worker starting times on the previous
-        #elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
-                         #max(self.iteration_start_times[iteration-2])]
-        elapsed_times = [self.iteration_start_times[iteration-1][0] - \
-                         self.iteration_start_times[iteration-2][0]]
+        elapsed_times = [max(self.iteration_start_times[iteration-1]) - \
+                         max(self.iteration_start_times[iteration-2])]
+        #elapsed_times = [self.iteration_start_times[iteration-1][0] - \
+        #                 self.iteration_start_times[iteration-2][0]]
 
         self.iteration_times.extend(elapsed_times)
 
