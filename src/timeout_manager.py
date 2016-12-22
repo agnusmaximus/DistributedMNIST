@@ -23,7 +23,7 @@ class TimeoutServer(pb.Root):
     tf.logging.info("Worker %d: starting status server..." % self.tf_flags.task_id)
 
     # Statistics tracking
-    self.worker_start_times = [] * self.n_total_workers
+    self.worker_start_times = [0] * self.n_total_workers
     for i in range(self.n_total_workers):
       self.worker_start_times[i] = {}
     self.iteration_start_times = {}
