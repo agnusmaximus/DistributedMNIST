@@ -338,13 +338,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
-              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas+1))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               #aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas+1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
