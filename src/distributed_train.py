@@ -285,7 +285,7 @@ def train(target, dataset, cluster_spec):
           if timeout_server.timeout < 0:
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
-            tf.logging.info("Setting timeout: %f" % timeout_server.timeout)
+            tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
             run_options = tf.RunOptions(timeout_in_ms=int(timeout_server.timeout))
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
 
@@ -323,7 +323,7 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
       except tf.errors.DeadlineExceededError:
-        tf.logging.info("Timeout exceeded, running timeout op")
+        tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
 
     if is_chief:
