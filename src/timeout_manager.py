@@ -23,13 +23,30 @@ class TimeoutServer(pb.Root):
     tf.logging.info("Worker %d: starting status server..." % self.tf_flags.task_id)
 
     # Statistics tracking
-    self.worker_start_times = {}
+    self.worker_start_times = [] * self.n_total_workers
     for i in range(self.n_total_workers):
       self.worker_start_times[i] = {}
     self.iteration_start_times = {}
 
     # When to timeout
     self.timeout = -1
+    self.ITERATION_TO_START_TIMEOUT = 70
+    self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 10
+
+  def set_timeout(self, iteration):
+    if iteration >= self.ITERATION_TO_START_TIMEOUT:
+
+      # Compute a histogram of when a worker finishes an iteration,
+      # with time=0 being the start of the beginning of the iteration.
+      histogram = []
+      for it in range(self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION, iteration-1):
+        iteration_start_time = self.iteration_start_times[it]
+        worker_end_times = [start_times[i][it+1] for start_times in self.worker_start_times]
+        worker_end_times = [x-iteration_start_time for x in worker_end_times]
+        histogram.extend(worker_end_times)
+
+      tf.logging.info("HISTOGRAM")
+      tf.logging.info(sorted(histogram))
 
   # Keep track of statistics of iterations start times
   def track_worker_start_times(self, worker_id, iteration, time):
@@ -53,6 +70,9 @@ class TimeoutServer(pb.Root):
     cur_time = time.time()
     tf.logging.info("Beginning of iteration %d (dequeued successfully) - t=%f" % (iteration, cur_time))
     self.track_iteration_start_times(iteration, cur_time)
+
+    # Set timeout
+    self.set_timeout(iteration)
 
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
