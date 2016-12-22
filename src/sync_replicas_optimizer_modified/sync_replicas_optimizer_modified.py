@@ -304,7 +304,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
+              train_ops.append(grad_accum.apply_grad(grad,
+                                                     local_step=self._local_step.ref()))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
@@ -337,14 +338,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
-              #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
-              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+              aggregated_grad.append(grad_accum.take_grad(n_accumulated))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
-              #aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
