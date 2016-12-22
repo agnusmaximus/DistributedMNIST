@@ -263,7 +263,7 @@ def train(target, dataset, cluster_spec):
           timeout_client.broadcast_worker_starting(cur_iteration)
 
         # Wait for the queue to have a token before starting.
-        sess.run([wait_op])
+        #sess.run([wait_op])
 
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
