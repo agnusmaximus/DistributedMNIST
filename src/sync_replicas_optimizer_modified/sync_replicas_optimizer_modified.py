@@ -272,7 +272,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
-      update_local_step_op = state_ops.assign(self._local_step.ref(), self._sync_token_queues[worker_id].dequeue())
+      update_local_step_op = state_ops.assign(self._local_step, self._sync_token_queues[worker_id].dequeue())
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -338,13 +338,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               #aggregated_grad.append(grad_accum.take_grad(n_accumulated))
-              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas+1))
+              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
               n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               #aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas+1))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(self._total_num_replicas))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
