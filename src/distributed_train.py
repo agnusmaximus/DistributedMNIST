@@ -363,7 +363,6 @@ def train(target, dataset, cluster_spec):
     else:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
       timeout_op = opt.timeout_op
-      wait_op = opt.wait_op
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -450,8 +449,6 @@ def train(target, dataset, cluster_spec):
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
-
-        sess.run([wait_op])
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
