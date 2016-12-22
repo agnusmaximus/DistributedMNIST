@@ -263,6 +263,8 @@ def train(target, dataset, cluster_spec):
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
 
+        assert(int(sess.run(global_step)) == cur_iteration)
+
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
 
