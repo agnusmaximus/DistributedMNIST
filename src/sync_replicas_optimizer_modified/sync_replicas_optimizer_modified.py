@@ -271,10 +271,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
-      n_in_q = self._sync_token_queues[worker_id].size()
-      queue_tokens = self._sync_token_queues[worker_id].dequeue_many(n_in_q)
-      cur_step = tf.reduce_max(queue_tokens)
-      update_local_step_op = state_ops.assign(self._local_step, cur_step)
+      with ops.control_dependencies([self._sync_token_queues[worker_id].dequeue()]):
+        update_local_step_op = state_ops.assign(self._local_step, global_step.ref())
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
