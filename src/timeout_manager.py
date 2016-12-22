@@ -62,7 +62,7 @@ class TimeoutServer(pb.Root):
 
 class TimeoutClient:
   def __init__(self, tf_flags):
-    self._tf_flags = tf_flags
+    self.tf_flags = tf_flags
     self.worker_id = self.tf_flags.task_id
     hosts = self.tf_flags.worker_hosts.split(",")
     hosts = [x.split(":")[0] for x in hosts]
