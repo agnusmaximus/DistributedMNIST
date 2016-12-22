@@ -263,6 +263,8 @@ def train(target, dataset, cluster_spec):
           # Broadcast worker starting iteration to other workers.
           timeout_client.broadcast_worker_starting(cur_iteration)
 
+        assert(cur_iteration == int(sess.run(global_step)))
+
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
 
@@ -277,7 +279,7 @@ def train(target, dataset, cluster_spec):
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          if timeout_server.timeout < 0 or 1:
+          if timeout_server.timeout < 0:
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
