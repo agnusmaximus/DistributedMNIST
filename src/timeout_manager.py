@@ -10,14 +10,15 @@ from threading import Thread, Timer
 # RPC procedures #
 ##################
 class TimeoutServer(pb.Root):
-  def __init__(self):
-    self.worker_id = FLAGS.task_id
-    self.n_total_workers = len(FLAGS.worker_hosts.split(","))
+  def __init__(self, tf_flags):
+    self.tf_flags = tf_flags
+    self.worker_id = self.tf_flags.task_id
+    self.n_total_workers = len(self.tf_flags.worker_hosts.split(","))
     self.iteration_track = [0] * self.n_total_workers
-    self.n_to_collect = FLAGS.num_replicas_to_aggregate
+    self.n_to_collect = self.tf_flags.num_replicas_to_aggregate
     self.ready_to_start = False
     self.iterations_killed = set()
-    tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
+    tf.logging.info("Worker %d: starting status server..." % self.tf_flags.task_id)
 
     # Statistics tracking
     self.worker_start_times = {}
@@ -59,9 +60,10 @@ class TimeoutServer(pb.Root):
     return (self.worker_id, self.ready_to_start)
 
 class TimeoutClient:
-  def __init__(self):
-    self.worker_id = FLAGS.task_id
-    hosts = FLAGS.worker_hosts.split(",")
+  def __init__(self, tf_flags):
+    self._tf_flags = tf_flags
+    self.worker_id = self.tf_flags.task_id
+    hosts = self.tf_flags.worker_hosts.split(",")
     hosts = [x.split(":")[0] for x in hosts]
     self.hosts = hosts
     self.self_perspective = None
@@ -71,8 +73,8 @@ class TimeoutClient:
 
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
-      tf.logging.info("Connecting to %s:%d" % (host, FLAGS.rpc_port))
-      reactor.connectTCP(host, FLAGS.rpc_port, factory)
+      tf.logging.info("Connecting to %s:%d" % (host, self.tf_flags.rpc_port))
+      reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
       if i == self.worker_id:
         factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       else:
@@ -126,18 +128,18 @@ class TimeoutClient:
     time.sleep(1)
     host = "".join(args[1:])
     factory = pb.PBClientFactory()
-    tf.logging.info("Trying reconnecting to %s:%d" % (host, FLAGS.rpc_port))
-    reactor.connectTCP(host, FLAGS.rpc_port, factory)
+    tf.logging.info("Trying reconnecting to %s:%d" % (host, self.tf_flags.rpc_port))
+    reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
     factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
 # Separate manager process to oversee training on workers.
-def launch_manager(sess, timeout_op):
+def launch_manager(sess, timeout_op, tf_flags):
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
-  timeout_server = TimeoutServer()
+  timeout_server = TimeoutServer(tf_flags)
   rpc_server = pb.PBServerFactory(timeout_server)
-  reactor.listenTCP(FLAGS.rpc_port, rpc_server)
-  rpc_client = TimeoutClient()
+  reactor.listenTCP(self.tf_flags.rpc_port, rpc_server)
+  rpc_client = TimeoutClient(tf_flags)
   Thread(target=reactor.run, args=(False,)).start()
 
   while not rpc_client.ready_to_start():
