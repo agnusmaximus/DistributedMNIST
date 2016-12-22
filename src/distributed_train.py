@@ -451,7 +451,7 @@ def train(target, dataset, cluster_spec):
           iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
 
-        sess.run([wait_op])
+        #sess.run([wait_op])
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
