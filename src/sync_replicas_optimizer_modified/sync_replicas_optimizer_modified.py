@@ -274,6 +274,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       n_in_q = self._sync_token_queues[worker_id].size()
       update_local_step_op = state_ops.assign(self._local_step.ref(), self._sync_token_queues[worker_id].dequeue())
 
+    self.wait_op = update_local_step_op
+
     # Gradient accum creation
     with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
@@ -295,24 +297,24 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var.device))
 
       # Phase 1 gradient computation
-      with ops.control_dependencies([update_local_step_op]):
-        for index, (grad, var) in enumerate(grads_and_vars):
-          with ops.device(var.device):
-            if grad is None:
-              continue
+      #with ops.control_dependencies([update_local_step_op]):
+      for index, (grad, var) in enumerate(grads_and_vars):
+        with ops.device(var.device):
+          if grad is None:
+            continue
 
-            elif isinstance(grad, ops.Tensor):
-              grad_accum = self._accumulator_list[index][0]
+          elif isinstance(grad, ops.Tensor):
+            grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
+            train_ops.append(grad_accum.apply_grad(grad, local_step=self._local_step.ref()))
 
-            else:
-              if not isinstance(grad, ops.IndexedSlices):
-                raise ValueError("Unknown grad type!")
-              grad_accum = self._accumulator_list[index][0]
+          else:
+            if not isinstance(grad, ops.IndexedSlices):
+              raise ValueError("Unknown grad type!")
+            grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step.ref()))
+            train_ops.append(grad_accum.apply_indexed_slices_grad(
+              grad, local_step=self._local_step.ref()))
 
 
       # Phase 1 is finished when:
@@ -385,9 +387,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step.ref())
-      self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   lambda x : x,
-                                   [global_step])
+      #self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
+      #                             lambda x : x,
+      #                             [global_step])
 
       """self.wait_op = tf.while_loop(lambda x : tf.logical_and(tf.less_equal(self._local_step.ref(), global_step.ref()),
                                                              tf.greater(self._local_step.ref(), 0)),
