@@ -112,7 +112,7 @@ class WorkerStatusServer(pb.Root):
     tf.logging.info("Worker %d: starting status server..." % FLAGS.task_id)
 
     # When to collect statistico
-    self.iteration_start_collect = 5
+    self.iteration_start_collect = 100
     self.iteration_end_collect = 1000
 
     # Statistics tracking
@@ -366,6 +366,7 @@ def train(target, dataset, cluster_spec):
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
+
     # Get chief queue_runners, init_tokens and clean_up_op, which is used to
     # synchronize replicas.
     # More details can be found in sync_replicas_optimizer.
@@ -448,6 +449,8 @@ def train(target, dataset, cluster_spec):
           tf.logging.info("Starting iteration... %d" % cur_iteration)
           iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
+
+        sess.run([wait_op])
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
