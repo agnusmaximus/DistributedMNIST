@@ -254,7 +254,7 @@ def train(target, dataset, cluster_spec):
       try:
 
         # Check the current iteration
-        cur_iteration, = sess.run([global_step])
+        cur_iteration = sess.run(global_step)
         tf.logging.info("Starting iteration... %d" % cur_iteration)
 
         # Timeout method
