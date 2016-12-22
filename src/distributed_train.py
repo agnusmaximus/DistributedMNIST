@@ -254,14 +254,6 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        # Check the current iteration
-        if len(iterations_finished) == 0:
-          cur_iteration = 0
-        else:
-          cur_iteration = max(iterations_finished) + 1
-        tf.logging.info("Starting iteration... %d" % cur_iteration)
-        iterations_finished.add(cur_iteration)
-
         # Timeout method
         if FLAGS.timeout_method:
 
@@ -322,6 +314,8 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
+
+        cur_iteration += 1
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
