@@ -273,7 +273,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.device(global_step.device):
       dequeued = self._sync_token_queues[worker_id].dequeue()
       with ops.control_dependencies([dequeued]):
-        with ops.control_dependencies([logging_ops.Print(dequeued, [dequeued], message="DEQUEUED")]):
+        with ops.control_dependencies([logging_ops.Print(dequeued, [dequeued, worker_id], message="DEQUEUED, worker_id")]):
           update_local_step_op = state_ops.assign(self._local_step, global_step.ref())
 
     # Gradient accum creation

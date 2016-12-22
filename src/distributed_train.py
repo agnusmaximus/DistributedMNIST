@@ -257,6 +257,8 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
+        tf.logging.info("Worker starting iteration %d" % cur_iteration)
+
         # Timeout method
         if FLAGS.timeout_method:
 
