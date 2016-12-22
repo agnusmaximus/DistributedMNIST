@@ -239,7 +239,6 @@ def train(target, dataset, cluster_spec):
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
-
     # TIMEOUT client overseer
     if FLAGS.timeout_method:
       timeout_client, timeout_server = launch_manager(sess, timeout_op, FLAGS)
