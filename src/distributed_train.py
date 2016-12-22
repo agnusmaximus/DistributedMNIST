@@ -454,7 +454,7 @@ def train(target, dataset, cluster_spec):
           iterations_finished.add(cur_iteration)
           rpc_client.broadcast_starting(cur_iteration)
 
-
+        sess.run([wait_op])
 
         if FLAGS.timeline_logging:
           run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
