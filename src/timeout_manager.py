@@ -51,7 +51,7 @@ class TimeoutServer(pb.Root):
 
   def notify_iteration_starting(self, iteration):
     cur_time = time.time()
-    tf.logging.info("Beginning of iteration %d (dequeued successfully)" % iteration)
+    tf.logging.info("Beginning of iteration %d (dequeued successfully) - t=%f" % (iteration, cur_time))
     self.track_iteration_start_times(iteration, cur_time)
 
   def remote_notify_ready_to_start(self):
