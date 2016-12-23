@@ -229,13 +229,12 @@ def train(target, dataset, cluster_spec):
       log_device_placement=FLAGS.log_device_placement)
 
   # Get a session.
-  sess = sv.prepare_or_wait_for_session(target, config=sess_config)
+  sess = sv.prepare_or_wait_for_session(config=sess_config)
 
   tf.logging.info("YO I SHOULD TIME OUT")
   opt = tf.RunOptions(timeout_in_ms=1000)
   sess.run(b, options=opt)
   tf.logging.info("YAYAY")
-
 
   # Start the queue runners.
   queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
