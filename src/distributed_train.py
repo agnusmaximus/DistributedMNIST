@@ -225,11 +225,18 @@ def train(target, dataset, cluster_spec):
     tf.logging.info('%s Supervisor' % datetime.now())
 
     sess_config = tf.ConfigProto(
-        #allow_soft_placement=True,
+        allow_soft_placement=True,
         log_device_placement=FLAGS.log_device_placement)
 
     # Get a session.
     sess = sv.prepare_or_wait_for_session(target, config=sess_config)
+
+    tf.logging.info("YO I SHOULD TIME OUT")
+
+    opt = tf.RunOptions(timeout_in_ms=1000)
+    sess.run(b, options=opt)
+    tf.logging.info("YAYAY")
+
 
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
@@ -295,12 +302,6 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           if timeout_server.timeout < 0:
-            tf.logging.info("YO I SHOULD TIME OUT")
-
-            opt = tf.RunOptions(timeout_in_ms=1000)
-            sess.run(b, options=opt)
-            tf.logging.info("YAYAY")
-
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
