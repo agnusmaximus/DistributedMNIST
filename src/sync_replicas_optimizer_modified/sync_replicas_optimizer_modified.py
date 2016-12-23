@@ -275,7 +275,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="N IN Q")]):
         #dequeued = self._sync_token_queues[worker_id].dequeue()
         dequeueds = self._sync_token_queues[worker_id].dequeue_many(n_in_q)
-        update_local_step_op = tf.reduce_max(dequeueds)
+        update_local_step_op = state_ops.assign(self._local_step, tf.reduce_max(dequeueds))
         #update_local_step_op = state_ops.assign(self._local_step, dequeued)
 
     # Gradient accum creation
