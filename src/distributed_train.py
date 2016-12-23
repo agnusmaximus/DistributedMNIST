@@ -329,7 +329,10 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-
+      except Exception as e:
+        tf.logging.info("WTF MAN " + str(e))
+        tf.logging.info(e.__doc__)
+        tf.logging.info(e.message)
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
