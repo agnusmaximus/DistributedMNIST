@@ -43,7 +43,7 @@ configuration = Cfg({
     "worker_type" : "m4.2xlarge",
     "ps_type" : "m4.2xlarge",
     "evaluator_type" : "m4.2xlarge",
-    "image_id" : "ami-56d97b36", #"ami-e47bcc84",          # US west
+    "image_id" : "ami-e47bcc84",          # US west
 
     # Launch specifications
     "spot_price" : ".13",                 # Has to be a string
