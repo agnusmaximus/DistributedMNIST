@@ -333,11 +333,11 @@ def train(target, dataset, cluster_spec):
         tf.logging.info("WTF MAN " + str(e))
         tf.logging.info(e.__doc__)
         tf.logging.info(e.message)
+        sys.exit(-1)
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
-      finally:
-        tf.logging.info("WTF MAN")
+        sys.exit(-1)
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
