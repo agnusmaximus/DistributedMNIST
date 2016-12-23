@@ -142,9 +142,6 @@ def train(target, dataset, cluster_spec):
                                     FLAGS.learning_rate_decay_factor,
                                     staircase=True)
 
-    # Add a summary to track the learning rate.
-    tf.scalar_summary('learning_rate', lr)
-
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
 
     # Number of classes in the Dataset label set plus 1.
