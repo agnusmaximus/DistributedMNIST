@@ -258,6 +258,7 @@ def train(target, dataset, cluster_spec):
         cur_iteration += 1
 
         tf.logging.info("Worker starting iteration %d" % cur_iteration)
+        sys.stdout.flush()
 
         # Timeout method
         if FLAGS.timeout_method:
@@ -266,11 +267,13 @@ def train(target, dataset, cluster_spec):
           timeout_client.broadcast_worker_starting(cur_iteration)
 
         tf.logging.info("WAITING OPP")
+        sys.stdout.flush()
 
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
 
         tf.logging.info("DONE WAITING OPP")
+        sys.stdout.flush()
 
         assert(cur_iteration == int(sess.run(global_step)))
 
@@ -278,6 +281,7 @@ def train(target, dataset, cluster_spec):
         timeout_server.notify_iteration_starting(cur_iteration)
 
         tf.logging.info("NOTIFY STARTING")
+        sys.stdout.flush()
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
