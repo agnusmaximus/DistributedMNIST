@@ -27,8 +27,7 @@ def main(unused_args):
   server = tf.train.Server(
       {'ps': ps_hosts,
        'worker': worker_hosts},
-      job_name=FLAGS.job_name,
-      task_index=FLAGS.task_id)
+      job_name=FLAGS.job_name)
 
   if FLAGS.job_name == 'ps':
     # `ps` jobs wait for incoming connections from the workers.
