@@ -291,6 +291,7 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           if timeout_server.timeout < 0:
+            tf.logging.info("YO I SHOULD TIME OUT")
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=tf.RunOptions(timeout_in_ms=10))
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
