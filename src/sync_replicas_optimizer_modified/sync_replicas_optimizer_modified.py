@@ -328,7 +328,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         #finished_phase_1.append(dequeue)
         p1_queue_size =  self._p1_finished_queues[i].size()
         with ops.control_dependencies([tf.Assert(tf.less_equal(p1_queue_size, 1), [p1_queue_size])]):
-          finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
+          finished_phase_1.append(self._p1_finished_queues[i].dequeue())
+      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
