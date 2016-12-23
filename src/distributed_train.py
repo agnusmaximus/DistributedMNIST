@@ -253,6 +253,12 @@ def train(target, dataset, cluster_spec):
     begin_time = time.time()
     cur_iteration = -1
     iterations_finished = set()
+
+    def print_queue_sizes():
+      sess.run([opt.print_sizes])
+      Timer(5, print_queue_sizes).start()
+    Timer(10, print_queue_sizes).start()
+
     while not sv.should_stop():
       try:
 
