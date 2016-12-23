@@ -247,110 +247,110 @@ def train(target, dataset, cluster_spec):
       sess.run(init_tokens_op)
 
 
-  # TIMEOUT client overseer
-  if FLAGS.timeout_method:
-    timeout_client, timeout_server = launch_manager(sess, timeout_op, FLAGS)
+    # TIMEOUT client overseer
+    if FLAGS.timeout_method:
+      timeout_client, timeout_server = launch_manager(sess, timeout_op, FLAGS)
 
-  # Train, checking for Nans. Concurrently run the summary operation at a
-  # specified interval. Note that the summary_op and train_op never run
-  # simultaneously in order to prevent running out of GPU memory.
-  next_summary_time = time.time() + FLAGS.save_summaries_secs
-  begin_time = time.time()
-  cur_iteration = -1
-  iterations_finished = set()
-  while not sv.should_stop():
-    try:
+    # Train, checking for Nans. Concurrently run the summary operation at a
+    # specified interval. Note that the summary_op and train_op never run
+    # simultaneously in order to prevent running out of GPU memory.
+    next_summary_time = time.time() + FLAGS.save_summaries_secs
+    begin_time = time.time()
+    cur_iteration = -1
+    iterations_finished = set()
+    while not sv.should_stop():
+      try:
 
-      # Increment current iteration
-      cur_iteration += 1
+        # Increment current iteration
+        cur_iteration += 1
 
-      tf.logging.info("Worker starting iteration %d" % cur_iteration)
-      sys.stdout.flush()
+        tf.logging.info("Worker starting iteration %d" % cur_iteration)
+        sys.stdout.flush()
 
-      # Timeout method
-      if FLAGS.timeout_method:
+        # Timeout method
+        if FLAGS.timeout_method:
 
-        # Broadcast worker starting iteration to other workers.
-        timeout_client.broadcast_worker_starting(cur_iteration)
+          # Broadcast worker starting iteration to other workers.
+          timeout_client.broadcast_worker_starting(cur_iteration)
 
-      tf.logging.info("WAITING OPP")
-      sys.stdout.flush()
+        tf.logging.info("WAITING OPP")
+        sys.stdout.flush()
 
 
-      # Wait for the queue to have a token before starting.
-      sess.run([wait_op])
+        # Wait for the queue to have a token before starting.
+        sess.run([wait_op])
 
-      tf.logging.info("DONE WAITING OPP")
-      sys.stdout.flush()
+        tf.logging.info("DONE WAITING OPP")
+        sys.stdout.flush()
 
-      assert(cur_iteration == int(sess.run(global_step)))
+        assert(cur_iteration == int(sess.run(global_step)))
 
-      # Broadcast the iteration has begun.
-      timeout_server.notify_iteration_starting(cur_iteration)
+        # Broadcast the iteration has begun.
+        timeout_server.notify_iteration_starting(cur_iteration)
 
-      tf.logging.info("NOTIFY STARTING")
-      sys.stdout.flush()
+        tf.logging.info("NOTIFY STARTING")
+        sys.stdout.flush()
 
-      start_time = time.time()
-      feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
+        start_time = time.time()
+        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
-      if FLAGS.timeline_logging:
-        run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-        run_metadata = tf.RunMetadata()
-        loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
-      else:
-        if timeout_server.timeout < 0:
-          loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
+        if FLAGS.timeline_logging:
+          run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+          run_metadata = tf.RunMetadata()
+          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
-          run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
-          loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+          if timeout_server.timeout < 0:
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
+          else:
+            tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
+            run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
 
-      assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
-      # Log the elapsed time per iteration
-      finish_time = time.time()
+        # Log the elapsed time per iteration
+        finish_time = time.time()
 
-      # Create the Timeline object, and write it to a json
-      if FLAGS.timeline_logging:
-        tl = timeline.Timeline(run_metadata.step_stats)
-        ctf = tl.generate_chrome_trace_format()
-        with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
-          f.write(ctf)
+        # Create the Timeline object, and write it to a json
+        if FLAGS.timeline_logging:
+          tl = timeline.Timeline(run_metadata.step_stats)
+          ctf = tl.generate_chrome_trace_format()
+          with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
+            f.write(ctf)
 
-      if step > FLAGS.max_steps:
-        break
+        if step > FLAGS.max_steps:
+          break
 
-      duration = time.time() - start_time
-      examples_per_sec = FLAGS.batch_size / float(duration)
-      format_str = ('Worker %d: %s: step %d, loss = %f'
-                    '(%.1f examples/sec; %.3f  sec/batch)')
-      tf.logging.info(format_str %
-                      (FLAGS.task_id, datetime.now(), step, loss_value,
-                         examples_per_sec, duration))
+        duration = time.time() - start_time
+        examples_per_sec = FLAGS.batch_size / float(duration)
+        format_str = ('Worker %d: %s: step %d, loss = %f'
+                      '(%.1f examples/sec; %.3f  sec/batch)')
+        tf.logging.info(format_str %
+                        (FLAGS.task_id, datetime.now(), step, loss_value,
+                           examples_per_sec, duration))
 
-      # Determine if the summary_op should be run on the chief worker.
-      if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+        # Determine if the summary_op should be run on the chief worker.
+        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
-        tf.logging.info('Running Summary operation on the chief.')
-        summary_str = sess.run(summary_op)
-        sv.summary_computed(sess, summary_str)
-        tf.logging.info('Finished running Summary operation.')
+          tf.logging.info('Running Summary operation on the chief.')
+          summary_str = sess.run(summary_op)
+          sv.summary_computed(sess, summary_str)
+          tf.logging.info('Finished running Summary operation.')
 
-        # Determine the next time for running the summary.
-        next_summary_time += FLAGS.save_summaries_secs
-    except tf.errors.DeadlineExceededError:
-      tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
-      sess.run([timeout_op])
+          # Determine the next time for running the summary.
+          next_summary_time += FLAGS.save_summaries_secs
+      except tf.errors.DeadlineExceededError:
+        tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
+        sess.run([timeout_op])
 
-  if is_chief:
-    tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
+    if is_chief:
+      tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
 
-  # Stop the supervisor.  This also waits for service threads to finish.
-  sv.stop()
+    # Stop the supervisor.  This also waits for service threads to finish.
+    sv.stop()
 
-  # Save after the training ends.
-  if is_chief:
-    saver.save(sess,
-               os.path.join(FLAGS.train_dir, 'model.ckpt'),
-               global_step=global_step)
+    # Save after the training ends.
+    if is_chief:
+      saver.save(sess,
+                 os.path.join(FLAGS.train_dir, 'model.ckpt'),
+                 global_step=global_step)
