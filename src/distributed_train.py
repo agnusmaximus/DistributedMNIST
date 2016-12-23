@@ -268,22 +268,14 @@ def train(target, dataset, cluster_spec):
           # Broadcast worker starting iteration to other workers.
           timeout_client.broadcast_worker_starting(cur_iteration)
 
-        tf.logging.info("WAITING OPP")
-        sys.stdout.flush()
-
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
-
-        tf.logging.info("DONE WAITING OPP")
-        sys.stdout.flush()
 
         assert(cur_iteration == int(sess.run(global_step)))
 
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
 
-        tf.logging.info("NOTIFY STARTING")
-        sys.stdout.flush()
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -299,9 +291,6 @@ def train(target, dataset, cluster_spec):
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
             run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
-            #tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
-            #Timer(timeout_server.timeout / float(1000), lambda : sess.run([timeout_op])).start()
-            #loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
