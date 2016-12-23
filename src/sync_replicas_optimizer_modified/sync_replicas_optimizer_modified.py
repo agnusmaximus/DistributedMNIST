@@ -381,7 +381,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               with ops.control_dependencies([enqueue_op]):
                 enqueue_op = logging_ops.Print(global_step, [global_step, worker_id], message="Enqueueing to glob worker_id")
                 with ops.control_dependencies([enqueue_op]):
-                  enqueue_op = logging_ops.Print(global_step, [global_step, self._sync_token_queues[worker].size()], message="SIZE NOW")
+                  enqueue_op = logging_ops.Print(global_step, [global_step, self._sync_token_queues[worker].size(), worker_id], message="SIZE NOW")
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
