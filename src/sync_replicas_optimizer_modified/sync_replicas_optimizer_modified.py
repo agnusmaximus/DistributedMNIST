@@ -376,7 +376,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
-            for worker in range(self._total_num_replicas):
+            #for worker in range(self._total_num_replicas):
+            for worker in range(3):
               enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               with ops.control_dependencies([enqueue_op]):
                 enqueue_op = logging_ops.Print(global_step, [global_step, worker_id], message="Enqueueing to glob worker_id")
@@ -392,11 +393,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step)
-      self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
-      with ops.control_dependencies([self.wait_op]):
-        self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                     lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
-                                     [global_step])
+      #self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
+      #with ops.control_dependencies([self.wait_op]):
+      self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
+                                   #lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
+                                   lambda x : x,
+                                   [global_step])
 
 
       for accum, dev in self._accumulator_list:
