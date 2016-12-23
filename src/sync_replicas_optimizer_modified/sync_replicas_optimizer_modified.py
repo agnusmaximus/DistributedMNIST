@@ -395,8 +395,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       #self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
       #with ops.control_dependencies([self.wait_op]):
       self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   #lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
-                                   lambda x : x,
+                                   lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
+                                   #lambda x : x,
                                    [global_step])
 
 
