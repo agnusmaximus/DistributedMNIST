@@ -35,6 +35,7 @@ from tensorflow.python.training import optimizer
 from tensorflow.python.training import queue_runner
 
 
+
 # Please note that the gradients from replicas are averaged instead of summed
 # (as in the old sync_replicas_optimizer) so you need to increase the learning
 # rate according to the number of replicas. This change is introduced to be
@@ -362,6 +363,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
       self.print_sizes2 = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes after enqueue")
+      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
