@@ -31,7 +31,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('timeout_method', True, 'Use the timeout straggler killing method')
+f.app.flags.DEFINE_boolean('timeout_method', True, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -291,7 +291,7 @@ def train(target, dataset, cluster_spec):
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
           if timeout_server.timeout < 0:
-            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
+            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=tf.RunOptions(timeout_in_ms=10))
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
             run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
