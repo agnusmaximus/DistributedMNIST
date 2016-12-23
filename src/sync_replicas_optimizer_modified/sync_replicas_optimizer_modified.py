@@ -271,12 +271,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
-      n_in_q = self._sync_token_queues[worker_id].size()
-      with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="N IN Q")]):
+      #n_in_q = self._sync_token_queues[worker_id].size()
+      #with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="N IN Q")]):
         #dequeued = self._sync_token_queues[worker_id].dequeue()
-        dequeueds = self._sync_token_queues[worker_id].dequeue_many(n_in_q)
-        update_local_step_op = state_ops.assign(self._local_step, tf.reduce_max(dequeueds))
+        #dequeueds = self._sync_token_queues[worker_id].dequeue_many(n_in_q)
+        #update_local_step_op = state_ops.assign(self._local_step, tf.reduce_max(dequeueds))
         #update_local_step_op = state_ops.assign(self._local_step, dequeued)
+      update_local_step_op = state_ops.assign(self._local_step, global_step)
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -393,14 +394,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # allowing the given worker to not  have to submit a gradient to the accumulator.
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
-      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step.ref())
+      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step)
       #self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
       #with ops.control_dependencies([self.wait_op]):
-      self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   #lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
-                                   lambda x : x,
-                                   [global_step])
-
+      #self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
+      #                             #lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
+      #                             lambda x : x,
+      #                             [global_step])
+      self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
       for accum, dev in self._accumulator_list:
         with ops.device(dev):
