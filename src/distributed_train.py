@@ -265,8 +265,16 @@ def train(target, dataset, cluster_spec):
           # Broadcast worker starting iteration to other workers.
           timeout_client.broadcast_worker_starting(cur_iteration)
 
+        tf.logging.info("Printing queue sizes...")
+
+        sess.run([opt.print_sizes])
+
+        tf.logging.info("Done printing queue sizes...")
+
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
+
+        sess.run([opt.print_sizes])
 
         assert(cur_iteration == int(sess.run(global_step)))
 
