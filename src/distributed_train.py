@@ -190,7 +190,8 @@ def train(target, dataset, cluster_spec):
     saver = tf.train.Saver()
 
     # Build the summary operation based on the TF collection of Summaries.
-    summary_op = tf.summary.merge_all()
+    #summary_op = tf.summary.merge_all()
+    summary_op = tf.merge_all_summaries()
 
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
