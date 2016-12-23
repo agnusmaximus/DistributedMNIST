@@ -392,9 +392,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step.ref())
-      self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   lambda x : logging_ops.Print(x, [global_step.ref(), self._sync_token_queues[worker_id].size()], message="waitop"),
-                                   [global_step])
+      self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
+      with ops.control_dependencies([self.wait_op]):
+        self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
+                                     lambda x : logging_ops.Print(x, [global_step.ref(), self._sync_token_queues[worker_id].size()], message="waitop"),
+                                     [global_step])
+
 
       """self.wait_op = tf.while_loop(lambda x : tf.logical_and(tf.less_equal(self._local_step.ref(), global_step.ref()),
                                                              tf.greater(self._local_step.ref(), 0)),

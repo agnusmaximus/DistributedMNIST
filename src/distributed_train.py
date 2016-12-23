@@ -270,13 +270,8 @@ def train(target, dataset, cluster_spec):
         sys.stdout.flush()
 
 
-        try:
-          # Wait for the queue to have a token before starting.
-          sess.run([wait_op], options=tf.RunOptions(timeout_in_ms=20*1000))
-        except tf.errors.DeadlineExceededError:
-          tf.logging.info("WTF????? WHY DID wait op take so long")
-          sys.stdout.flush()
-          sys.exit(-1)
+        # Wait for the queue to have a token before starting.
+        sess.run([wait_op], options=tf.RunOptions(timeout_in_ms=20*1000))
 
         tf.logging.info("DONE WAITING OPP")
         sys.stdout.flush()
