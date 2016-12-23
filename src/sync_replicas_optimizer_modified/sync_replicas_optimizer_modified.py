@@ -360,6 +360,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                     shapes=(),
                                     shared_name="dummy_queue"))
 
+      self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
+
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
           with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step)]):
@@ -379,6 +381,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               with ops.control_dependencies([tf.Assert(tf.equal(queue_size, 0), [queue_size])]):
                 enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
+              sync_ops.append(self.print_sizes)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
