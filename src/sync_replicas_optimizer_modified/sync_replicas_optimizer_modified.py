@@ -273,8 +273,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.device(global_step.device):
       n_in_q = self._sync_token_queues[worker_id].size()
       with ops.control_dependencies([logging_ops.Print(n_in_q, [n_in_q], message="N IN Q")]):
-        dequeued = self._sync_token_queues[worker_id].dequeue()
-        update_local_step_op = state_ops.assign(self._local_step, dequeued)
+        #dequeued = self._sync_token_queues[worker_id].dequeue()
+        dequeueds = self._sync_token_queues[worker_id].dequeue_many(n_in_q)
+        update_local_step_op = tf.maximum(dequeueds)
+        #update_local_step_op = state_ops.assign(self._local_step, dequeued)
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -395,8 +397,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       #self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
       #with ops.control_dependencies([self.wait_op]):
       self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                   lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
-                                   #lambda x : x,
+                                   #lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
+                                   lambda x : x,
                                    [global_step])
 
 
