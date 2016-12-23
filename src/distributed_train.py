@@ -269,7 +269,7 @@ def train(target, dataset, cluster_spec):
 
 
         # Wait for the queue to have a token before starting.
-        sess.run([wait_op], options=tf.RunOptions(timeout_in_ms=20*1000))
+        sess.run([wait_op])
 
         tf.logging.info("DONE WAITING OPP")
         sys.stdout.flush()
@@ -294,7 +294,7 @@ def train(target, dataset, cluster_spec):
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
-            run_options = tf.RunOptions(timeout_in_ms=int(timeout_server.timeout))
+            run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
@@ -333,7 +333,6 @@ def train(target, dataset, cluster_spec):
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d" % cur_iteration)
         sess.run([timeout_op])
-        sys.exit(-1)
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
