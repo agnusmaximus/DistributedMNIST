@@ -361,6 +361,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                     shared_name="dummy_queue"))
 
       self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
+      self.print_sizes2 = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes after dequeue")
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
