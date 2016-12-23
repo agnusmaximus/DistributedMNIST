@@ -233,9 +233,8 @@ def train(target, dataset, cluster_spec):
 
   tf.logging.info("YO I SHOULD TIME OUT")
 
-  sess2 = tf.Session()
   opt = tf.RunOptions(timeout_in_ms=1000)
-  sess2.run(b, options=opt)
+  sess.run(b, options=opt)
   tf.logging.info("YAYAY")
 
 
