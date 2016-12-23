@@ -119,97 +119,97 @@ def train(target, dataset, cluster_spec):
   is_chief = (FLAGS.task_id == 0)
 
   # Ops are assigned to worker by default.
-  with tf.device(
-      tf.train.replica_device_setter(
-        worker_device='/job:worker/task:%d/cpu:0' % FLAGS.task_id,
-        cluster=cluster_spec)):
+  #with tf.device(
+  #    tf.train.replica_device_setter(
+  #      worker_device='/job:worker/task:%d/cpu:0' % FLAGS.task_id,
+  #      cluster=cluster_spec)):
 
-    # Create a variable to count the number of train() calls. This equals the
-    # number of updates applied to the variables. The PS holds the global step.
-    global_step = tf.Variable(0, name="global_step", trainable=False)
+  # Create a variable to count the number of train() calls. This equals the
+  # number of updates applied to the variables. The PS holds the global step.
+  global_step = tf.Variable(0, name="global_step", trainable=False)
 
-    # Calculate the learning rate schedule.
-    num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
+  # Calculate the learning rate schedule.
+  num_batches_per_epoch = (dataset.num_examples / FLAGS.batch_size)
 
-    # Decay steps need to be divided by the number of replicas to aggregate.
-    # This was the old decay schedule. Don't want this since it decays too fast with a fixed learning rate.
-    decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
-    # New decay schedule. Decay every few steps.
-    #decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay)
+  # Decay steps need to be divided by the number of replicas to aggregate.
+  # This was the old decay schedule. Don't want this since it decays too fast with a fixed learning rate.
+  decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
+  # New decay schedule. Decay every few steps.
+  #decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay)
 
-    # Decay the learning rate exponentially based on the number of steps.
-    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
-                                    global_step,
-                                    decay_steps,
-                                    FLAGS.learning_rate_decay_factor,
-                                    staircase=True)
+  # Decay the learning rate exponentially based on the number of steps.
+  lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
+                                  global_step,
+                                  decay_steps,
+                                  FLAGS.learning_rate_decay_factor,
+                                  staircase=True)
 
-    images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
+  images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
 
-    # Number of classes in the Dataset label set plus 1.
-    # Label 0 is reserved for an (unused) background class.
-    logits, reg = mnist.inference(images, train=True)
+  # Number of classes in the Dataset label set plus 1.
+  # Label 0 is reserved for an (unused) background class.
+  logits, reg = mnist.inference(images, train=True)
 
-    # Add classification loss.
-    total_loss = mnist.loss(logits, labels) + reg
+  # Add classification loss.
+  total_loss = mnist.loss(logits, labels) + reg
 
-    # Create an optimizer that performs gradient descent.
-    opt = tf.train.AdamOptimizer(lr)
+  # Create an optimizer that performs gradient descent.
+  opt = tf.train.AdamOptimizer(lr)
 
-    # Use V2 optimizer
-    if not FLAGS.timeout_method:
-      opt = tf.train.SyncReplicasOptimizerV2(
-        opt,
-        replicas_to_aggregate=num_replicas_to_aggregate,
-        total_num_replicas=num_workers)
-    else:
-      opt = TimeoutReplicasOptimizer(
-        opt,
-        global_step,
-        total_num_replicas=num_workers)
+  # Use V2 optimizer
+  if not FLAGS.timeout_method:
+    opt = tf.train.SyncReplicasOptimizerV2(
+      opt,
+      replicas_to_aggregate=num_replicas_to_aggregate,
+      total_num_replicas=num_workers)
+  else:
+    opt = TimeoutReplicasOptimizer(
+      opt,
+      global_step,
+      total_num_replicas=num_workers)
 
-    # Compute gradients with respect to the loss.
-    grads = opt.compute_gradients(total_loss)
-    if not FLAGS.timeout_method:
-      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
-    else:
-      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
-      timeout_op = opt.timeout_op
-      wait_op = opt.wait_op
+  # Compute gradients with respect to the loss.
+  grads = opt.compute_gradients(total_loss)
+  if not FLAGS.timeout_method:
+    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+  else:
+    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
+    timeout_op = opt.timeout_op
+    wait_op = opt.wait_op
 
-    with tf.control_dependencies([apply_gradients_op]):
-      train_op = tf.identity(total_loss, name='train_op')
+  with tf.control_dependencies([apply_gradients_op]):
+    train_op = tf.identity(total_loss, name='train_op')
 
-    a = data_flow_ops.FIFOQueue(-1, tf.float32)
-    b = a.dequeue()
+  a = data_flow_ops.FIFOQueue(-1, tf.float32)
+  b = a.dequeue()
 
-    # Get chief queue_runners, init_tokens and clean_up_op, which is used to
-    # synchronize replicas.
-    # More details can be found in sync_replicas_optimizer.
-    chief_queue_runners = [opt.get_chief_queue_runner()]
-    init_tokens_op = opt.get_init_tokens_op()
-    #clean_up_op = opt.get_clean_up_op()
+  # Get chief queue_runners, init_tokens and clean_up_op, which is used to
+  # synchronize replicas.
+  # More details can be found in sync_replicas_optimizer.
+  chief_queue_runners = [opt.get_chief_queue_runner()]
+  init_tokens_op = opt.get_init_tokens_op()
+  #clean_up_op = opt.get_clean_up_op()
 
-    # Create a saver.
-    saver = tf.train.Saver()
+  # Create a saver.
+  saver = tf.train.Saver()
 
-    # Build the summary operation based on the TF collection of Summaries.
-    summary_op = tf.summary.merge_all()
+  # Build the summary operation based on the TF collection of Summaries.
+  summary_op = tf.summary.merge_all()
 
-    # Build an initialization operation to run below.
-    init_op = tf.initialize_all_variables()
+  # Build an initialization operation to run below.
+  init_op = tf.initialize_all_variables()
 
-    # We run the summaries in the same thread as the training operations by
-    # passing in None for summary_op to avoid a summary_thread being started.
-    # Running summaries and training operations in parallel could run out of
-    # GPU memory.
-    if is_chief:
-      local_init_op = opt.chief_init_op
-    else:
-      local_init_op = opt.local_step_init_op
+  # We run the summaries in the same thread as the training operations by
+  # passing in None for summary_op to avoid a summary_thread being started.
+  # Running summaries and training operations in parallel could run out of
+  # GPU memory.
+  if is_chief:
+    local_init_op = opt.chief_init_op
+  else:
+    local_init_op = opt.local_step_init_op
 
-    local_init_opt = [local_init_op]
-    ready_for_local_init_op = opt.ready_for_local_init_op
+  local_init_opt = [local_init_op]
+  ready_for_local_init_op = opt.ready_for_local_init_op
 
   sv = tf.train.Supervisor(is_chief=is_chief,
                            local_init_op=local_init_op,
