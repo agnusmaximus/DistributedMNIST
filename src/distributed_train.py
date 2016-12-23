@@ -211,35 +211,35 @@ def train(target, dataset, cluster_spec):
     local_init_opt = [local_init_op]
     ready_for_local_init_op = opt.ready_for_local_init_op
 
-    sv = tf.train.Supervisor(is_chief=is_chief,
-                             local_init_op=local_init_op,
-                             ready_for_local_init_op=ready_for_local_init_op,
-                             logdir=FLAGS.train_dir,
-                             init_op=init_op,
-                             summary_op=None,
-                             global_step=global_step,
-                             saver=saver,
-                             save_model_secs=FLAGS.save_interval_secs)
+  sv = tf.train.Supervisor(is_chief=is_chief,
+                           local_init_op=local_init_op,
+                           ready_for_local_init_op=ready_for_local_init_op,
+                           logdir=FLAGS.train_dir,
+                           init_op=init_op,
+                           summary_op=None,
+                           global_step=global_step,
+                           saver=saver,
+                           save_model_secs=FLAGS.save_interval_secs)
 
 
-    tf.logging.info('%s Supervisor' % datetime.now())
+  tf.logging.info('%s Supervisor' % datetime.now())
 
-    sess_config = tf.ConfigProto(
-        allow_soft_placement=True,
-        log_device_placement=FLAGS.log_device_placement)
+  sess_config = tf.ConfigProto(
+      allow_soft_placement=True,
+      log_device_placement=FLAGS.log_device_placement)
 
-    # Get a session.
-    sess = sv.prepare_or_wait_for_session(target, config=sess_config)
+  # Get a session.
+  sess = sv.prepare_or_wait_for_session(target, config=sess_config)
 
-    # Start the queue runners.
-    queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
-    sv.start_queue_runners(sess, queue_runners)
-    tf.logging.info('Started %d queues for processing input data.',
-                    len(queue_runners))
+  # Start the queue runners.
+  queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
+  sv.start_queue_runners(sess, queue_runners)
+  tf.logging.info('Started %d queues for processing input data.',
+                  len(queue_runners))
 
-    if is_chief:
-      sv.start_queue_runners(sess, chief_queue_runners)
-      sess.run(init_tokens_op)
+  if is_chief:
+    sv.start_queue_runners(sess, chief_queue_runners)
+    sess.run(init_tokens_op)
 
 
   # TIMEOUT client overseer
