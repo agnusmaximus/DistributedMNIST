@@ -123,8 +123,8 @@ def evaluate(dataset):
 
     # Create summary writer
     graph_def = tf.get_default_graph().as_graph_def()
-    summary_writer = tf.train.SummaryWriter(FLAGS.eval_dir,
-                                            graph_def=graph_def)
+    summary_writer = tf.summary.FileWriter(FLAGS.eval_dir,
+                                           graph_def=graph_def)
     step = -1
     while True:
       step = do_eval(saver, summary_writer, validation_accuracy, validation_loss, images_placeholder, labels_placeholder, dataset, prev_global_step=step)
