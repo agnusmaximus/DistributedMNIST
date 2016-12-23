@@ -271,7 +271,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
-      update_local_step_op = state_ops.assign(self._local_step, global_step)
+      queue_size = self._sync_token_queues[worker].size()
+      with ops.control_dependencies([tf.Assert(tf.equal(queue_size, 0), [queue_size])]):
+        update_local_step_op = state_ops.assign(self._local_step, global_step)
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -320,11 +322,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # a token that is >= the current global step
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
-        dequeue = tf.while_loop(lambda x : tf.less(self._p1_finished_queues[i].dequeue(), x),
-                                lambda x : x,
-                                [global_step])
-        finished_phase_1.append(dequeue)
-      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
+        #dequeue = tf.while_loop(lambda x : tf.less(self._p1_finished_queues[i].dequeue(), x),
+        #                        lambda x : x,
+        #                        [global_step])
+        #finished_phase_1.append(dequeue)
+        p1_queue_size =  self._p1_finished_queues[i].size()
+        with ops.control_dependencies(tf.Assert(tf.less_equal(p1_queue_size, 1), [p1_queue_size])):
+          finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
@@ -374,11 +378,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
-              with ops.control_dependencies([enqueue_op]):
-                enqueue_op = logging_ops.Print(global_step, [global_step, worker_id], message="Enqueueing to glob worker_id")
-                with ops.control_dependencies([enqueue_op]):
-                  enqueue_op = logging_ops.Print(global_step, [global_step, self._sync_token_queues[worker].size(), worker], message="SIZE NOW")
+              queue_size = self._sync_token_queues[worker].size()
+              with ops.control_dependencies([tf.Assert(tf.equal(queue_size, 0), [queue_size])]):
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,

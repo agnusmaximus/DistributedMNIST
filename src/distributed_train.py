@@ -259,9 +259,6 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
-        tf.logging.info("Worker starting iteration %d" % cur_iteration)
-        sys.stdout.flush()
-
         # Timeout method
         if FLAGS.timeout_method:
 
@@ -275,7 +272,6 @@ def train(target, dataset, cluster_spec):
 
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
-
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
