@@ -382,7 +382,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               with ops.control_dependencies([tf.Assert(tf.equal(queue_size, 0), [queue_size])]):
                 enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
-              sync_ops.append(self.print_sizes)
+              sync_ops.append(self.print_sizes2)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
