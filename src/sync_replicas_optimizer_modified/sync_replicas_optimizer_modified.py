@@ -377,7 +377,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             #for worker in range(self._total_num_replicas):
-            for worker in range(3):
+            for worker in range(0):
               enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               with ops.control_dependencies([enqueue_op]):
                 enqueue_op = logging_ops.Print(global_step, [global_step, worker_id], message="Enqueueing to glob worker_id")
