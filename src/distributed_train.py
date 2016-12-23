@@ -180,6 +180,9 @@ def train(target, dataset, cluster_spec):
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
 
+    a = data_flow_ops.FIFOQueue(-1, tf.float32)
+    b = a.dequeue()
+
     # Get chief queue_runners, init_tokens and clean_up_op, which is used to
     # synchronize replicas.
     # More details can be found in sync_replicas_optimizer.
@@ -294,8 +297,6 @@ def train(target, dataset, cluster_spec):
           if timeout_server.timeout < 0:
             tf.logging.info("YO I SHOULD TIME OUT")
 
-            a = data_flow_ops.FIFOQueue(-1, tf.float32)
-            b = a.dequeue()
             opt = tf.RunOptions(timeout_in_ms=1000)
             sess.run(b, options=opt)
             tf.logging.info("YAYAY")
