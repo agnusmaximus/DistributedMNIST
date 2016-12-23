@@ -122,6 +122,7 @@ def train(target, dataset, cluster_spec):
   with tf.device(
       tf.train.replica_device_setter(
         worker_device='/job:worker/task:%d/cpu:0' % FLAGS.task_id,
+        ps_device="/job:ps/cpu:0",
         cluster=cluster_spec)):
 
     # Create a variable to count the number of train() calls. This equals the
@@ -236,7 +237,6 @@ def train(target, dataset, cluster_spec):
     opt = tf.RunOptions(timeout_in_ms=1000)
     sess.run(b, options=opt)
     tf.logging.info("YAYAY")
-
 
     # Start the queue runners.
     queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
