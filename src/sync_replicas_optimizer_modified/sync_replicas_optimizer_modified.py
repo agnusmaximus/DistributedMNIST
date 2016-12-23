@@ -307,7 +307,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_grad(grad,
-                                                     local_step=self._local_step.ref()))
+                                                     local_step=self._local_step))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
@@ -315,7 +315,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step.ref()))
+                grad, local_step=self._local_step))
 
 
       # Phase 1 is finished when:
@@ -364,9 +364,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step.ref())]):
+          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step)]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
-            train_op = logging_ops.Print(self._local_step.ref(),
+            train_op = logging_ops.Print(self._local_step,
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                          message="Finished worker updates")
 
@@ -377,7 +377,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # step so the replicas can fetch them to start the next step.
             #sync_ops.append(logging_ops.Print(global_step, [global_step], message="ENQUEING TO BEGIN NEXT ITER"))
             for worker in range(self._total_num_replicas):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step.ref())
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               with ops.control_dependencies([enqueue_op]):
                 enqueue_op = logging_ops.Print(global_step, [global_step, worker_id], message="Enqueueing to glob worker_id")
                 with ops.control_dependencies([enqueue_op]):
@@ -391,18 +391,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # allowing the given worker to not  have to submit a gradient to the accumulator.
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
-      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step.ref())
+      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step)
       self.wait_op = logging_ops.Print(global_step, [global_step], message="wattititititing")
       with ops.control_dependencies([self.wait_op]):
         self.wait_op = tf.while_loop(lambda x : tf.less_equal(self._sync_token_queues[worker_id].size(), 0),
-                                     lambda x : logging_ops.Print(x, [global_step.ref(), self._sync_token_queues[worker_id].size()], message="waitop"),
+                                     lambda x : logging_ops.Print(x, [global_step, self._sync_token_queues[worker_id].size()], message="waitop"),
                                      [global_step])
-
-
-      """self.wait_op = tf.while_loop(lambda x : tf.logical_and(tf.less_equal(self._local_step.ref(), global_step.ref()),
-                                                             tf.greater(self._local_step.ref(), 0)),
-                                   lambda x : x,
-                                   [global_step])"""
 
 
       for accum, dev in self._accumulator_list:
@@ -483,10 +477,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     init_tokens = []
     with ops.device(self._global_step.device), ops.name_scope(""):
       tokens = array_ops.fill([num_tokens],
-                              self._global_step.ref())
+                              self._global_step)
       for i in range(self._total_num_replicas):
-        with ops.control_dependencies([logging_ops.Print(self._global_step.ref(), [self._global_step.ref()], message="Init token queue")]):
-          init_tokens_op = self._sync_token_queues[i].enqueue(self._global_step.ref())
+        with ops.control_dependencies([logging_ops.Print(self._global_step, [self._global_step], message="Init token queue")]):
+          init_tokens_op = self._sync_token_queues[i].enqueue(self._global_step)
         init_tokens.append(init_tokens_op)
 
     return init_tokens
