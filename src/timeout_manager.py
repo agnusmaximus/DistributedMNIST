@@ -30,7 +30,7 @@ class TimeoutServer(pb.Root):
     self.iteration_start_times = {}
 
     # When to timeout
-    self.timeout = -1
+    self.timeout = 400
     self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 10
     self.ITERATION_TO_END_STATISTICS_COLLECTION = 80
     self.ITERATION_TO_START_TIMEOUT = 80
