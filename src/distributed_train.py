@@ -284,7 +284,7 @@ def train(target, dataset, cluster_spec):
 
         sess.run([opt.print_sizes])
 
-        assert(cur_iteration == int(sess.run(global_step)))
+        #assert(cur_iteration == int(sess.run(global_step)))
 
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
