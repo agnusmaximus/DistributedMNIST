@@ -277,7 +277,7 @@ def train(target, dataset, cluster_spec):
         tf.logging.info("DONE WAITING OPP")
         sys.stdout.flush()
 
-        assert(cur_iteration == int(sess.run(global_step)))
+        #assert(cur_iteration == int(sess.run(global_step)))
 
         # Broadcast the iteration has begun.
         timeout_server.notify_iteration_starting(cur_iteration)
