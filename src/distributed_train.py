@@ -309,8 +309,8 @@ def train(target, dataset, cluster_spec):
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
             #run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
             #loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+            Timer(timeout_server.timeout / float(1000), lambda : sess.run([timeout_op])).start()
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
-            Timer(timeout_server.timeout / float(1000), lambda : sess.run([timeout_op]))
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
