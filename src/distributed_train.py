@@ -349,8 +349,9 @@ def train(target, dataset, cluster_spec):
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d - %f" % (cur_iteration, time.time()))
         sess.run([timeout_op])
         tf.logging.info("Done executing timeout op")
-      finally:
-        pass
+      except:
+        print "Unexpected error:", sys.exc_info()[0]
+        raise
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
