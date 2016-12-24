@@ -339,15 +339,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              n_accumulated = tf.identity(grad_accum.num_accumulated())
-              n_accumulated = tf.maximum(n_accumulated, 1)
-              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
-              aggregated_grad.append(grad_accum.take_grad(n_accumulated))
+              aggregated_grad.append(grad_accum.take_grad(1))
             else:
-              n_accumulated = tf.identity(grad_accum.num_accumulated())
-              n_accumulated = tf.maximum(n_accumulated, 1)
-              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
@@ -356,6 +350,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         print_update = logging_ops.Print(global_step, [global_step], "YOO I'M STARTING TO UPDATE OP")
         with ops.control_dependencies([print_update]):
           update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
+
+        with ops.control_dependencies([update_op]):
+          update_op = logging_ops.Print(global_step, [global_step], "YOO I'VE FINISHED UPDATE OP")
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
