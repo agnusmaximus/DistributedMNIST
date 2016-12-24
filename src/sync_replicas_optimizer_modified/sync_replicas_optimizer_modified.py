@@ -324,7 +324,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       finished_phase_1 = []
       with ops.control_dependencies([pp]):
         for i in range(self._total_num_replicas):
-          p1_queue_size =  self._p1_finished_queues[i].size()
+          #p1_queue_size =  self._p1_finished_queues[i].size()
           dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
                                   lambda x: x,
                                   [global_step])
