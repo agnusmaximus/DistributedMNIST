@@ -39,14 +39,14 @@ configuration = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m4.2xlarge",
-    "worker_type" : "m4.2xlarge",
-    "ps_type" : "m4.2xlarge",
-    "evaluator_type" : "m4.2xlarge",
+    "master_type" : "m3.large",
+    "worker_type" : "m3.large",
+    "ps_type" : "m3.large",
+    "evaluator_type" : "m3.large",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
-    "spot_price" : ".12",                 # Has to be a string
+    "spot_price" : ".03",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
