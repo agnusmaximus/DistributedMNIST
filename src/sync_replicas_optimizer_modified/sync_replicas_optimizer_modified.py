@@ -336,18 +336,19 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             elif isinstance(grad, ops.Tensor):
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
-              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               aggregated_grad.append(grad_accum.take_grad(n_accumulated))
             else:
               n_accumulated = tf.identity(grad_accum.num_accumulated())
               n_accumulated = tf.maximum(n_accumulated, 1)
-              n_accumulated = logging_ops.Print(n_accumulated, [n_accumulated, index], message="(n_accumulated, var_index)")
               aggregated_grad.append(grad_accum.take_indexed_slices_grad(tf.maximum(n_accumulated, 1)))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
+        print_accum_vars = logging_ops.Print(global_step,
+                                             [x[0].num_accumulated() for x in self._accumulator_list],
+                                             message="Updating aggregated variables")
         update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
@@ -382,7 +383,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             for worker in range(self._total_num_replicas):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+              with ops.control_dependencies([empty_op]):
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
