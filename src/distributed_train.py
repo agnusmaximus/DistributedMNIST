@@ -258,6 +258,7 @@ def train(target, dataset, cluster_spec):
       tf.logging.info("Periodic print queue sizes...")
       sess.run([opt.print_sizes])
       sess.run([opt.print_p1_sizes])
+      sess.run([opt.print_accum_sizes])
       tf.logging.info("Done periodic print queue sizes...")
       Timer(5, print_queue_sizes).start()
     Timer(10, print_queue_sizes).start()
