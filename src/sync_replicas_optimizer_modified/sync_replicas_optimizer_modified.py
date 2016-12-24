@@ -371,6 +371,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                                  [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                                  message="Accum sizes")
 
+      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step], message="local vs global step")
+
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
           with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step)]):
