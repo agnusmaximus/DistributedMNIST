@@ -269,7 +269,7 @@ def train(target, dataset, cluster_spec):
 
         tf.logging.info("EXCEPTIONS QUEUERUNNER")
         tf.logging.info("%d" % len(opt._chief_queue_runner.exceptions_raised()))
-        tf.logging.info(opt._chief_queue_runner.exceptions_raised())
+        tf.logging.info(str(opt._chief_queue_runner.exceptions_raised()))
 
         sys.stdout.flush()
         tf.logging.info("A new iteration...")
