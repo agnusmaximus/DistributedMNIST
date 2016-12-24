@@ -261,8 +261,8 @@ def train(target, dataset, cluster_spec):
       sess.run([opt.print_accum_sizes])
       sess.run([opt.print_local_step])
       tf.logging.info("Done periodic print queue sizes...")
-      #Timer(5, print_queue_sizes).start()
-    #Timer(10, print_queue_sizes).start()
+      Timer(20, print_queue_sizes).start()
+    Timer(10, print_queue_sizes).start()
 
     while not sv.should_stop():
       try:
@@ -282,13 +282,13 @@ def train(target, dataset, cluster_spec):
         # Wait for the queue to have a token before starting.
         sess.run([wait_op])
 
-        tf.logging.info("Printing sizes...")
+        #tf.logging.info("Printing sizes...")
 
-        print_queue_sizes()
+        #print_queue_sizes()
 
-        tf.logging.info("Done printing sizes...")
+        #tf.logging.info("Done printing sizes...")
 
-        sess.run([opt.print_sizes])
+        #sess.run([opt.print_sizes])
 
         #assert(cur_iteration == int(sess.run(global_step)))
 
