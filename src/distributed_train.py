@@ -261,11 +261,12 @@ def train(target, dataset, cluster_spec):
       sess.run([opt.print_accum_sizes])
       tf.logging.info("Done periodic print queue sizes...")
       Timer(5, print_queue_sizes).start()
-    Timer(10, print_queue_sizes).start()
+    #Timer(10, print_queue_sizes).start()
 
     while not sv.should_stop():
       try:
 
+        sys.stdout.flush()
         tf.logging.info("A new iteration...")
 
         # Increment current iteration
