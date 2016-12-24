@@ -350,7 +350,7 @@ def train(target, dataset, cluster_spec):
         sess.run([timeout_op])
         tf.logging.info("Done executing timeout op")
       except:
-        print "Unexpected error:", sys.exc_info()[0]
+        print("Unexpected error:", sys.exc_info()[0])
         raise
 
     if is_chief:
