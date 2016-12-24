@@ -105,12 +105,11 @@ def do_eval(saver,
       summary.value.add(tag="Validation Accuracy", simple_value=float(acc))
       summary.value.add(tag="Validation Loss", simple_value=float(loss))
       writer.add_summary(summary, global_step)
-
-    except Exception as e:
-      print(e.__doc__)
-      print(e.message)
-
     return global_step
+
+  except Exception as e:
+    print(e.__doc__)
+    print(e.message)
 
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
