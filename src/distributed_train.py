@@ -265,6 +265,8 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
+        tf.logging.info("A new iteration...")
+
         # Increment current iteration
         cur_iteration += 1
 
@@ -341,6 +343,7 @@ def train(target, dataset, cluster_spec):
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Timeout exceeded, running timeout op on iteration %d - %f" % (cur_iteration, time.time()))
         sess.run([timeout_op])
+        tf.logging.info("Done executing timeout op")
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
