@@ -402,7 +402,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
       for accum, var in self._accumulator_list:
-        with ops.device(var.dev):
+        with ops.device(var.device):
           chief_init_ops.append(
               accum.set_global_step(
                   global_step, name="SetGlobalStep"))
