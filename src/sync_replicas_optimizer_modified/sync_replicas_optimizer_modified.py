@@ -382,9 +382,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             for worker in range(self._total_num_replicas):
-              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-              with ops.control_dependencies([empty_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
