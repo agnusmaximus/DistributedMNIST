@@ -60,52 +60,56 @@ def do_eval(saver,
     data_set: The set of images and labels to evaluate, from
       input_data.read_data_sets().
   """
-  with tf.Session() as sess:
+  try:
+    with tf.Session() as sess:
 
-    # Load checkpoint
-    ckpt = tf.train.get_checkpoint_state(FLAGS.checkpoint_dir)
-    if ckpt and ckpt.model_checkpoint_path:
-      if os.path.isabs(ckpt.model_checkpoint_path):
-        # Restores from checkpoint with absolute path.
-        saver.restore(sess, ckpt.model_checkpoint_path)
+      # Load checkpoint
+      ckpt = tf.train.get_checkpoint_state(FLAGS.checkpoint_dir)
+      if ckpt and ckpt.model_checkpoint_path:
+        if os.path.isabs(ckpt.model_checkpoint_path):
+          # Restores from checkpoint with absolute path.
+          saver.restore(sess, ckpt.model_checkpoint_path)
+        else:
+          # Restores from checkpoint with relative path.
+          saver.restore(sess, os.path.join(FLAGS.checkpoint_dir,
+                                           ckpt.model_checkpoint_path))
       else:
-        # Restores from checkpoint with relative path.
-        saver.restore(sess, os.path.join(FLAGS.checkpoint_dir,
-                                         ckpt.model_checkpoint_path))
-    else:
-      print('No checkpoint file found')
+        print('No checkpoint file found')
+        sys.stdout.flush()
+        return -1
+
+      global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+
+      # Don't evaluate on the same checkpoint
+      if prev_global_step == global_step:
+        return prev_global_step
+
+      print('Succesfully loaded model from %s at step=%s.' %
+            (ckpt.model_checkpoint_path, global_step))
       sys.stdout.flush()
-      return -1
 
-    global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
+      # Compute accuracy
+      num_examples = data_set.num_examples
+      feed_dict = mnist.fill_feed_dict(data_set,
+                                       images_placeholder,
+                                       labels_placeholder,
+                                       num_examples)
+      acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
 
-    # Don't evaluate on the same checkpoint
-    if prev_global_step == global_step:
-      return prev_global_step
+      print('Num examples: %d  Precision @ 1: %0.04f Loss: %0.04f' %
+            (num_examples, acc, loss))
+      sys.stdout.flush()
 
-    print('Succesfully loaded model from %s at step=%s.' %
-          (ckpt.model_checkpoint_path, global_step))
-    sys.stdout.flush()
+      # Summarize accuracy
+      summary = tf.Summary()
+      summary.value.add(tag="Validation Accuracy", simple_value=float(acc))
+      summary.value.add(tag="Validation Loss", simple_value=float(loss))
+      writer.add_summary(summary, global_step)
 
-    # Compute accuracy
-    num_examples = data_set.num_examples
-    feed_dict = mnist.fill_feed_dict(data_set,
-                                     images_placeholder,
-                                     labels_placeholder,
-                                     num_examples)
-    acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
-
-    print('Num examples: %d  Precision @ 1: %0.04f Loss: %0.04f' %
-          (num_examples, acc, loss))
-    sys.stdout.flush()
-
-    # Summarize accuracy
-    summary = tf.Summary()
-    summary.value.add(tag="Validation Accuracy", simple_value=float(acc))
-    summary.value.add(tag="Validation Loss", simple_value=float(loss))
-    writer.add_summary(summary, global_step)
-
-    return global_step
+      return global_step
+    except Exception as e:
+      print(e.__doc__)
+      print(e.message)
 
 def evaluate(dataset):
   """Evaluate model on Dataset for a number of steps."""
