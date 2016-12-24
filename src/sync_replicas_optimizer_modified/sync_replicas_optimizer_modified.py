@@ -408,7 +408,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # allowing the given worker to not  have to submit a gradient to the accumulator.
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
-      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step)
+      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(local_step)
       self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
       for accum, var in self._accumulator_list:
