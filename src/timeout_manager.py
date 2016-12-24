@@ -33,7 +33,7 @@ class TimeoutServer(pb.Root):
     self.timeout = -1
     self.ITERATION_TO_BEGIN_STATISTICS_COLLECTION = 10
     self.ITERATION_TO_END_STATISTICS_COLLECTION = 80
-    self.ITERATION_TO_START_TIMEOUT = 80
+    self.ITERATION_TO_START_TIMEOUT = 20
     self.HIST_PERCENTILE = 80
 
   def set_timeout(self, iteration):
@@ -54,6 +54,7 @@ class TimeoutServer(pb.Root):
         tf.logging.info(sorted(histogram))
         self.timeout = int(np.percentile(histogram, self.HIST_PERCENTILE) * 1000)
         tf.logging.info("Timeout @ %f percentile = %d ms" % (self.HIST_PERCENTILE, self.timeout))
+        self.timeout = 300
 
   # Keep track of statistics of iterations start times
   def track_worker_start_times(self, worker_id, iteration, time):
