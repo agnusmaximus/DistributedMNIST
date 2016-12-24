@@ -349,7 +349,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             else:
               with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="YEHEHHEHHE")]):
                 with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.num_accumulated()], message="YOOO TAKING GRAD (glob step, size)")]):
-                aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+                  aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
