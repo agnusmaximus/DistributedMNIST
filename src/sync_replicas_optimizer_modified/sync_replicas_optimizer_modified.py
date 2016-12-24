@@ -366,6 +366,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
       self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
+      self.print_accum_sizes = logging_ops.Print(self._local_step,
+                                                 [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
+                                                 message="Accum sizes")
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
