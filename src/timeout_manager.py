@@ -49,7 +49,7 @@ class TimeoutServer(pb.Root):
         histogram.extend(worker_end_times)
 
       # TODO REMOVE
-      if self.timeout < 0 and 0:
+      if self.timeout < 0:
         tf.logging.info("HISTOGRAM")
         tf.logging.info(sorted(histogram))
         self.timeout = int(np.percentile(histogram, self.HIST_PERCENTILE) * 1000)
