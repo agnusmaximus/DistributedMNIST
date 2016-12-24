@@ -341,10 +341,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.size()], message="YOOO TAKING GRAD (glob step, size)")]):
+              with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.num_accum()], message="YOOO TAKING GRAD (glob step, size)")]):
                 aggregated_grad.append(grad_accum.take_grad(1))
             else:
-              with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.size()], message="YOOO TAKING GRAD (glob step, size)")]):
+              with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.num_accum()], message="YOOO TAKING GRAD (glob step, size)")]):
                 aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
