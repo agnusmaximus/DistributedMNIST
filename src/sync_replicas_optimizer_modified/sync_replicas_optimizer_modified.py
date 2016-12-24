@@ -294,7 +294,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             grad_accum = data_flow_ops.SparseConditionalAccumulator(
               grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
 
-          self._accumulator_list.append((grad_accum, var.device))
+          self._accumulator_list.append((grad_accum, var))
 
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
@@ -377,8 +377,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
           # We must account for the case where everyone times out.
           # Don't deadlock when that happens.
-          for accum, dev in self._accumulator_list:
-            accum.apply_grad(0, local_step=global_step)
+          for accum, var in self._accumulator_list:
+            accum.apply_grad(tf.zeros(var.shape, dtype=accum.dtype), local_step=global_step)
 
           with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration (global step)...")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
@@ -390,6 +390,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
+
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
 
@@ -400,8 +401,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(global_step)
       self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
-      for accum, dev in self._accumulator_list:
-        with ops.device(dev):
+      for accum, var in self._accumulator_list:
+        with ops.device(var.dev):
           chief_init_ops.append(
               accum.set_global_step(
                   global_step, name="SetGlobalStep"))
