@@ -328,6 +328,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           finished_phase_1.append(logging_ops.Print(global_step, [i, global_step], message="Dequeued p1 tokens (worker, global_step)"))
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
+      with ops.control_dependencies([finished_phase_1]):
+        finished_phase_1 = logging_ops.Print(global_step, [global_step], "YOOO FINISHED PHASE 1 FOR GLOBAL STEP")
+
       # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
         for index, (grad, var) in enumerate(grads_and_vars):
