@@ -320,15 +320,17 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
+      pp = logging_ops.Print(global_step, [global_step], "STARTING TO TRY TO DEQUEUE PHASE 1 TOKENS")
       finished_phase_1 = []
-      for i in range(self._total_num_replicas):
-        p1_queue_size =  self._p1_finished_queues[i].size()
-        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
-                                lambda x: x,
-                                [global_step])
-        with ops.control_dependencies([dequeue]):
-          finished_phase_1.append(logging_ops.Print(global_step, [i, global_step], message="Dequeued p1 tokens (worker, global_step)"))
-      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
+      with ops.control_dependencies([pp]):
+        for i in range(self._total_num_replicas):
+          p1_queue_size =  self._p1_finished_queues[i].size()
+          dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
+                                  lambda x: x,
+                                  [global_step])
+          with ops.control_dependencies([dequeue]):
+            finished_phase_1.append(logging_ops.Print(global_step, [i, global_step], message="Dequeued p1 tokens (worker, global_step)"))
+        finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       with ops.control_dependencies([finished_phase_1]):
         finished_phase_1 = logging_ops.Print(global_step, [global_step], "YOOO FINISHED PHASE 1 FOR GLOBAL STEP")
