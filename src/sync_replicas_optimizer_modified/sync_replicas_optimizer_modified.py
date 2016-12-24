@@ -378,7 +378,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           # We must account for the case where everyone times out.
           # Don't deadlock when that happens.
           for accum, var in self._accumulator_list:
-            accum.apply_grad(tf.zeros(var.shape, dtype=accum.dtype), local_step=global_step)
+            accum.apply_grad(tf.zeros(var.get_shape(), dtype=accum.dtype), local_step=global_step)
 
           with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration (global step)...")]):
             # Sync_op needs to insert tokens to the token queue at the end of the
