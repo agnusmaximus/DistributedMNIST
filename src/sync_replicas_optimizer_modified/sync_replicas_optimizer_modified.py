@@ -323,8 +323,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
         p1_queue_size =  self._p1_finished_queues[i].size()
-        with ops.control_dependencies([tf.Assert(tf.less_equal(p1_queue_size, 1), [p1_queue_size])]):
-          finished_phase_1.append(self._p1_finished_queues[i].dequeue())
+        finished_phase_1.append(self._p1_finished_queues[i].dequeue())
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       # Phase 2 gradient applying
@@ -383,7 +382,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             for worker in range(self._total_num_replicas):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
+              with ops.control_dependencies([empty_op]):
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
               sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
