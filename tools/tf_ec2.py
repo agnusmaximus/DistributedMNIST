@@ -115,7 +115,8 @@ configuration = Cfg({
 
         # Tensorboard command
         "python /usr/local/lib/python2.7/dist-packages/tensorflow/tensorboard/tensorboard.py "
-        " --logdir=%(base_out_dir)s/eval_dir/ "
+        " --logdir=%(base_out_dir)s/train_dir/ "
+        #" --logdir=%(base_out_dir)s/eval_dir/ "
         "> %(base_out_dir)s/out_evaluator_tensorboard 2>&1 &"
     ],
 })
