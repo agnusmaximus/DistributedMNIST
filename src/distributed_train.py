@@ -267,10 +267,6 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
-        tf.logging.info("EXCEPTIONS QUEUERUNNER")
-        tf.logging.info("%d" % len(opt._chief_queue_runner.exceptions_raised))
-        tf.logging.info(opt._chief_queue_runner.exceptions_raised)
-
         sys.stdout.flush()
         tf.logging.info("A new iteration...")
 
@@ -307,7 +303,7 @@ def train(target, dataset, cluster_spec):
           run_metadata = tf.RunMetadata()
           loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
         else:
-          if timeout_server.timeout < 0:
+          if timeout_server.timeout < 0 or cur_iteration % 2 == 0:
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
           else:
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
