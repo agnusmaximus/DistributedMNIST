@@ -267,6 +267,10 @@ def train(target, dataset, cluster_spec):
     while not sv.should_stop():
       try:
 
+        tf.logging.info("EXCEPTIONS QUEUERUNNER")
+        tf.logging.info(len(opt._chief_queue_runner.exceptions_raiwed()))
+        tf.logging.info(opt._chief_queue_runner.exceptions_raised())
+
         sys.stdout.flush()
         tf.logging.info("A new iteration...")
 
