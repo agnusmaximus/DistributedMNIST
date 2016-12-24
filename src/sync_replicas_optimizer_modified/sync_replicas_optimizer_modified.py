@@ -397,10 +397,11 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           for accum, var in self._accumulator_list:
             add_zero_grad.append(accum.apply_grad(tf.zeros(var.get_shape(), dtype=accum.dtype), local_step=global_step))
 
-          add_zero_grad = control_flow_ops.group(*(add_zero_grad))
+          #add_zero_grad = control_flow_ops.group(*(add_zero_grad))
           enqueue_print = logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration (global step)...")
 
-          with ops.control_dependencies([add_zero_grad, enqueue_print]):
+          #with ops.control_dependencies([add_zero_grad, enqueue_print]):
+          with ops.control_dependencies([enqueue_print]):
             # Sync_op needs to insert tokens to the token queue at the end of the
             # step so the replicas can fetch them to start the next step.
             for worker in range(self._total_num_replicas):
