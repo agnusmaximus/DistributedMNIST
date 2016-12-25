@@ -317,6 +317,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step))
 
+
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
@@ -344,12 +345,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             else:
               aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
+      aggregated_grads_and_vars = zip(aggregated_grad, var_list)
+
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
         update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
-
-        with ops.control_dependencies([update_op]):
-          update_op = logging_ops.Print(global_step, [global_step], message="Updated!!!!")
+      with ops.device(global_step.device), ops.name_scope(""):
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
