@@ -44,6 +44,8 @@ tf.app.flags.DEFINE_integer('eval_interval_secs', 1,
 tf.app.flags.DEFINE_boolean('run_once', False,
                             """Whether to run eval only once.""")
 
+start_time = time.time()
+
 def do_eval(saver,
             writer,
             val_acc,
@@ -98,7 +100,7 @@ def do_eval(saver,
       acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
 
       print('Num examples: %d  Precision @ 1: %f Loss: %f Time: %f' %
-            (num_examples, acc, loss, time.time()))
+            (num_examples, acc, loss, time.time() - start_time))
       sys.stdout.flush()
 
       # Summarize accuracy
