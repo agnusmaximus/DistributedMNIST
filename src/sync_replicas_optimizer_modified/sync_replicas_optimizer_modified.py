@@ -370,7 +370,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         sync_ops = []
         with ops.control_dependencies([update_op]):
 
-          pp = logging_ops.Print(global_step, global_step, message="YO I'M UPDATED")
+          pp = logging_ops.Print(global_step, [global_step], message="YO I'M UPDATED")
 
           with ops.control_dependencies([pp]):
 
