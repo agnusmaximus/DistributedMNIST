@@ -242,9 +242,9 @@ def train(target, dataset, cluster_spec):
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
-    # TIMEOUT client overseer
-    if FLAGS.timeout_method:
-      timeout_client, timeout_server = launch_manager(sess, timeout_op, FLAGS)
+    # TIMEOUT client overseer.
+    # Even if not using timeout, we want to wait until all machines are ready.
+    timeout_client, timeout_server = launch_manager(sess, timeout_op, FLAGS)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run

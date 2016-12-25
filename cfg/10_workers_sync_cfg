@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "mnist_cnn_25_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_10_workers_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -39,7 +39,8 @@ Cfg({
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "sudo rm -rf %(base_out_dir)s/*",
+        "sudo rm -rf %(base_out_dir)s",
+        "mkdir %(base_out_dir)s",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -83,6 +84,9 @@ Cfg({
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
+        # Wait a bit
+        "sleep 30",
+
         # Evaluation command
         "python src/mnist_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "

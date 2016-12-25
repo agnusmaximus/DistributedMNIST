@@ -23,7 +23,7 @@ class Cfg(dict):
            return item % self
        return item
 
-configuration = Cfg({
+cfg = Cfg({
     "name" : "mnist_cnn_25_workers",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
@@ -64,7 +64,8 @@ configuration = Cfg({
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "sudo rm -rf %(base_out_dir)s/*",
+        "sudo rm -rf %(base_out_dir)s",
+        "sudo mkdir %(base_out_dir)s/*",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -107,6 +108,9 @@ configuration = Cfg({
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
+        # Sleep a bit
+        "sleep 30",
+
         # Evaluation command
         "python src/mnist_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "
@@ -746,4 +750,5 @@ def tf_ec2_run(argv, configuration):
     return command_map[command](argv)
 
 if __name__ == "__main__":
+    print(cfg)
     tf_ec2_run(sys.argv, configuration)

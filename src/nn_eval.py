@@ -22,6 +22,7 @@ from datetime import datetime
 import math
 import os.path
 import time
+import time
 
 import sys
 import numpy as np
@@ -96,8 +97,8 @@ def do_eval(saver,
                                        num_examples)
       acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
 
-      print('Num examples: %d  Precision @ 1: %0.04f Loss: %0.04f' %
-            (num_examples, acc, loss))
+      print('Num examples: %d  Precision @ 1: %f Loss: %f Time: %f' %
+            (num_examples, acc, loss, time.time()))
       sys.stdout.flush()
 
       # Summarize accuracy
