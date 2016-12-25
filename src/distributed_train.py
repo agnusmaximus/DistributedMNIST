@@ -254,16 +254,6 @@ def train(target, dataset, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
-    def print_queue_sizes():
-      tf.logging.info("Periodic print queue sizes...")
-      sess.run([opt.print_sizes])
-      sess.run([opt.print_p1_sizes])
-      sess.run([opt.print_accum_sizes])
-      sess.run([opt.print_local_step])
-      tf.logging.info("Done periodic print queue sizes...")
-      Timer(20, print_queue_sizes).start()
-    Timer(10, print_queue_sizes).start()
-
     while not sv.should_stop():
       try:
 
@@ -279,21 +269,10 @@ def train(target, dataset, cluster_spec):
           # Broadcast worker starting iteration to other workers.
           timeout_client.broadcast_worker_starting(cur_iteration)
 
-        # Wait for the queue to have a token before starting.
-        sess.run([wait_op])
+          # Wait for the queue to have a token before starting.
+          sess.run([wait_op])
 
-        #tf.logging.info("Printing sizes...")
-
-        #print_queue_sizes()
-
-        #tf.logging.info("Done printing sizes...")
-
-        #sess.run([opt.print_sizes])
-
-        #assert(cur_iteration == int(sess.run(global_step)))
-
-        # Broadcast the iteration has begun.
-        if FLAGS.timeout_method:
+          # Notify iteration starting
           timeout_server.notify_iteration_starting(cur_iteration)
 
         start_time = time.time()
@@ -310,8 +289,6 @@ def train(target, dataset, cluster_spec):
             tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
             run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
             loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
-            #Timer(timeout_server.timeout / float(1000), lambda : sess.run([timeout_op])).start()
-            #loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
