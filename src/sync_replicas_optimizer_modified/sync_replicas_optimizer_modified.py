@@ -276,7 +276,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       update_local_step_op = state_ops.assign(self._local_step, global_step)
 
     # Gradient accum creation
-    with ops.name_scope(None, self._name):
+    """with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
         var_list.append(var)
         tf.logging.info("Grad " + str(grad) + " assigned to " + str(var.device))
@@ -315,8 +315,36 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))
+                grad, local_step=self._local_step))"""
 
+    with ops.name_scope(None, self._name):
+      for grad, var in grads_and_vars:
+        var_list.append(var)
+        with ops.device(var.device):
+          # Dense gradients.
+          if grad is None:
+            aggregated_grad.append(None)  # pass-through.
+            continue
+          elif isinstance(grad, ops.Tensor):
+            grad_accum = data_flow_ops.ConditionalAccumulator(
+                grad.dtype,
+                shape=var.get_shape(),
+                shared_name=var.name + "/grad_accum")
+            train_ops.append(grad_accum.apply_grad(
+                grad, local_step=self._local_step))
+            aggregated_grad.append(grad_accum.take_grad(
+                self._replicas_to_aggregate))
+          else:
+            if not isinstance(grad, ops.IndexedSlices):
+              raise ValueError("Unknown grad type!")
+            grad_accum = data_flow_ops.SparseConditionalAccumulator(
+                grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
+            train_ops.append(grad_accum.apply_indexed_slices_grad(
+                grad, local_step=self._local_step))
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(
+                self._replicas_to_aggregate))
+
+          self._accumulator_list.append((grad_accum, var))
 
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
@@ -337,7 +365,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([finished_phase_1]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
-            grad_accum = self._accumulator_list[index][0].accumulator_ref
+            grad_accum = self._accumulator_list[index][0]
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
