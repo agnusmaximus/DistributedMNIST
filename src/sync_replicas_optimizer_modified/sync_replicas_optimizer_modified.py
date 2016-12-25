@@ -337,7 +337,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([finished_phase_1]):
         for index, (grad, var) in enumerate(grads_and_vars):
           with ops.device(var.device):
-            grad_accum = self._accumulator_list[index][0]
+            grad_accum = self._accumulator_list[index][0].accumulator_ref
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
