@@ -315,7 +315,36 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))"""
+                grad, local_step=self._local_step))
+
+      # Phase 1 is finished when:
+      # For every worker, we find that their p1_finished_queue contains
+      # a token that is >= the current global step
+      finished_phase_1 = []
+      for i in range(self._total_num_replicas):
+        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
+                                lambda x: x,
+                                [global_step])
+        finished_phase_1.append(dequeue)
+
+      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
+
+      with ops.control_dependencies([finished_phase_1]):
+        finished_phase_1 = logging_ops.Print(global_step, [global_step], message="finished phase 1")
+
+      # Phase 2 gradient applying
+      with ops.control_dependencies([finished_phase_1]):
+        for index, (grad, var) in enumerate(grads_and_vars):
+          with ops.device(var.device):
+            grad_accum = self._accumulator_list[index][0]
+            if grad is None:
+              aggregated_grad.append(None)
+            elif isinstance(grad, ops.Tensor):
+              aggregated_grad.append(grad_accum.take_grad(1))
+            else:
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+      """
+
 
     with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
@@ -345,33 +374,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                 1))
 
           self._accumulator_list.append((grad_accum, var))
-
-      # Phase 1 is finished when:
-      # For every worker, we find that their p1_finished_queue contains
-      # a token that is >= the current global step
-      finished_phase_1 = []
-      for i in range(self._total_num_replicas):
-        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
-                                lambda x: x,
-                                [global_step])
-        finished_phase_1.append(dequeue)
-
-      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
-
-      with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step], message="finished phase 1")
-
-      # Phase 2 gradient applying
-      with ops.control_dependencies([finished_phase_1]):
-        for index, (grad, var) in enumerate(grads_and_vars):
-          with ops.device(var.device):
-            grad_accum = self._accumulator_list[index][0]
-            if grad is None:
-              aggregated_grad.append(None)
-            elif isinstance(grad, ops.Tensor):
-              aggregated_grad.append(grad_accum.take_grad(1))
-            else:
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
