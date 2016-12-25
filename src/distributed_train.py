@@ -254,7 +254,7 @@ def train(target, dataset, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
-"""    def print_queue_sizes():
+    """    def print_queue_sizes():
       tf.logging.info("Periodic print queue sizes...")
       sess.run([opt.print_sizes])
       sess.run([opt.print_p1_sizes])
