@@ -404,7 +404,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.print_accum_sizes = logging_ops.Print(self._local_step,
                                                  [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                                  message="Accum sizes")
-      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step._ref()], message="local vs global step")
+      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step._ref(), global_step._ref()], message="local vs global step")
 
 
       return train_op
