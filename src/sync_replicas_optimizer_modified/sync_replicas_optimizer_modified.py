@@ -279,6 +279,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
         var_list.append(var)
+        tf.logging.info("Grad " + str(grad) + " assigned to " + str(var.device))
         with ops.device(var.device):
           if grad is None:
             continue
@@ -320,20 +321,14 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
-      pp = logging_ops.Print(global_step, [global_step], "STARTING TO TRY TO DEQUEUE PHASE 1 TOKENS")
       finished_phase_1 = []
-      with ops.control_dependencies([pp]):
-        for i in range(self._total_num_replicas):
-          #p1_queue_size =  self._p1_finished_queues[i].size()
-          dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
-                                  lambda x: logging_ops.Print(x, [x], message="dequueingining"),
-                                  [global_step])
-          with ops.control_dependencies([dequeue]):
-            finished_phase_1.append(logging_ops.Print(global_step, [i, global_step], message="Dequeued p1 tokens (worker, global_step)"))
-        finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
+      for i in range(self._total_num_replicas):
+        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
+                                lambda x: x,
+                                [global_step])
+        finished_phase_1.append(dequeue)
 
-      with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step], "YOOO FINISHED PHASE 1 FOR GLOBAL STEP")
+      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
@@ -343,24 +338,15 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             if grad is None:
               aggregated_grad.append(None)
             elif isinstance(grad, ops.Tensor):
-              with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="YEHEHHEHHE")]):
-                with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.num_accumulated()], message="YOOO TAKING GRAD (glob step, size)")]):
-                  aggregated_grad.append(grad_accum.take_grad(1))
+              aggregated_grad.append(grad_accum.take_grad(1))
             else:
-              with ops.control_dependencies([logging_ops.Print(global_step, [global_step], message="YEHEHHEHHE")]):
-                with ops.control_dependencies([logging_ops.Print(global_step, [global_step, grad_accum.num_accumulated()], message="YOOO TAKING GRAD (glob step, size)")]):
-                  aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        print_update = logging_ops.Print(global_step, [global_step], "YOO I'M STARTING TO UPDATE OP")
-        with ops.control_dependencies([print_update]):
-          update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
-
-        with ops.control_dependencies([update_op]):
-          update_op = logging_ops.Print(global_step, [global_step], "YOO I'VE FINISHED UPDATE OP")
+        update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
@@ -370,14 +356,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                     types_pb2.DT_INT32,
                                     shapes=(),
                                     shared_name="dummy_queue"))
-
-      self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
-      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
-      self.print_accum_sizes = logging_ops.Print(self._local_step,
-                                                 [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
-                                                 message="Accum sizes")
-
-      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step], message="local vs global step")
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
@@ -390,25 +368,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         sync_ops = []
         with ops.control_dependencies([update_op]):
 
-          add_zero_grad = []
-
-          # We must account for the case where everyone times out.
-          # Don't deadlock when that happens.
-          for accum, var in self._accumulator_list:
-            add_zero_grad.append(accum.apply_grad(tf.zeros(var.get_shape(), dtype=accum.dtype), local_step=global_step))
-
-          #add_zero_grad = control_flow_ops.group(*(add_zero_grad))
-          enqueue_print = logging_ops.Print(global_step, [global_step], message="QueueRunner enqueueing to start next iteration (global step)...")
-
-          #with ops.control_dependencies([add_zero_grad, enqueue_print]):
-          with ops.control_dependencies([enqueue_print]):
-            # Sync_op needs to insert tokens to the token queue at the end of the
-            # step so the replicas can fetch them to start the next step.
-            for worker in range(self._total_num_replicas):
-              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-              with ops.control_dependencies([empty_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
-              sync_ops.append(enqueue_op)
+          # Sync_op needs to insert tokens to the token queue at the end of the
+          # step so the replicas can fetch them to start the next step.
+          for worker in range(self._total_num_replicas):
+            empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
+            with ops.control_dependencies([empty_op]):
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+            sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
