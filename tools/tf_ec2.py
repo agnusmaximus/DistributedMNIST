@@ -545,6 +545,51 @@ def tf_ec2_run(argv, configuration):
             thread.join()
         summarize_idle_instances(None)
 
+    def download_file(argv):
+       if len(argv) != 5:
+          print("Usage python inception_ec2.py download_file instances_cluster_string path_to_file dir_to_save")
+          sys.exit(0)
+
+       # Get instances of the cluster
+       cluster_instance_string = argv[2]
+       instance_ids = cluster_instance_string.split(",")
+
+       filepath = argv[3]
+
+       # Create the outpath if it does not exist
+       outpath = argv[4] + "/"
+       if not os.path.exists(outpath):
+          os.makedirs(outpath)
+
+       # Get a random running instance (does not have to be idle, since
+       # might want to download while everything machine is not idle)
+       running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
+       if len(running_instances) == 0:
+          print("Error, no running instances")
+          sys.exit(0)
+       selected_instance = None
+       for instance in running_instances:
+          if instance.instance_id in instance_ids:
+             selected_instance = instance
+       if selected_instance == None:
+          print("Error, no instance in instance cluster: %s" % cluster_instance_string)
+          sys.exit(0)
+
+       # For the selected instance, ssh and compress the directory
+       file_to_download = configuration["base_out_dir"] + "/" + filepath
+       name = configuration["name"] + "_data_" + filepath
+       copy_command = "cp -r %s ./%s" % (file_to_download, name)
+       run_ssh_commands(instance, [copy_command])
+
+       # SCP the data over to the local machine
+       client = connect_client(selected_instance)
+       scp = SCPClient(client.get_transport())
+       local_path = outpath + name
+       print("SCP %s to %s" % (name, local_path))
+       scp.get("%s" % name, local_path=local_path)
+       scp.close()
+       client.close()
+
     def download_outdir(argv):
         if len(argv) != 4:
             print("Usage python inception_ec2.py download_outdir instances_cluster_string path_to_save")
@@ -654,7 +699,7 @@ def tf_ec2_run(argv, configuration):
         # 5. Runs inception
         shut_everything_down(None)
         launch(None)
-        run_tf(None)
+        return run_tf(None)
 
     def help(hmap):
         print("Usage: python inception_ec2.py [command]")
@@ -677,6 +722,7 @@ def tf_ec2_run(argv, configuration):
         "kill_python" : kill_python,
         "run_command" : run_command,
         "download_outdir" : download_outdir,
+        "download_file" : download_file,
     }
     help_map = {
         "launch" : "Launch instances",
@@ -688,7 +734,8 @@ def tf_ec2_run(argv, configuration):
         "kill_all_python" : "Kills python running inception training on ALL instances.",
         "kill_python" : "Kills python running inception on instances indicated by instance id string separated by ',' (no spaces).",
         "run_command" : "Runs given command on instances selcted by instance id string, separated by ','.",
-        "download_outdir" : "Downloads base_out_dir as specified in the configuration. Used for pulling checkpoint files and saved models."
+        "download_outdir" : "Downloads base_out_dir as specified in the configuration. Used for pulling checkpoint files and saved models.",
+        "download_file" : "Downloads base_out_dir/filepath as specified in the configuration."
     }
 
     if len(argv) < 2:
