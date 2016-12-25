@@ -333,7 +333,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             train_ops.append(grad_accum.apply_grad(
                 grad, local_step=self._local_step))
             aggregated_grad.append(grad_accum.take_grad(
-                self._replicas_to_aggregate))
+                1))
           else:
             if not isinstance(grad, ops.IndexedSlices):
               raise ValueError("Unknown grad type!")
@@ -342,7 +342,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step))
             aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-                self._replicas_to_aggregate))
+                1))
 
           self._accumulator_list.append((grad_accum, var))
 
