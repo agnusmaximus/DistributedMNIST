@@ -317,7 +317,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step))
 
-
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
@@ -350,7 +349,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
         update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
-      with ops.device(global_step.device), ops.name_scope(""):
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
@@ -372,13 +370,17 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         sync_ops = []
         with ops.control_dependencies([update_op]):
 
-          # Sync_op needs to insert tokens to the token queue at the end of the
-          # step so the replicas can fetch them to start the next step.
-          for worker in range(self._total_num_replicas):
-            empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-            with ops.control_dependencies([empty_op]):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
-            sync_ops.append(enqueue_op)
+          pp = logging_ops.Print(global_step, global_step, message="YO I'M UPDATED")
+
+          with ops.control_dependencies([pp]):
+
+            # Sync_op needs to insert tokens to the token queue at the end of the
+            # step so the replicas can fetch them to start the next step.
+            for worker in range(self._total_num_replicas):
+              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
+              with ops.control_dependencies([empty_op]):
+                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+              sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
