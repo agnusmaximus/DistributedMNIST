@@ -45,21 +45,21 @@ def extract_times_losses_precision(fname):
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=False, launch=False):
+def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=False):
 
     if rerun:
         if launch:
             shutdown_and_launch(cfg1)
-        run_tf_and_download_evaluator_file(200, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
-        run_tf_and_download_evaluator_file(200, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(600, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(600, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
-    plt.xlabel("time")
+    plt.xlabel("time (s)")
     plt.ylabel("loss")
-    plt.legend(loc="upper right")
     for fname in glob.glob(outdir + "/*"):
         times, losses, precisions = extract_times_losses_precision(fname)
         print(times, losses, precisions)
         plt.plot(times, losses, linestyle='solid', label=fname)
+    plt.legend(loc="upper right")
     plt.savefig("time_loss.png")
 
 if __name__ == "__main__":
