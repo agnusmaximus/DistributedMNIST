@@ -65,7 +65,7 @@ cfg = Cfg({
     "master_pre_commands" :
     [
         "sudo rm -rf %(base_out_dir)s",
-        "sudo mkdir %(base_out_dir)s/*",
+        "sudo mkdir %(base_out_dir)s",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
