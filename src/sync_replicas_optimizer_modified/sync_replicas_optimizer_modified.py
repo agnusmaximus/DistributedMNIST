@@ -382,6 +382,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         with ops.control_dependencies([sync_ops]):
           sync_ops = logging_ops.Print(global_step, [global_step], message="YO ADDED TOKENS")
+          with ops.control_dependencies([sync_ops]):
+            sync_ops = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [sync_ops])
