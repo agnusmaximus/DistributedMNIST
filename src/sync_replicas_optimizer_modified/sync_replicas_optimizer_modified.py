@@ -253,7 +253,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         collections=[ops.GraphKeys.LOCAL_VARIABLES],
         dtype=global_step.dtype.base_dtype,
         name="sync_rep_local_step")
-    self.local_step_init_op = state_ops.assign(self._local_step, global_step)
+    self.local_step_init_op = state_ops.assign(self._local_step, global_step._ref())
     chief_init_ops = [self.local_step_init_op]
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
@@ -273,7 +273,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     # BEFORE begining to compute gradients.
     with ops.device(global_step.device):
       queue_size = self._sync_token_queues[worker_id].size()
-      update_local_step_op = state_ops.assign(self._local_step, global_step)
+      update_local_step_op = state_ops.assign(self._local_step, global_step._ref())
 
     # Gradient accum creation
     with ops.name_scope(None, self._name):
@@ -307,7 +307,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_grad(grad,
-                                                     local_step=self._local_step))
+                                                     local_step=self._local_step._ref()))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
@@ -315,22 +315,22 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))
+                grad, local_step=self._local_step._ref()))
 
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
       finished_phase_1 = []
       for i in range(self._total_num_replicas):
-        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step),
+        dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step._ref()),
                                 lambda x: x,
-                                [global_step])
+                                [global_step._ref()])
         finished_phase_1.append(dequeue)
 
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step], message="finished phase 1")
+        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1")
 
       # Phase 2 gradient applying
       with ops.control_dependencies([finished_phase_1]):
@@ -361,9 +361,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step)]):
+          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step._ref())]):
             # Worker finished applying gradients. Add token to phase1_finished_queue
-            train_op = logging_ops.Print(self._local_step,
+            train_op = logging_ops.Print(self._local_step._ref(),
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                          message="Finished worker updates")
 
@@ -375,9 +375,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           for worker in range(self._total_num_replicas):
             empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
             with ops.control_dependencies([empty_op]):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step._ref())
               with ops.control_dependencies([enqueue_op]):
-                enqueue_op = logging_ops.Print(global_step, [global_step], message="ENQUEUED! %d" % worker)
+                enqueue_op = logging_ops.Print(global_step, [global_step._ref()], message="ENQUEUED! %d" % worker)
             sync_ops.append(enqueue_op)
 
         sync_ops = control_flow_ops.group(*(sync_ops))
@@ -408,7 +408,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.print_accum_sizes = logging_ops.Print(self._local_step,
                                                  [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                                  message="Accum sizes")
-      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step], message="local vs global step")
+      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step._ref()], message="local vs global step")
 
 
       return train_op
