@@ -380,11 +380,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
         sync_ops = control_flow_ops.group(*(sync_ops))
 
-        with ops.control_dependencies([sync_ops]):
-          sync_ops = logging_ops.Print(global_step, [global_step], message="YO ADDED TOKENS")
-          with ops.control_dependencies([sync_ops]):
-            sync_ops = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
-
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [sync_ops])
 
@@ -393,7 +388,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step)
+
       self.wait_op = self._sync_token_queues[worker_id].dequeue()
+      with ops.control_dependencies([self.wait_op]):
+        self.wait_op = logging_ops.Print(global_step, [global_step], message="YOOOOO I'VE DEQUEUES")
 
       for accum, var in self._accumulator_list:
         with ops.device(var.device):
