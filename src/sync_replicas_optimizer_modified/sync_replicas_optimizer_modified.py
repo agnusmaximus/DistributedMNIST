@@ -370,20 +370,21 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         sync_ops = []
         with ops.control_dependencies([update_op]):
 
-          pp = logging_ops.Print(global_step, [global_step], message="YO I'M UPDATED")
+          # Sync_op needs to insert tokens to the token queue at the end of the
+          # step so the replicas can fetch them to start the next step.
+          for worker in range(self._total_num_replicas):
+            empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
+            with ops.control_dependencies([empty_op]):
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+            sync_ops.append(enqueue_op)
 
-          with ops.control_dependencies([pp]):
+        sync_ops = control_flow_ops.group(*(sync_ops))
 
-            # Sync_op needs to insert tokens to the token queue at the end of the
-            # step so the replicas can fetch them to start the next step.
-            for worker in range(self._total_num_replicas):
-              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-              with ops.control_dependencies([empty_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
-              sync_ops.append(enqueue_op)
+        with ops.control_dependencies([sync_ops]):
+          sync_ops = logging_ops.Print(global_step, [global_step], message="YO ADDED TOKENS")
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
-                                                            [control_flow_ops.group(*(sync_ops))])
+                                                            [sync_ops])
 
       # The timeout op just adds a token to the finished phase 1 queue,
       # allowing the given worker to not  have to submit a gradient to the accumulator.
