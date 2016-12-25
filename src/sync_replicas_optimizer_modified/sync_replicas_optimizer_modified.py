@@ -297,25 +297,25 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._accumulator_list.append((grad_accum, var))
 
       # Phase 1 gradient computation
-      #with ops.control_dependencies([update_local_step_op]):
-      for index, (grad, var) in enumerate(grads_and_vars):
-        with ops.device(var.device):
-          if grad is None:
-            continue
+      with ops.control_dependencies([update_local_step_op]):
+        for index, (grad, var) in enumerate(grads_and_vars):
+          with ops.device(var.device):
+            if grad is None:
+              continue
 
-          elif isinstance(grad, ops.Tensor):
-            grad_accum = self._accumulator_list[index][0]
+            elif isinstance(grad, ops.Tensor):
+              grad_accum = self._accumulator_list[index][0]
 
-            train_ops.append(grad_accum.apply_grad(grad,
-                                                   local_step=self._local_step._ref()))
+              train_ops.append(grad_accum.apply_grad(grad,
+                                                     local_step=self._local_step._ref()))
 
-          else:
-            if not isinstance(grad, ops.IndexedSlices):
-              raise ValueError("Unknown grad type!")
-            grad_accum = self._accumulator_list[index][0]
+            else:
+              if not isinstance(grad, ops.IndexedSlices):
+                raise ValueError("Unknown grad type!")
+              grad_accum = self._accumulator_list[index][0]
 
-            train_ops.append(grad_accum.apply_indexed_slices_grad(
-              grad, local_step=self._local_step._ref()))
+              train_ops.append(grad_accum.apply_indexed_slices_grad(
+                grad, local_step=self._local_step._ref()))
 
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
@@ -333,16 +333,16 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1")
 
       # Phase 2 gradient applying
-      with ops.control_dependencies([finished_phase_1]):
-        for index, (grad, var) in enumerate(grads_and_vars):
-          with ops.device(var.device):
-            grad_accum = self._accumulator_list[index][0]
-            if grad is None:
-              aggregated_grad.append(None)
-            elif isinstance(grad, ops.Tensor):
-              aggregated_grad.append(grad_accum.take_grad(1))
-            else:
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+      #with ops.control_dependencies([finished_phase_1]):
+      for index, (grad, var) in enumerate(grads_and_vars):
+        with ops.device(var.device):
+          grad_accum = self._accumulator_list[index][0]
+          if grad is None:
+            aggregated_grad.append(None)
+          elif isinstance(grad, ops.Tensor):
+            aggregated_grad.append(grad_accum.take_grad(1))
+          else:
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
