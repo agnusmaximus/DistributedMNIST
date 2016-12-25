@@ -24,7 +24,7 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "mnist_cnn_25_workers",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_10_workers",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -101,6 +101,7 @@ cfg = Cfg({
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
+        "--timeout_method=true "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
@@ -751,4 +752,4 @@ def tf_ec2_run(argv, configuration):
 
 if __name__ == "__main__":
     print(cfg)
-    tf_ec2_run(sys.argv, configuration)
+    tf_ec2_run(sys.argv, cfg)
