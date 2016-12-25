@@ -371,17 +371,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         sync_ops = []
         with ops.control_dependencies([update_op]):
 
-          pp = logging_ops.Print(global_step, [global_step], message="UPDATED")
-
-          with ops.control_dependencies([pp]):
-
-            # Sync_op needs to insert tokens to the token queue at the end of the
-            # step so the replicas can fetch them to start the next step.
-            for worker in range(self._total_num_replicas):
-              empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-              with ops.control_dependencies([empty_op]):
-                enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
-              sync_ops.append(enqueue_op)
+          # Sync_op needs to insert tokens to the token queue at the end of the
+          # step so the replicas can fetch them to start the next step.
+          for worker in range(self._total_num_replicas):
+            empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
+            with ops.control_dependencies([empty_op]):
+              enqueue_op = self._sync_token_queues[worker].enqueue(global_step)
+            sync_ops.append(enqueue_op)
 
         self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
                                                             [control_flow_ops.group(*(sync_ops))])
@@ -400,6 +396,15 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                   global_step, name="SetGlobalStep"))
       self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
+
+      self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
+      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
+      self.print_accum_sizes = logging_ops.Print(self._local_step,
+                                                 [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
+                                                 message="Accum sizes")
+      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step, global_step], message="local vs global step")
+
+
       return train_op
 
   def get_chief_queue_runner(self):

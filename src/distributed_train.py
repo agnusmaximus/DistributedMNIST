@@ -254,6 +254,16 @@ def train(target, dataset, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
+    def print_queue_sizes():
+      tf.logging.info("Periodic print queue sizes...")
+      sess.run([opt.print_sizes])
+      sess.run([opt.print_p1_sizes])
+      sess.run([opt.print_accum_sizes])
+      sess.run([opt.print_local_step])
+      tf.logging.info("Done periodic print queue sizes...")
+      Timer(20, print_queue_sizes).start()
+    Timer(10, print_queue_sizes).start()
+
     while not sv.should_stop():
       try:
 
