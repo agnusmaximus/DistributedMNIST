@@ -276,7 +276,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       update_local_step_op = state_ops.assign(self._local_step, global_step)
 
     # Gradient accum creation
-    """with ops.name_scope(None, self._name):
+    with ops.name_scope(None, self._name):
       for grad, var in grads_and_vars:
         var_list.append(var)
         tf.logging.info("Grad " + str(grad) + " assigned to " + str(var.device))
@@ -343,39 +343,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               aggregated_grad.append(grad_accum.take_grad(1))
             else:
               aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
-      """
-
-
-    with ops.name_scope(None, self._name):
-      for grad, var in grads_and_vars:
-        var_list.append(var)
-        with ops.device(var.device):
-          # Dense gradients.
-          if grad is None:
-            aggregated_grad.append(None)  # pass-through.
-            continue
-          elif isinstance(grad, ops.Tensor):
-            grad_accum = data_flow_ops.ConditionalAccumulator(
-                grad.dtype,
-                shape=var.get_shape(),
-                shared_name=var.name + "/grad_accum")
-            train_ops.append(grad_accum.apply_grad(
-                grad, local_step=self._local_step))
-            aggregated_grad.append(grad_accum.take_grad(
-                1))
-          else:
-            if not isinstance(grad, ops.IndexedSlices):
-              raise ValueError("Unknown grad type!")
-            grad_accum = data_flow_ops.SparseConditionalAccumulator(
-                grad.dtype, shape=(), shared_name=var.name + "/grad_accum")
-            train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step))
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(
-                1))
-
-          self._accumulator_list.append((grad_accum, var))
-
-      aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
