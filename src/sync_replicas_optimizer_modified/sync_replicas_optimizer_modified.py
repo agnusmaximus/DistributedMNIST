@@ -376,8 +376,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
             with ops.control_dependencies([empty_op]):
               enqueue_op = self._sync_token_queues[worker].enqueue(global_step._ref())
-              with ops.control_dependencies([enqueue_op]):
-                enqueue_op = logging_ops.Print(global_step, [global_step._ref()], message="ENQUEUED! %d" % worker)
             sync_ops.append(enqueue_op)
 
         sync_ops = control_flow_ops.group(*(sync_ops))

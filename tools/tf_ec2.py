@@ -111,8 +111,7 @@ configuration = Cfg({
         "python src/mnist_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "
         "--checkpoint_dir=%(base_out_dir)s/train_dir "
-        #"> %(base_out_dir)s/out_evaluator 2>&1 &",
-       "> out_evaluator 2>&1 &",
+        "> %(base_out_dir)s/out_evaluator 2>&1 &",
 
         # Tensorboard command
         "python /usr/local/lib/python2.7/dist-packages/tensorflow/tensorboard/tensorboard.py "
