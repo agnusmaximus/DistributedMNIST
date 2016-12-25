@@ -379,6 +379,9 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.device(global_step.device), ops.name_scope(""):
         update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
+        with ops.control_dependencies([update_op]):
+          update_op = logging_ops.Print(global_step, [global_step], message="Updated!!!!")
+
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
         # closed queues in PS devices.
