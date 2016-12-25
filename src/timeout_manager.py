@@ -162,7 +162,7 @@ class TimeoutClient:
     factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
 # Separate manager process to oversee training on workers.
-def launch_manager(sess, timeout_op, tf_flags):
+def launch_manager(sess, tf_flags):
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
   timeout_server = TimeoutServer(tf_flags)

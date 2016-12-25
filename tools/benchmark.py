@@ -33,33 +33,34 @@ def run_tf_and_download_evaluator_file(run_time_sec, cfg, evaluator_file_name="o
 
 def extract_times_losses_precision(fname):
     f = open(fname)
-    f.read()
 
     times, losses, precisions = [], [], []
     for line in f:
         m = re.match("Num examples: ([0-9]*)  Precision @ 1: ([\.0-9]*) Loss: ([\.0-9]*) Time: ([\.0-9]*)", line)
-        examples, precision, loss, time = int(m.group(1)), float(m.group(2)), float(m.group(3)), float(m.group(4))
-        times.append(time)
-        losses.append(loss)
-        precisions.append(precision)
+        if m:
+            examples, precision, loss, time = int(m.group(1)), float(m.group(2)), float(m.group(3)), float(m.group(4))
+            times.append(time)
+            losses.append(loss)
+            precisions.append(precision)
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=False):
+def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=False, launch=False):
 
     if rerun:
         if launch:
             shutdown_and_launch(cfg1)
-        run_tf_and_download_evaluator_file(500, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
-        run_tf_and_download_evaluator_file(500, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(200, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(200, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plt.xlabel("time")
     plt.ylabel("loss")
     plt.legend(loc="upper right")
     for fname in glob.glob(outdir + "/*"):
         times, losses, precisions = extract_times_losses_precision(fname)
+        print(times, losses, precisions)
         plt.plot(times, losses, linestyle='solid', label=fname)
-    plt.savefig(outdir + "/time_loss.png")
+    plt.savefig("time_loss.png")
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
