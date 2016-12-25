@@ -392,8 +392,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step)
 
       self.wait_op = self._sync_token_queues[worker_id].dequeue()
-      with ops.control_dependencies([self.wait_op]):
-        self.wait_op = logging_ops.Print(global_step, [global_step._ref()], message="YOOOOO I'VE DEQUEUES")
 
       for accum, var in self._accumulator_list:
         with ops.device(var.device):

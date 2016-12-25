@@ -262,7 +262,7 @@ def train(target, dataset, cluster_spec):
       sess.run([opt.print_local_step])
       tf.logging.info("Done periodic print queue sizes...")
       Timer(20, print_queue_sizes).start()
-    Timer(1, print_queue_sizes).start()
+    #Timer(1, print_queue_sizes).start()
 
     while not sv.should_stop():
       try:
