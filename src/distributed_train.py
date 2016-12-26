@@ -291,6 +291,7 @@ def train(target, dataset, cluster_spec):
 
 
         run_options = tf.RunOptions()
+        run_metedata = tf.RunMetadata()
 
         if FLAGS.timeline_logging:
           run_options.trace_level=tf.RunOptions.FULL_TRACE
