@@ -317,20 +317,22 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step._ref()))
 
+      prefetch = []
+      for index, (grad, var) in enumerate(grads_and_vars):
+        prefetch.append(tf.identity(var))
+      prefetch = control_flow_ops.group(*(prefetch))
+
       # Phase 1 is finished when:
       # For every worker, we find that their p1_finished_queue contains
       # a token that is >= the current global step
       finished_phase_1 = []
-      #for i in range(self._total_num_replicas):
-        #dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step._ref()),
-        #                        lambda x: x,
-        #                        [global_step._ref()])
-        #dequeue = self._p1_finished_queues[i].dequeue()
-        #finished_phase_1.append(dequeue)
-      for index, (grad, var) in enumerate(grads_and_vars):
-        with ops.device(var.device):
-          dequeue = self._p1_finished_queues[index].dequeue()
-        finished_phase_1.append(dequeue)
+      with ops.control_dependencies([prefetch]):
+        for i in range(self._total_num_replicas):
+          #dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step._ref()),
+          #                        lambda x: x,
+          #                        [global_step._ref()])
+          dequeue = self._p1_finished_queues[i].dequeue()
+          finished_phase_1.append(dequeue)
 
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 

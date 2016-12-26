@@ -101,8 +101,8 @@ cfg = Cfg({
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
-        "--timeline_logging=false "
-        "--timeout_method=false "
+        "--timeline_logging=true "
+        "--timeout_method=true "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
