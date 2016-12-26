@@ -32,7 +32,7 @@ cfg = Cfg({
     "n_workers" : 10,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "11",
+    "num_replicas_to_aggregate" : "7",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -101,8 +101,8 @@ cfg = Cfg({
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
-        "--timeline_logging=true "
-        "--timeout_method=true "
+        "--timeline_logging=false "
+        "--timeout_method=false "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
