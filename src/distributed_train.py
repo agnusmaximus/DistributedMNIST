@@ -35,6 +35,7 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean('timeout_method', False, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('interval_method', False, 'Use the interval method')
+tf.app.flags.DEFINE_float('interval_ms', 1000, 'The interval ms')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -274,9 +275,9 @@ def train(target, dataset, cluster_spec):
     def interval_update():
       tf.logging.info("Interval update...")
       sess.run([opt._update_op])
-      Timer(timeout_server.update_interval / float(1000), interval_update).start()
+      Timer(FLAGS.interval_ms / float(1000), interval_update).start()
     if FLAGS.interval_method and FLAGS.task_id == 0:
-      Timer(timeout_server.update_interval / float(1000), interval_update).start()
+      Timer(FLAGS.interval_ms / float(1000), interval_update).start()
 
     while not sv.should_stop():
       try:

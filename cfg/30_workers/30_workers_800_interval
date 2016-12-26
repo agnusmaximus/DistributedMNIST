@@ -1,13 +1,13 @@
 Cfg({
-    "name" : "mnist_cnn_30_workers_sync",      # Unique name for this specific configuration
+    "name" : "30_workers_800_interval",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 30,
+    "n_workers" : 29,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "26",
+    "num_replicas_to_aggregate" : "30",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -40,7 +40,6 @@ Cfg({
         "sudo rm -rf %(base_out_dir)s",
         "mkdir %(base_out_dir)s",
     ],
-
 
     # Command specification
     # Master pre commands are run only by the master
@@ -81,7 +80,8 @@ Cfg({
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
-        "--timeout_method=false "
+	"--interval_method=true "
+	"--interval_ms=800"
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "

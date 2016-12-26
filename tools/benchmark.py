@@ -2,6 +2,8 @@ from __future__ import print_function
 import sys
 import time
 import re
+import shutil
+import os
 import glob
 from matplotlib import pyplot as plt
 from tf_ec2 import tf_ec2_run, Cfg
@@ -45,30 +47,29 @@ def extract_times_losses_precision(fname):
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=False):
+def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=350, rerun=True, launch=True):
+
+    shutil.rmtree(outdir)
+    os.makedirs(outdir)
 
     if rerun:
         if launch:
             shutdown_and_launch(cfg1)
-        run_tf_and_download_evaluator_file(240, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
-        run_tf_and_download_evaluator_file(240, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        for cfg in cfgs:
+            run_tf_and_download_evaluator_file(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plt.xlabel("time (s)")
     plt.ylabel("loss")
     for fname in glob.glob(outdir + "/*"):
+        label = fname.split("/")[-1]
         times, losses, precisions = extract_times_losses_precision(fname)
         print(times, losses, precisions)
-        plt.plot(times, losses, linestyle='solid', label=fname)
+        plt.plot(times, losses, linestyle='solid', label=label)
     plt.legend(loc="upper right")
     plt.savefig("time_loss.png")
 
 if __name__ == "__main__":
-    if len(sys.argv) != 3:
-        print("Usage: python benchmark.py config_file1 config_file2")
-        sys.exit(0)
-
-    cfg_file1 = sys.argv[1]
-    cfg_file2 = sys.argv[2]
-    cfg1 = load_cfg_from_file(cfg_file1)
-    cfg2 = load_cfg_from_file(cfg_file2)
-    plot_time_loss(cfg1, cfg2)
+    print("Usage: python benchmark.py config_file1 config_file2")
+    cfgs = [str(x) for x in sys.argv[1:]]
+    cfgs = [load_cfg_from_file(x) for x in cfgs]
+    plot_time_loss(cfgs)
