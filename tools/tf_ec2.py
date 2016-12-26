@@ -83,7 +83,7 @@ cfg = Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".005",
+    "initial_learning_rate" : ".01",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
 
