@@ -35,7 +35,7 @@ class TimeoutServer(pb.Root):
     self.ITERATION_TO_END_STATISTICS_COLLECTION = 20
     self.ITERATION_TO_START_TIMEOUT = 20
     self.HIST_PERCENTILE = 50
-    self.update_interval = 600
+    self.update_interval = 1000
 
   def set_timeout(self, iteration):
     if iteration >= self.ITERATION_TO_START_TIMEOUT:
