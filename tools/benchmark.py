@@ -45,7 +45,7 @@ def extract_times_losses_precision(fname):
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=False):
+def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=True):
 
     if rerun:
         if launch:
