@@ -338,22 +338,21 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="FinishedPhase1Print")
 
       # Phase 2 gradient applying
-      #with ops.control_dependencies([finished_phase_1]):
-      for index, (grad, var) in enumerate(grads_and_vars):
-        with ops.device(var.device):
-          grad_accum = self._accumulator_list[index][0]
-          if grad is None:
-            aggregated_grad.append(None)
-          elif isinstance(grad, ops.Tensor):
-            aggregated_grad.append(grad_accum.take_grad(1))
-          else:
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+      with ops.control_dependencies([finished_phase_1]):
+        for index, (grad, var) in enumerate(grads_and_vars):
+          with ops.device(var.device):
+            grad_accum = self._accumulator_list[index][0]
+            if grad is None:
+              aggregated_grad.append(None)
+            elif isinstance(grad, ops.Tensor):
+              aggregated_grad.append(grad_accum.take_grad(1))
+            else:
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        with ops.control_dependencies([finished_phase_1]):
           update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
