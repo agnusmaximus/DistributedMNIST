@@ -37,6 +37,8 @@ from tensorflow.python.training import queue_runner
 
 tf.app.flags.DEFINE_float('interval_ms', 1000, 'The interval ms')
 
+FLAGS = tf.app.flags.FLAGS
+
 # Please note that the gradients from replicas are averaged instead of summed
 # (as in the old sync_replicas_optimizer) so you need to increase the learning
 # rate according to the number of replicas. This change is introduced to be
