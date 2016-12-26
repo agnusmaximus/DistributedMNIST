@@ -335,7 +335,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1")
+        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="Finished phase 1 print")
 
       # Phase 2 gradient applying
       #with ops.control_dependencies([finished_phase_1]):
@@ -371,7 +371,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             # Worker finished applying gradients. Add token to phase1_finished_queue
             train_op = logging_ops.Print(self._local_step._ref(),
                                          [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
-                                         message="Finished worker updates")
+                                         message="Finished worker updates",
+                                         name="FinishedWorkerUpdatesPrint")
 
         sync_ops = []
         with ops.control_dependencies([update_op]):
