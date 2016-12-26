@@ -159,15 +159,15 @@ def train(target, dataset, cluster_spec):
     opt = tf.train.AdamOptimizer(lr)
 
     # Use V2 optimizer
-    if not FLAGS.timeout_method:
-      opt = tf.train.SyncReplicasOptimizerV2(
-        opt,
-        replicas_to_aggregate=num_replicas_to_aggregate,
-        total_num_replicas=num_workers)
-    else:
+    if FLAGS.timeout_method or FLAGS.interval_method:
       opt = TimeoutReplicasOptimizer(
         opt,
         global_step,
+        total_num_replicas=num_workers)
+    else:
+      opt = tf.train.SyncReplicasOptimizerV2(
+        opt,
+        replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
