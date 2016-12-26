@@ -289,17 +289,16 @@ def train(target, dataset, cluster_spec):
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
+
+        run_options = tf.RunOptions()
+
         if FLAGS.timeline_logging:
-          run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-          run_metadata = tf.RunMetadata()
-          loss_value, step = sess.run([train_op, global_step], options=run_options, run_metadata=run_metadata, feed_dict=feed_dict)
-        else:
-          if not FLAGS.timeout_method or (timeout_server.timeout < 0 or FLAGS.task_id == 0):
-            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict)
-          else:
-            tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
-            run_options = tf.RunOptions(timeout_in_ms=timeout_server.timeout)
-            loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, options=run_options)
+          run_options.trace_level=tf.RunOptions.FULL_TRACE
+        if not FLAGS.timeout_method or (timeout_server.timeout < 0 or FLAGS.task_id == 0):
+          tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
+          run_options.timeout_in_ms = timeout_server.timeout
+
+        loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
