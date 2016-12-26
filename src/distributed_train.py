@@ -273,7 +273,7 @@ def train(target, dataset, cluster_spec):
 
     def interval_update():
       tf.logging.info("Interval update...")
-      sess.run([opt.update_op])
+      sess.run([opt._update_op])
       Timer(timeout_server.update_interval / 1000.0, interval_update).start()
     if FLAGS.interval_method:
       Timer(timeout_server.update_interval / 1000.0, interval_update).start()
