@@ -60,12 +60,16 @@ cfg = Cfg({
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
+    "setup_commands" :
+    [
+        "sudo rm -rf %(base_out_dir)s",
+        "mkdir %(base_out_dir)s",
+    ],
+
     # Command specification
     # Master pre commands are run only by the master
     "master_pre_commands" :
     [
-        "sudo rm -rf %(base_out_dir)s/*",
-        "mkdir %(base_out_dir)s",
         "cd DistributedMNIST",
         "git fetch && git reset --hard origin/master",
     ],
@@ -440,9 +444,11 @@ def tf_ec2_run(argv, configuration):
 
         # Create a map of command&machine assignments
         command_machine_assignments = {}
+        setup_machine_assignments = {}
 
         # Construct the master command
         command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["master_pre_commands"])}
+        setup_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["setup_commands"])}
         for command_string in configuration["train_commands"]:
             command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "0").replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", "master"))
 
@@ -471,6 +477,23 @@ def tf_ec2_run(argv, configuration):
         # Run the commands via ssh in parallel
         threads = []
         q = Queue.Queue()
+
+        for name, command_and_machine in setup_machine_assignments.items():
+            instance = command_and_machine["instance"]
+            commands = command_and_machine["commands"]
+            print("-----------------------")
+            print("Pre Command: %s\n" % " ".join(commands))
+            t = threading.Thread(target=run_ssh_commands_parallel, args=(instance, commands, q))
+            t.start()
+            threads.append(t)
+
+        threads = []
+        q = Queue.Queue()
+
+        # Wait until commands are all finished
+        for t in threads:
+            t.join()
+
         for name, command_and_machine in command_machine_assignments.items():
             instance = command_and_machine["instance"]
             commands = command_and_machine["commands"]

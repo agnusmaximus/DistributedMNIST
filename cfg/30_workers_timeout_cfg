@@ -1,13 +1,13 @@
 Cfg({
-    "name" : "mnist_cnn_10_workers_sync",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_30_workers_timeout",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 10,
+    "n_workers" : 30,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "7",
+    "num_replicas_to_aggregate" : "31",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -60,7 +60,7 @@ Cfg({
 
     # Model configuration
     "batch_size" : "128",
-    "initial_learning_rate" : ".01",
+    "initial_learning_rate" : ".001",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
 
@@ -80,7 +80,7 @@ Cfg({
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
-        "--timeout_method=false "
+        "--timeout_method=true "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "

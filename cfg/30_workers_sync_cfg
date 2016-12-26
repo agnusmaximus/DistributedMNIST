@@ -1,13 +1,13 @@
 Cfg({
-    "name" : "mnist_cnn_10_workers_sync",      # Unique name for this specific configuration
+    "name" : "mnist_cnn_30_workers_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 10,
+    "n_workers" : 30,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "7",
+    "num_replicas_to_aggregate" : "26",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -41,6 +41,7 @@ Cfg({
         "mkdir %(base_out_dir)s",
     ],
 
+
     # Command specification
     # Master pre commands are run only by the master
     "master_pre_commands" :
@@ -60,7 +61,7 @@ Cfg({
 
     # Model configuration
     "batch_size" : "128",
-    "initial_learning_rate" : ".01",
+    "initial_learning_rate" : ".001",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
 
