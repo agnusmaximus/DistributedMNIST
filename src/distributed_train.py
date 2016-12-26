@@ -34,6 +34,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_boolean('timeout_method', False, 'Use the timeout straggler killing method')
+tf.app.flags.DEFINE_boolean('interval_method', False, 'Use the interval method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -171,12 +172,16 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    if not FLAGS.timeout_method:
-      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
-    else:
+    if FLAGS.timeout_method:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
       timeout_op = opt.timeout_op
       wait_op = opt.wait_op
+    elif FLAGS.interval_method:
+      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
+      wait_op = opt.wait_op
+      update_op = opt._update_op
+    else:
+      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -239,7 +244,8 @@ def train(target, dataset, cluster_spec):
                     len(queue_runners))
 
     if is_chief:
-      sv.start_queue_runners(sess, chief_queue_runners)
+      if not FLAGS.interval_method:
+        sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
     # TIMEOUT client overseer.
@@ -265,6 +271,13 @@ def train(target, dataset, cluster_spec):
     if FLAGS.timeout_method:
       Timer(1, print_queue_sizes).start()
 
+    def interval_update():
+      tf.logging.info("Interval update...")
+      sess.run([opt.update_op])
+      Timer(timeout_manager.update_interval / 1000.0, interval_update).start()
+    if FLAGS.interval_method:
+      Timer(timeout_manager.update_interval / 1000.0, interval_update).start()
+
     while not sv.should_stop():
       try:
 
@@ -289,14 +302,13 @@ def train(target, dataset, cluster_spec):
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
-
         run_options = tf.RunOptions()
         run_metadata = tf.RunMetadata()
 
         if FLAGS.timeline_logging:
           run_options.trace_level=tf.RunOptions.FULL_TRACE
           run_options.output_partition_graphs=True
-        if not FLAGS.timeout_method or (timeout_server.timeout < 0 or FLAGS.task_id != 0):
+        if FLAGS.timeout_method and  (timeout_server.timeout >= 0 and FLAGS.task_id != 0):
           tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
           run_options.timeout_in_ms = timeout_server.timeout
 

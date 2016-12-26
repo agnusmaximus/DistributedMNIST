@@ -334,22 +334,30 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="FinishedPhase1Print")
 
       # Phase 2 gradient applying
-      with ops.control_dependencies([finished_phase_1]):
-        for index, (grad, var) in enumerate(grads_and_vars):
-          with ops.device(var.device):
-            grad_accum = self._accumulator_list[index][0]
-            if grad is None:
-              aggregated_grad.append(None)
-            elif isinstance(grad, ops.Tensor):
-              aggregated_grad.append(grad_accum.take_grad(1))
-            else:
-              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+      #with ops.control_dependencies([finished_phase_1]):
+      for index, (grad, var) in enumerate(grads_and_vars):
+        with ops.device(var.device):
+          grad_accum = self._accumulator_list[index][0]
+          if grad is None:
+            aggregated_grad.append(None)
+          elif isinstance(grad, ops.Tensor):
+            aggregated_grad.append(grad_accum.take_grad(1))
+          else:
+            aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
+      self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
+      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
+      self.print_accum_sizes = logging_ops.Print(self._local_step,
+                                                 [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
+                                                 message="Accum sizes")
+      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step._ref(), global_step._ref()], message="local vs global step")
+
       # sync_op will be assigned to the same device as the global step.
       with ops.device(global_step.device), ops.name_scope(""):
-        update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
+        with ops.control_dependencies([self.print_accum_sizes]):
+          update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
@@ -400,14 +408,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                   global_step, name="SetGlobalStep"))
       self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
-
-      self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
-      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
-      self.print_accum_sizes = logging_ops.Print(self._local_step,
-                                                 [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
-                                                 message="Accum sizes")
-      self.print_local_step = logging_ops.Print(self._local_step, [self._local_step._ref(), global_step._ref()], message="local vs global step")
-
 
       return train_op
 
