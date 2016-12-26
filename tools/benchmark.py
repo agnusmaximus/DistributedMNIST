@@ -47,12 +47,14 @@ def extract_times_losses_precision(fname):
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=350, rerun=True, launch=True):
-
-    shutil.rmtree(outdir)
-    os.makedirs(outdir)
+def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=350, rerun=False, launch=False):
 
     if rerun:
+
+        if os.path.exists(outdir):
+            shutil.rmtree(outdir)
+        os.makedirs(outdir)
+
         if launch:
             shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
@@ -64,7 +66,7 @@ def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir
         label = fname.split("/")[-1]
         times, losses, precisions = extract_times_losses_precision(fname)
         print(times, losses, precisions)
-        plt.plot(times, losses, linestyle='solid', label=label)
+        plt.plot(times, losses, linestyle='solid',  marker='o', label=label)
     plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_loss.png")
 

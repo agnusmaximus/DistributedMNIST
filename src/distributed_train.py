@@ -33,9 +33,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('timeout_method', False, 'Use the timeout straggler killing method')
 tf.app.flags.DEFINE_boolean('interval_method', False, 'Use the interval method')
-tf.app.flags.DEFINE_float('interval_ms', 1000, 'The interval ms')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -160,7 +158,7 @@ def train(target, dataset, cluster_spec):
     opt = tf.train.AdamOptimizer(lr)
 
     # Use V2 optimizer
-    if FLAGS.timeout_method or FLAGS.interval_method:
+    if FLAGS.interval_method:
       opt = TimeoutReplicasOptimizer(
         opt,
         global_step,
@@ -173,14 +171,8 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    if FLAGS.timeout_method:
+    if FLAGS.interval_method:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
-      timeout_op = opt.timeout_op
-      wait_op = opt.wait_op
-    elif FLAGS.interval_method:
-      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
-      wait_op = opt.wait_op
-      update_op = opt._update_op
     else:
       apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
@@ -261,23 +253,7 @@ def train(target, dataset, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
-    def print_queue_sizes():
-      tf.logging.info("Periodic print queue sizes...")
-      sess.run([opt.print_sizes])
-      sess.run([opt.print_p1_sizes])
-      sess.run([opt.print_accum_sizes])
-      sess.run([opt.print_local_step])
-      tf.logging.info("Done periodic print queue sizes...")
-      Timer(20, print_queue_sizes).start()
-    if FLAGS.timeout_method:
-      Timer(1, print_queue_sizes).start()
-
-    def interval_update():
-      tf.logging.info("Interval update...")
-      sess.run([opt._update_op])
-      Timer(FLAGS.interval_ms / float(1000), interval_update).start()
-    if FLAGS.interval_method and FLAGS.task_id == 0:
-      Timer(FLAGS.interval_ms / float(1000), interval_update).start()
+    opt.start_interval_updates()
 
     while not sv.should_stop():
       try:
@@ -288,18 +264,6 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
-        # Timeout method
-        if FLAGS.timeout_method:
-
-          # Broadcast worker starting iteration to other workers.
-          timeout_client.broadcast_worker_starting(cur_iteration)
-
-          # Wait for the queue to have a token before starting.
-          sess.run([wait_op])
-
-          # Notify iteration starting
-          timeout_server.notify_iteration_starting(cur_iteration)
-
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
@@ -309,9 +273,6 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options.trace_level=tf.RunOptions.FULL_TRACE
           run_options.output_partition_graphs=True
-        if FLAGS.timeout_method and  (timeout_server.timeout >= 0 and FLAGS.task_id != 0):
-          tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
-          run_options.timeout_in_ms = timeout_server.timeout
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
 
@@ -348,10 +309,6 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-      except tf.errors.DeadlineExceededError:
-        tf.logging.info("Timeout exceeded, running timeout op on iteration %d - %f" % (cur_iteration, time.time()))
-        sess.run([timeout_op])
-        tf.logging.info("Done executing timeout op")
       except:
         print("Unexpected error:", sys.exc_info()[0])
         raise

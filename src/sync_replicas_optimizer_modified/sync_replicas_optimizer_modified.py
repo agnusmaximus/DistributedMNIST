@@ -34,7 +34,7 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.training import optimizer
 from tensorflow.python.training import queue_runner
 
-
+tf.app.flags.DEFINE_float('interval_ms', 1000, 'The interval ms')
 
 # Please note that the gradients from replicas are averaged instead of summed
 # (as in the old sync_replicas_optimizer) so you need to increase the learning
@@ -202,6 +202,13 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                                                   shapes=(),
                                                                   shared_name="sync_token_q_%d" % worker)
 
+  def start_interval_updates(self):
+    def interval_update():
+      tf.logging.info("Interval update...")
+      sess.run([opt._update_op])
+      Timer(FLAGS.interval_ms / float(1000), interval_update).start()
+    Timer(FLAGS.interval_ms / float(1000), interval_update).start()
+
   def compute_gradients(self, *args, **kwargs):
     """Compute gradients of "loss" for the variables in "var_list".
     This simply wraps the compute_gradients() from the real optimizer. The
@@ -317,24 +324,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step._ref()))
 
-      # Phase 1 is finished when:
-      # For every worker, we find that their p1_finished_queue contains
-      # a token that is >= the current global step
-      finished_phase_1 = []
-      for i in range(self._total_num_replicas):
-        #dequeue = tf.while_loop(lambda x: tf.less(self._p1_finished_queues[i].dequeue(), global_step._ref()),
-        #                        lambda x: x,
-        #                        [global_step._ref()])
-        dequeue = self._p1_finished_queues[i].dequeue()
-        finished_phase_1.append(dequeue)
-
-      finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
-
-      with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="FinishedPhase1Print")
-
       # Phase 2 gradient applying
-      #with ops.control_dependencies([]):
       for index, (grad, var) in enumerate(grads_and_vars):
         with ops.device(var.device):
           grad_accum = self._accumulator_list[index][0]
@@ -347,6 +337,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
+      # Some debug operations
       self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
       self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
       self.print_accum_sizes = logging_ops.Print(self._local_step,
@@ -399,8 +390,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # This is intended so that after killing a worker, the worker can call this and continue.
       # We also need to wait until the next iteration begins.
       self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step)
-
-      self.wait_op = self._sync_token_queues[worker_id].dequeue()
 
       for accum, var in self._accumulator_list:
         with ops.device(var.device):

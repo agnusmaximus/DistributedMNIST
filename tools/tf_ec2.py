@@ -24,7 +24,7 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "mnist_cnn_10_workers",      # Unique name for this specific configuration
+    "name" : "11_workers_interval",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -32,7 +32,7 @@ cfg = Cfg({
     "n_workers" : 10,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-   "num_replicas_to_aggregate" : "7",
+   "num_replicas_to_aggregate" : "11",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -106,7 +106,6 @@ cfg = Cfg({
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--timeline_logging=false "
-        "--timeout_method=false "
         "--interval_method=true "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
