@@ -54,7 +54,7 @@ def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir
 
     if rerun:
         if launch:
-            shutdown_and_launch(cfg1)
+            shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
             run_tf_and_download_evaluator_file(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
@@ -65,7 +65,7 @@ def plot_time_loss(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir
         times, losses, precisions = extract_times_losses_precision(fname)
         print(times, losses, precisions)
         plt.plot(times, losses, linestyle='solid', label=label)
-    plt.legend(loc="upper right")
+    plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_loss.png")
 
 if __name__ == "__main__":
