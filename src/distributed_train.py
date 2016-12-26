@@ -295,7 +295,7 @@ def train(target, dataset, cluster_spec):
 
         if FLAGS.timeline_logging:
           run_options.trace_level=tf.RunOptions.FULL_TRACE
-        if not FLAGS.timeout_method or (timeout_server.timeout < 0 or FLAGS.task_id == 0):
+        if not FLAGS.timeout_method or (timeout_server.timeout < 0 or FLAGS.task_id != 0):
           tf.logging.info("Setting timeout: %d ms" % timeout_server.timeout)
           run_options.timeout_in_ms = timeout_server.timeout
 
