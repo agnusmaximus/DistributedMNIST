@@ -83,7 +83,7 @@ cfg = Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".001",
+    "initial_learning_rate" : ".005",
     "learning_rate_decay_factor" : ".95",
     "num_epochs_per_decay" : "1.0",
 
@@ -107,7 +107,7 @@ cfg = Cfg({
         "--task_id=TASK_ID "
         "--timeline_logging=false "
         "--interval_method=true "
-        "--interval_ms=5000 "
+        "--interval_ms=8000 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
