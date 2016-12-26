@@ -45,13 +45,13 @@ def extract_times_losses_precision(fname):
     f.close()
     return times, losses, precisions
 
-def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=True):
+def plot_time_loss(cfg1, cfg2, evaluator_file_name="out_evaluator", outdir="result_dir", rerun=True, launch=False):
 
     if rerun:
         if launch:
             shutdown_and_launch(cfg1)
-        run_tf_and_download_evaluator_file(600, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
-        run_tf_and_download_evaluator_file(600, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(120, cfg1, evaluator_file_name=evaluator_file_name, outdir=outdir)
+        run_tf_and_download_evaluator_file(120, cfg2, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plt.xlabel("time (s)")
     plt.ylabel("loss")
