@@ -205,10 +205,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                                                   shapes=(),
                                                                   shared_name="sync_token_q_%d" % worker)
 
-  def start_interval_updates(self):
+  def start_interval_updates(self, sess):
     def interval_update():
       tf.logging.info("Interval update...")
-      sess.run([opt._update_op])
+      sess.run([self._update_op])
       Timer(FLAGS.interval_ms / float(1000), interval_update).start()
     Timer(FLAGS.interval_ms / float(1000), interval_update).start()
 
@@ -268,16 +268,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
-    # For timeout, we have phase1 finished queues per worker.
-    # We continue to phase 2 once from each phase1 queue we successfully dequeue
-    # an item.
-    self._p1_finished_queues = []
-    with ops.device(global_step.device), ops.name_scope(""):
-      for i in range(self._total_num_replicas):
-        self._p1_finished_queues.append(data_flow_ops.FIFOQueue(-1,
-                                                               global_step.dtype.base_dtype,
-                                                               shapes=(),
-                                                               shared_name="phase1_finished_q_%d" % i))
 
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
@@ -342,7 +332,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       # Some debug operations
       self.print_sizes = logging_ops.Print(global_step, [self._sync_token_queues[i].size() for i in range(self._total_num_replicas)], message="queue sizes")
-      self.print_p1_sizes = logging_ops.Print(global_step, [self._p1_finished_queues[i].size() for i in range(self._total_num_replicas)], message="p1 sizes after")
       self.print_accum_sizes = logging_ops.Print(self._local_step,
                                                  [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
                                                  message="Accum sizes")
@@ -365,34 +354,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
       with ops.device(global_step.device), ops.name_scope(""):
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([self._p1_finished_queues[worker_id].enqueue(self._local_step._ref())]):
-            # Worker finished applying gradients. Add token to phase1_finished_queue
-            train_op = logging_ops.Print(self._local_step._ref(),
-                                         [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
-                                         message="Finished worker updates",
-                                         name="FinishedWorkerUpdatesPrint")
+          # Worker finished applying gradients. Add token to phase1_finished_queue
+          train_op = logging_ops.Print(self._local_step._ref(),
+                                       [x[0].num_accumulated() for x in self._accumulator_list] + [worker_id],
+                                       message="Finished worker updates",
+                                       name="FinishedWorkerUpdatesPrint")
 
-        sync_ops = []
-        with ops.control_dependencies([update_op]):
-
-          # Sync_op needs to insert tokens to the token queue at the end of the
-          # step so the replicas can fetch them to start the next step.
-          for worker in range(self._total_num_replicas):
-            empty_op = self._sync_token_queues[worker].dequeue_many(self._sync_token_queues[worker].size())
-            with ops.control_dependencies([empty_op]):
-              enqueue_op = self._sync_token_queues[worker].enqueue(global_step._ref())
-            sync_ops.append(enqueue_op)
-
-        sync_ops = control_flow_ops.group(*(sync_ops))
-
-        self._chief_queue_runner = queue_runner.QueueRunner(dummy_queue,
-                                                            [sync_ops])
-
-      # The timeout op just adds a token to the finished phase 1 queue,
-      # allowing the given worker to not  have to submit a gradient to the accumulator.
-      # This is intended so that after killing a worker, the worker can call this and continue.
-      # We also need to wait until the next iteration begins.
-      self.timeout_op = self._p1_finished_queues[worker_id].enqueue(self._local_step)
 
       for accum, var in self._accumulator_list:
         with ops.device(var.device):
