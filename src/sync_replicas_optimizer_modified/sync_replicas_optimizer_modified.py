@@ -334,16 +334,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="FinishedPhase1Print")
 
       # Phase 2 gradient applying
-      #with ops.control_dependencies([finished_phase_1]):
+      #with ops.control_dependencies([]):
       for index, (grad, var) in enumerate(grads_and_vars):
         with ops.device(var.device):
           grad_accum = self._accumulator_list[index][0]
           if grad is None:
             aggregated_grad.append(None)
           elif isinstance(grad, ops.Tensor):
-            aggregated_grad.append(grad_accum.take_grad(1))
+            with ops.control_dependencies([logging_ops.Print(global_step, [grad_accum.num_accumulated()], message="Num accumulated %d" % index)]):
+              aggregated_grad.append(grad_accum.take_grad(1))
           else:
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+            with ops.control_dependencies([logging_ops.Print(global_step, [grad_accum.num_accumulated()], message="Num accumulated %d" % index)]):
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
