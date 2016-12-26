@@ -275,8 +275,8 @@ def train(target, dataset, cluster_spec):
       tf.logging.info("Interval update...")
       sess.run([opt._update_op])
       tf.logging.info("WAITING FOR %f" % (timeout_server.update_interval / float(1000)))
-      #Timer(timeout_server.update_interval / float(1000), interval_update).start()
-    if FLAGS.interval_method:
+      Timer(timeout_server.update_interval / float(1000), interval_update).start()
+    if FLAGS.interval_method and FLAGS.task_id == 0:
       Timer(timeout_server.update_interval / float(1000), interval_update).start()
 
     while not sv.should_stop():
