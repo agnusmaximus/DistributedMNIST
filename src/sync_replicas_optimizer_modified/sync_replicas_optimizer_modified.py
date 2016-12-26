@@ -335,7 +335,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       finished_phase_1 = control_flow_ops.group(*(finished_phase_1))
 
       with ops.control_dependencies([finished_phase_1]):
-        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="Finished phase 1 print")
+        finished_phase_1 = logging_ops.Print(global_step, [global_step._ref()], message="finished phase 1", name="FinishedPhase1Print")
 
       # Phase 2 gradient applying
       #with ops.control_dependencies([finished_phase_1]):
