@@ -253,7 +253,7 @@ def train(target, dataset, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
-    if FLAGS.task_id == 0:
+    if FLAGS.task_id == 0 and FLAGS.interval_method:
       opt.start_interval_updates(sess)
 
     while not sv.should_stop():

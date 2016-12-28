@@ -29,10 +29,10 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 10,
+    "n_workers" : 49,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-   "num_replicas_to_aggregate" : "11",
+    "num_replicas_to_aggregate" : "50",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -83,8 +83,8 @@ cfg = Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".006",
-    "learning_rate_decay_factor" : ".95",
+    "initial_learning_rate" : ".01",
+    "learning_rate_decay_factor" : ".99",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.

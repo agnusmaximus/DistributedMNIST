@@ -69,7 +69,7 @@ def plot_time_loss(outdir):
         times, losses, precisions, steps = extract_times_losses_precision(fname)
         print(times, losses, precisions, steps)
         plt.plot(times, losses, linestyle='solid',  marker='o', label=label, color=colors[i])
-    plt.legend(loc="upper right", fontsize=5)
+    plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_loss.png")
 
 def plot_time_step(outdir):
@@ -84,7 +84,7 @@ def plot_time_step(outdir):
         times, losses, precisions, steps = extract_times_losses_precision(fname)
         print(times, losses, precisions, steps)
         plt.plot(times, steps, linestyle='solid',  marker='o', label=label, color=colors[i])
-    plt.legend(loc="upper left", fontsize=5)
+    plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
 def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=350, rerun=False, launch=False):
