@@ -83,8 +83,8 @@ cfg = Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".01",
-    "learning_rate_decay_factor" : ".99",
+    "initial_learning_rate" : ".004",
+    "learning_rate_decay_factor" : ".999",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
@@ -106,8 +106,8 @@ cfg = Cfg({
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--timeline_logging=false "
-        "--interval_method=true "
-        "--interval_ms=8000 "
+        "--interval_method=false "
+        "--interval_ms=4000 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],

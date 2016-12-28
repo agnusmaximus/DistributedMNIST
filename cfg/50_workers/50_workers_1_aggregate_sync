@@ -1,13 +1,13 @@
 Cfg({
-    "name" : "50_workers_8000_interval",      # Unique name for this specific configuration
+    "name" : "50_workers_50_aggregate_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 49,
+    "n_workers" : 50,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "50",
+    "num_replicas_to_aggregate" : "1",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -41,6 +41,7 @@ Cfg({
         "mkdir %(base_out_dir)s",
     ],
 
+
     # Command specification
     # Master pre commands are run only by the master
     "master_pre_commands" :
@@ -58,8 +59,8 @@ Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".001",
-    "learning_rate_decay_factor" : ".98",
+    "initial_learning_rate" : ".004",
+    "learning_rate_decay_factor" : ".999",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
@@ -78,8 +79,6 @@ Cfg({
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
-	"--interval_method=true "
-	"--interval_ms=8000 "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "

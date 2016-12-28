@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "50_workers_4000_interval",      # Unique name for this specific configuration
+    "name" : "50_workers_1000_interval",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -58,8 +58,8 @@ Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".001",
-    "learning_rate_decay_factor" : ".98",
+    "initial_learning_rate" : ".004",
+    "learning_rate_decay_factor" : ".999",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
@@ -79,7 +79,7 @@ Cfg({
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
 	"--interval_method=true "
-	"--interval_ms=4000 "
+	"--interval_ms=1000 "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "

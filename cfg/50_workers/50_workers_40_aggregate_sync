@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "50_workers_47_aggregate_sync",      # Unique name for this specific configuration
+    "name" : "50_workers_40_aggregate_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -7,7 +7,7 @@ Cfg({
     "n_workers" : 49,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "47",
+    "num_replicas_to_aggregate" : "40",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -59,8 +59,8 @@ Cfg({
 
     # Model configuration
     "batch_size" : "1024",
-    "initial_learning_rate" : ".001",
-    "learning_rate_decay_factor" : ".98",
+    "initial_learning_rate" : ".004",
+    "learning_rate_decay_factor" : ".999",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
