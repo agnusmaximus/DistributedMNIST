@@ -1,0 +1,34 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434462 Time: 19.157655
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-9 at step=9.
+Num examples: 10000  Precision @ 1: 0.556200 Loss: 4.327150 Time: 62.567062
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-22 at step=22.
+Num examples: 10000  Precision @ 1: 0.780800 Loss: 3.659379 Time: 84.678689
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-34 at step=34.
+Num examples: 10000  Precision @ 1: 0.890500 Loss: 3.219593 Time: 104.609835
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-45 at step=45.
+Num examples: 10000  Precision @ 1: 0.906900 Loss: 3.017694 Time: 123.479612
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-57 at step=57.
+Num examples: 10000  Precision @ 1: 0.922800 Loss: 2.887249 Time: 144.523096
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-69 at step=69.
+Num examples: 10000  Precision @ 1: 0.933800 Loss: 2.776579 Time: 168.860773
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-80 at step=80.
+Num examples: 10000  Precision @ 1: 0.936000 Loss: 2.716236 Time: 187.675437
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-92 at step=92.
+Num examples: 10000  Precision @ 1: 0.944300 Loss: 2.624219 Time: 207.627588
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-104 at step=104.
+Num examples: 10000  Precision @ 1: 0.950700 Loss: 2.564280 Time: 226.458974
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-116 at step=116.
+Num examples: 10000  Precision @ 1: 0.949000 Loss: 2.525061 Time: 245.282032
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-128 at step=128.
+Num examples: 10000  Precision @ 1: 0.953000 Loss: 2.459258 Time: 265.226961
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-140 at step=140.
+Num examples: 10000  Precision @ 1: 0.954100 Loss: 2.425805 Time: 284.094780
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-152 at step=152.
+Num examples: 10000  Precision @ 1: 0.955200 Loss: 2.378849 Time: 304.060747
+Succesfully loaded model from /home/ubuntu/inception_shared/30_workers_800_interval/train_dir/model.ckpt-165 at step=165.

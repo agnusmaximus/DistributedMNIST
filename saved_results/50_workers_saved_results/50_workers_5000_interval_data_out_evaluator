@@ -1,0 +1,70 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434463 Time: 19.179457
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+Raised when an operation iterates past the valid input range.
+
+  This exception is raised in "end-of-file" conditions, such as when a
+  [`queue.dequeue()`](../../api_docs/python/io_ops.md#QueueBase.dequeue)
+  operation is blocked on an empty queue, and a
+  [`queue.close()`](../../api_docs/python/io_ops.md#QueueBase.close)
+  operation executes.
+
+  @@__init__
+  
+Read less bytes than requested
+	 [[Node: save/RestoreV2_7 = RestoreV2[dtypes=[DT_FLOAT], _device="/job:localhost/replica:0/task:0/cpu:0"](_recv_save/Const_0, save/RestoreV2_7/tensor_names, save/RestoreV2_7/shape_and_slices)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434462 Time: 43.745786
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+Raised when an operation iterates past the valid input range.
+
+  This exception is raised in "end-of-file" conditions, such as when a
+  [`queue.dequeue()`](../../api_docs/python/io_ops.md#QueueBase.dequeue)
+  operation is blocked on an empty queue, and a
+  [`queue.close()`](../../api_docs/python/io_ops.md#QueueBase.close)
+  operation executes.
+
+  @@__init__
+  
+Read less bytes than requested
+	 [[Node: save/RestoreV2_7 = RestoreV2[dtypes=[DT_FLOAT], _device="/job:localhost/replica:0/task:0/cpu:0"](_recv_save/Const_0, save/RestoreV2_7/tensor_names, save/RestoreV2_7/shape_and_slices)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434463 Time: 64.053356
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-3 at step=3.
+Num examples: 10000  Precision @ 1: 0.203700 Loss: 7.030231 Time: 84.023108
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-6 at step=6.
+Num examples: 10000  Precision @ 1: 0.592500 Loss: 4.731829 Time: 106.209065
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-10 at step=10.
+Num examples: 10000  Precision @ 1: 0.732200 Loss: 4.053258 Time: 125.046648
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-13 at step=13.
+Num examples: 10000  Precision @ 1: 0.784300 Loss: 3.871979 Time: 145.010857
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-17 at step=17.
+Num examples: 10000  Precision @ 1: 0.807500 Loss: 3.719163 Time: 163.876147
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-20 at step=20.
+Num examples: 10000  Precision @ 1: 0.823200 Loss: 3.569629 Time: 184.954691
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-24 at step=24.
+Num examples: 10000  Precision @ 1: 0.859300 Loss: 3.432619 Time: 203.787394
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-27 at step=27.
+Num examples: 10000  Precision @ 1: 0.891800 Loss: 3.306817 Time: 224.866772
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-31 at step=31.
+Num examples: 10000  Precision @ 1: 0.899500 Loss: 3.235561 Time: 243.714666
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-34 at step=34.
+Num examples: 10000  Precision @ 1: 0.902600 Loss: 3.167289 Time: 264.825444
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-38 at step=38.
+Num examples: 10000  Precision @ 1: 0.909700 Loss: 3.122997 Time: 283.750184
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-41 at step=41.
+Num examples: 10000  Precision @ 1: 0.919400 Loss: 3.075304 Time: 304.790276
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-45 at step=45.
+Num examples: 10000  Precision @ 1: 0.922300 Loss: 3.046148 Time: 323.640631
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-48 at step=48.
+Num examples: 10000  Precision @ 1: 0.927500 Loss: 3.012102 Time: 344.684492
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_5000_interval/train_dir/model.ckpt-52 at step=52.

@@ -1,0 +1,20 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_48_aggregate_sync/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434461 Time: 20.185976
+W tensorflow/core/framework/op_kernel.cc:975] Data loss: file is too short to be an sstable
+Raised when unrecoverable data loss or corruption is encountered.
+
+  For example, this may be raised by running a
+  [`tf.WholeFileReader.read()`](../../api_docs/python/io_ops.md#WholeFileReader)
+  operation, if the file is truncated while it is being read.
+
+  @@__init__
+  
+file is too short to be an sstable
+	 [[Node: save/RestoreV2_4 = RestoreV2[dtypes=[DT_FLOAT], _device="/job:localhost/replica:0/task:0/cpu:0"](_recv_save/Const_0, save/RestoreV2_4/tensor_names, save/RestoreV2_4/shape_and_slices)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_48_aggregate_sync/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 9.434464 Time: 43.212490
