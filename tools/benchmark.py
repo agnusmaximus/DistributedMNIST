@@ -87,8 +87,8 @@ def plot_time_step(outdir):
     plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*30, rerun=True, launch=True):
-
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=True, launch=True):
+    print([x["name"] for x in cfgs])
     if rerun:
         if launch:
             if os.path.exists(outdir):

@@ -139,12 +139,12 @@ def inference(images, train=True):
   if train:
       hidden = tf.nn.dropout(hidden, 0.5, seed=SEED)
 
-  reg = (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
-         tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
+  #reg = (tf.nn.l2_loss(fc1_weights) + tf.nn.l2_loss(fc1_biases) +
+  #       tf.nn.l2_loss(fc2_weights) + tf.nn.l2_loss(fc2_biases))
 
   logits = tf.matmul(hidden, fc2_weights) + fc2_biases
 
-  return logits, 5e-4 * reg
+  return logits
 
 def loss(logits, labels):
   """Calculates the loss from the logits and the labels.
