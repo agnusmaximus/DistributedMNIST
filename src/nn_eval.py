@@ -120,7 +120,7 @@ def evaluate(dataset):
     # Graph creation
     batch_size = dataset.num_examples
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(batch_size)
-    logits, reg = mnist.inference(images_placeholder, train=False)
+    logits = mnist.inference(images_placeholder, train=False)
     validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(batch_size)
     validation_loss = mnist.loss(logits, labels_placeholder)
 

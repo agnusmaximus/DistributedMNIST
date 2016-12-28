@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "11_workers_interval",      # Unique name for this specific configuration
+    "name" : "2_workers_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 49,
+    "n_workers" : 1,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "50",
+    "num_replicas_to_aggregate" : "2",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -82,7 +82,7 @@ cfg = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "1024",
+    "batch_size" : "128",
     "initial_learning_rate" : ".004",
     "learning_rate_decay_factor" : ".999",
     "num_epochs_per_decay" : "1.0",
