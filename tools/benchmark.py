@@ -24,6 +24,7 @@ def run_tf_and_download_evaluator_file(run_time_sec, cfg, evaluator_file_name="o
 
     kill_args = "tools/tf_ec2.py kill_all_python"
     tf_ec2_run(kill_args.split(), cfg)
+    time.sleep(10)
 
     run_args = "tools/tf_ec2.py run_tf"
     cluster_specs = tf_ec2_run(run_args.split(), cfg)
@@ -57,6 +58,36 @@ def extract_times_losses_precision(fname):
     min_length = min([len(x) for x in [times, losses, precisions, steps]])
     return times[:min_length], losses[:min_length], precisions[:min_length], steps[:min_length]
 
+def plot_time_precision(outdir):
+    plt.cla()
+    plt.xlabel("time (s)")
+    plt.ylabel("precision (%)")
+    files = glob.glob(outdir + "/*")
+    cmap = plt.get_cmap('jet')
+    colors = cmap(np.linspace(0, 1.0, len(files)))
+    for i, fname in enumerate(files):
+        label = fname.split("/")[-1]
+        times, losses, precisions, steps = extract_times_losses_precision(fname)
+        plt.plot(times, precisions, linestyle='solid', label=label, color=colors[i])
+    plt.legend(loc="upper right", fontsize=8)
+    plt.savefig("time_precision.png")
+
+def plot_step_loss(outdir):
+    plt.cla()
+    plt.xlabel("step")
+    plt.ylabel("losses")
+    files = glob.glob(outdir + "/*")
+    cmap = plt.get_cmap('jet')
+    colors = cmap(np.linspace(0, 1.0, len(files)))
+    plt.yscale('log')
+    #plt.xscale('log')
+    for i, fname in enumerate(files):
+        label = fname.split("/")[-1]
+        times, losses, precisions, steps = extract_times_losses_precision(fname)
+        plt.plot(steps, losses, linestyle='solid', label=label, color=colors[i])
+    plt.legend(loc="upper right", fontsize=8)
+    plt.savefig("step_losses.png")
+
 def plot_time_loss(outdir):
     plt.cla()
     plt.xlabel("time (s)")
@@ -64,11 +95,12 @@ def plot_time_loss(outdir):
     files = glob.glob(outdir + "/*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files)))
+    plt.yscale('log')
+    plt.xscale('log')
     for i, fname in enumerate(files):
         label = fname.split("/")[-1]
         times, losses, precisions, steps = extract_times_losses_precision(fname)
-        print(times, losses, precisions, steps)
-        plt.plot(times, losses, linestyle='solid',  marker='o', label=label, color=colors[i])
+        plt.plot(times, losses, linestyle='solid', label=label, color=colors[i])
     plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_loss.png")
 
@@ -78,16 +110,16 @@ def plot_time_step(outdir):
     plt.ylabel("step")
     files = glob.glob(outdir + "/*")
     cmap = plt.get_cmap('jet')
-    colors = cmap(np.linspace(0, 1.0, len(files)))
+    colors = cmap(np.linspace(0, 2.0, len(files)))
     for i, fname in enumerate(files):
         label = fname.split("/")[-1]
         times, losses, precisions, steps = extract_times_losses_precision(fname)
-        print(times, losses, precisions, steps)
-        plt.plot(times, steps, linestyle='solid',  marker='o', label=label, color=colors[i])
+        #print(times, losses, precisions, steps)
+        plt.plot(times, steps, linestyle='solid', label=label, color=colors[i])
     plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=True, launch=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch:
@@ -100,9 +132,13 @@ def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", ti
 
     plot_time_loss(outdir)
     plot_time_step(outdir)
+    plot_time_precision(outdir)
+    plot_step_loss(outdir)
 
 if __name__ == "__main__":
-    print("Usage: python benchmark.py config_file1 config_file2")
-    cfgs = [str(x) for x in sys.argv[1:]]
+    print("Usage: python benchmark.py config_dir")
+    cfg_dir = sys.argv[1]
+    cfg_filenames = glob.glob(cfg_dir + "/*")
+    cfgs = [str(x) for x in cfg_filenames]
     cfgs = [load_cfg_from_file(x) for x in cfgs]
     plot_figs(cfgs)
