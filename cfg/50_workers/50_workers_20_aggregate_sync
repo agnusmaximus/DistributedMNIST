@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "50_workers_7000_interval",      # Unique name for this specific configuration
+    "name" : "50_workers_20_aggregate_sync",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -7,7 +7,7 @@ Cfg({
     "n_workers" : 49,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "50",
+    "num_replicas_to_aggregate" : "20",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -40,6 +40,7 @@ Cfg({
         "sudo rm -rf %(base_out_dir)s",
         "mkdir %(base_out_dir)s",
     ],
+
 
     # Command specification
     # Master pre commands are run only by the master
@@ -78,8 +79,6 @@ Cfg({
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
-	"--interval_method=true "
-	"--interval_ms=7000 "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
