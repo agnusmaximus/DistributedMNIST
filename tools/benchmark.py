@@ -119,13 +119,10 @@ def plot_time_step(outdir):
     plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=False, launch=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch:
-            if os.path.exists(outdir):
-                shutil.rmtree(outdir)
-                os.makedirs(outdir)
             shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
             run_tf_and_download_evaluator_file(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
@@ -136,9 +133,14 @@ def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", ti
     plot_step_loss(outdir)
 
 if __name__ == "__main__":
-    print("Usage: python benchmark.py config_dir")
-    cfg_dir = sys.argv[1]
-    cfg_filenames = glob.glob(cfg_dir + "/*")
-    cfgs = [str(x) for x in cfg_filenames]
-    cfgs = [load_cfg_from_file(x) for x in cfgs]
+    print("Usage: python benchmark.py [use_dir dir|select_files cfg1 cfg2...] ")
+    cfgs = []
+    if len(sys.argv) >= 2:
+        if sys.argv[1] == "use_dir":
+            cfg_dir = sys.argv[2]
+            cfg_filenames = glob.glob(cfg_dir + "/*")
+            cfgs = [str(x) for x in cfg_filenames]
+            cfgs = [load_cfg_from_file(x) for x in cfgs]
+        elif sys.argv[1] == "select_files":
+            cfgs = [load_cfg_from_file(x) for x in sys.argv[2:]]
     plot_figs(cfgs)

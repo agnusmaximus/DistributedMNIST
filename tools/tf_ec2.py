@@ -29,10 +29,10 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 1,
+    "n_workers" : 49,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "2",
+    "num_replicas_to_aggregate" : "50",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -83,8 +83,8 @@ cfg = Cfg({
 
     # Model configuration
     "batch_size" : "128",
-    "initial_learning_rate" : ".004",
-    "learning_rate_decay_factor" : ".999",
+    "initial_learning_rate" : ".0008",
+    "learning_rate_decay_factor" : ".98",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
@@ -487,12 +487,12 @@ def tf_ec2_run(argv, configuration):
             t.start()
             threads.append(t)
 
-        threads = []
-        q = Queue.Queue()
-
         # Wait until commands are all finished
         for t in threads:
             t.join()
+
+        threads = []
+        q = Queue.Queue()
 
         for name, command_and_machine in command_machine_assignments.items():
             instance = command_and_machine["instance"]
