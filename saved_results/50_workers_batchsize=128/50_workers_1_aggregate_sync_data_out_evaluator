@@ -1,0 +1,359 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319830 Time: 20.215570
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-2 at step=2.
+Num examples: 10000  Precision @ 1: 0.354200 Loss: 3.172390 Time: 121.747236
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-7 at step=7.
+Num examples: 10000  Precision @ 1: 0.605600 Loss: 1.280194 Time: 153.509990
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-13 at step=13.
+Num examples: 10000  Precision @ 1: 0.699400 Loss: 1.040400 Time: 173.084977
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-18 at step=18.
+Num examples: 10000  Precision @ 1: 0.782800 Loss: 0.878644 Time: 192.726525
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-23 at step=23.
+Num examples: 10000  Precision @ 1: 0.827100 Loss: 0.677340 Time: 213.414012
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-28 at step=28.
+Num examples: 10000  Precision @ 1: 0.869200 Loss: 0.560456 Time: 232.973577
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-33 at step=33.
+Num examples: 10000  Precision @ 1: 0.882000 Loss: 0.457461 Time: 253.658785
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-38 at step=38.
+Num examples: 10000  Precision @ 1: 0.885500 Loss: 0.402756 Time: 273.209204
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-43 at step=43.
+Num examples: 10000  Precision @ 1: 0.904800 Loss: 0.350013 Time: 292.736213
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-48 at step=48.
+Num examples: 10000  Precision @ 1: 0.904700 Loss: 0.333407 Time: 312.293008
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-54 at step=54.
+Num examples: 10000  Precision @ 1: 0.910200 Loss: 0.310017 Time: 334.031094
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-59 at step=59.
+Num examples: 10000  Precision @ 1: 0.914800 Loss: 0.295813 Time: 353.560128
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-64 at step=64.
+Num examples: 10000  Precision @ 1: 0.922300 Loss: 0.270347 Time: 373.116759
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-69 at step=69.
+Num examples: 10000  Precision @ 1: 0.926700 Loss: 0.263215 Time: 392.689109
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-74 at step=74.
+Num examples: 10000  Precision @ 1: 0.934100 Loss: 0.236203 Time: 412.273586
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-79 at step=79.
+Num examples: 10000  Precision @ 1: 0.931900 Loss: 0.233956 Time: 431.824994
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-84 at step=84.
+Num examples: 10000  Precision @ 1: 0.936600 Loss: 0.213496 Time: 451.369211
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-89 at step=89.
+Num examples: 10000  Precision @ 1: 0.934100 Loss: 0.223219 Time: 470.934915
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-94 at step=94.
+Num examples: 10000  Precision @ 1: 0.941900 Loss: 0.203232 Time: 490.517988
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-99 at step=99.
+Num examples: 10000  Precision @ 1: 0.940200 Loss: 0.204644 Time: 510.042360
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-105 at step=105.
+Num examples: 10000  Precision @ 1: 0.940400 Loss: 0.201045 Time: 529.596846
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-110 at step=110.
+Num examples: 10000  Precision @ 1: 0.940400 Loss: 0.189897 Time: 551.363492
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-115 at step=115.
+Num examples: 10000  Precision @ 1: 0.942900 Loss: 0.188368 Time: 570.937039
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-120 at step=120.
+Num examples: 10000  Precision @ 1: 0.949200 Loss: 0.170566 Time: 590.526464
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-125 at step=125.
+Num examples: 10000  Precision @ 1: 0.953700 Loss: 0.162513 Time: 613.371260
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-130 at step=130.
+Num examples: 10000  Precision @ 1: 0.952400 Loss: 0.160143 Time: 632.910794
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-135 at step=135.
+Num examples: 10000  Precision @ 1: 0.952900 Loss: 0.158584 Time: 652.433739
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-140 at step=140.
+Num examples: 10000  Precision @ 1: 0.955100 Loss: 0.150860 Time: 671.984413
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-145 at step=145.
+Num examples: 10000  Precision @ 1: 0.957700 Loss: 0.144054 Time: 691.549380
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-150 at step=150.
+Num examples: 10000  Precision @ 1: 0.955600 Loss: 0.149899 Time: 712.178871
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-156 at step=156.
+Num examples: 10000  Precision @ 1: 0.958400 Loss: 0.139596 Time: 731.742766
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-161 at step=161.
+Num examples: 10000  Precision @ 1: 0.958500 Loss: 0.139317 Time: 751.300429
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-166 at step=166.
+Num examples: 10000  Precision @ 1: 0.961900 Loss: 0.132706 Time: 770.840054
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-171 at step=171.
+Num examples: 10000  Precision @ 1: 0.958700 Loss: 0.139301 Time: 792.580110
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-176 at step=176.
+Num examples: 10000  Precision @ 1: 0.961300 Loss: 0.129793 Time: 812.118035
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-181 at step=181.
+Num examples: 10000  Precision @ 1: 0.961700 Loss: 0.128017 Time: 831.650294
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-186 at step=186.
+Num examples: 10000  Precision @ 1: 0.962500 Loss: 0.127611 Time: 851.204130
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-191 at step=191.
+Num examples: 10000  Precision @ 1: 0.964200 Loss: 0.124027 Time: 870.753117
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-197 at step=197.
+Num examples: 10000  Precision @ 1: 0.966200 Loss: 0.114038 Time: 890.313058
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-202 at step=202.
+Num examples: 10000  Precision @ 1: 0.965800 Loss: 0.113513 Time: 910.984334
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-207 at step=207.
+Num examples: 10000  Precision @ 1: 0.967500 Loss: 0.112676 Time: 930.520510
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-212 at step=212.
+Num examples: 10000  Precision @ 1: 0.966900 Loss: 0.119008 Time: 950.101275
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-217 at step=217.
+Num examples: 10000  Precision @ 1: 0.965800 Loss: 0.114628 Time: 969.657370
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-222 at step=222.
+Num examples: 10000  Precision @ 1: 0.965700 Loss: 0.116274 Time: 993.618666
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-227 at step=227.
+Num examples: 10000  Precision @ 1: 0.968500 Loss: 0.106869 Time: 1013.147830
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-232 at step=232.
+Num examples: 10000  Precision @ 1: 0.969500 Loss: 0.103771 Time: 1032.709373
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-237 at step=237.
+Num examples: 10000  Precision @ 1: 0.969200 Loss: 0.102895 Time: 1052.260234
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-243 at step=243.
+Num examples: 10000  Precision @ 1: 0.969900 Loss: 0.101677 Time: 1071.786982
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-248 at step=248.
+Num examples: 10000  Precision @ 1: 0.970900 Loss: 0.100734 Time: 1091.324497
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-253 at step=253.
+Num examples: 10000  Precision @ 1: 0.972000 Loss: 0.100316 Time: 1110.861134
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-258 at step=258.
+Num examples: 10000  Precision @ 1: 0.973700 Loss: 0.091505 Time: 1133.703411
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-263 at step=263.
+Num examples: 10000  Precision @ 1: 0.970900 Loss: 0.096945 Time: 1153.240477
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-268 at step=268.
+Num examples: 10000  Precision @ 1: 0.970600 Loss: 0.096191 Time: 1172.790330
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-273 at step=273.
+Num examples: 10000  Precision @ 1: 0.974700 Loss: 0.085033 Time: 1192.342398
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-278 at step=278.
+Num examples: 10000  Precision @ 1: 0.973200 Loss: 0.090483 Time: 1211.861762
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-283 at step=283.
+Num examples: 10000  Precision @ 1: 0.973400 Loss: 0.088457 Time: 1233.624888
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-289 at step=289.
+Num examples: 10000  Precision @ 1: 0.973600 Loss: 0.084631 Time: 1253.177087
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-294 at step=294.
+Num examples: 10000  Precision @ 1: 0.974400 Loss: 0.084978 Time: 1272.728393
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-299 at step=299.
+Num examples: 10000  Precision @ 1: 0.976200 Loss: 0.080835 Time: 1297.837404
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-304 at step=304.
+Num examples: 10000  Precision @ 1: 0.975100 Loss: 0.082131 Time: 1317.385524
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-309 at step=309.
+Num examples: 10000  Precision @ 1: 0.974000 Loss: 0.081805 Time: 1336.916409
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-314 at step=314.
+Num examples: 10000  Precision @ 1: 0.974200 Loss: 0.085757 Time: 1356.451901
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-319 at step=319.
+Num examples: 10000  Precision @ 1: 0.975700 Loss: 0.079815 Time: 1376.016815
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-324 at step=324.
+Num examples: 10000  Precision @ 1: 0.976500 Loss: 0.078913 Time: 1395.533185
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-329 at step=329.
+Num examples: 10000  Precision @ 1: 0.975100 Loss: 0.081368 Time: 1415.095097
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-335 at step=335.
+Num examples: 10000  Precision @ 1: 0.972600 Loss: 0.088333 Time: 1434.616934
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-340 at step=340.
+Num examples: 10000  Precision @ 1: 0.974100 Loss: 0.082782 Time: 1454.146604
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-345 at step=345.
+Num examples: 10000  Precision @ 1: 0.973800 Loss: 0.080944 Time: 1474.808465
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-350 at step=350.
+Num examples: 10000  Precision @ 1: 0.975400 Loss: 0.076739 Time: 1494.331539
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-355 at step=355.
+Num examples: 10000  Precision @ 1: 0.976000 Loss: 0.076271 Time: 1513.892616
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-360 at step=360.
+Num examples: 10000  Precision @ 1: 0.974600 Loss: 0.076518 Time: 1533.426466
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-365 at step=365.
+Num examples: 10000  Precision @ 1: 0.976700 Loss: 0.075648 Time: 1552.980152
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-370 at step=370.
+Num examples: 10000  Precision @ 1: 0.977200 Loss: 0.074041 Time: 1572.516192
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-375 at step=375.
+Num examples: 10000  Precision @ 1: 0.978500 Loss: 0.068169 Time: 1593.167612
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-380 at step=380.
+Num examples: 10000  Precision @ 1: 0.979400 Loss: 0.067435 Time: 1612.717299
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-386 at step=386.
+Num examples: 10000  Precision @ 1: 0.977300 Loss: 0.068988 Time: 1632.249893
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-391 at step=391.
+Num examples: 10000  Precision @ 1: 0.978200 Loss: 0.068331 Time: 1654.001851
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-396 at step=396.
+Num examples: 10000  Precision @ 1: 0.977400 Loss: 0.075179 Time: 1673.524410
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-401 at step=401.
+Num examples: 10000  Precision @ 1: 0.978000 Loss: 0.071562 Time: 1693.045013
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-406 at step=406.
+Num examples: 10000  Precision @ 1: 0.977300 Loss: 0.070376 Time: 1715.917284
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-411 at step=411.
+Num examples: 10000  Precision @ 1: 0.976800 Loss: 0.068464 Time: 1735.461766
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-416 at step=416.
+Num examples: 10000  Precision @ 1: 0.978400 Loss: 0.066473 Time: 1755.002789
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-422 at step=422.
+Num examples: 10000  Precision @ 1: 0.980200 Loss: 0.063789 Time: 1774.560094
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-427 at step=427.
+Num examples: 10000  Precision @ 1: 0.978900 Loss: 0.066906 Time: 1794.114148
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-432 at step=432.
+Num examples: 10000  Precision @ 1: 0.980800 Loss: 0.061429 Time: 1813.647791
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-437 at step=437.
+Num examples: 10000  Precision @ 1: 0.980800 Loss: 0.061154 Time: 1833.203516
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-442 at step=442.
+Num examples: 10000  Precision @ 1: 0.980900 Loss: 0.062689 Time: 1852.766047
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-447 at step=447.
+Num examples: 10000  Precision @ 1: 0.980300 Loss: 0.061879 Time: 1872.304590
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-452 at step=452.
+Num examples: 10000  Precision @ 1: 0.980800 Loss: 0.061641 Time: 1891.857562
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-457 at step=457.
+Num examples: 10000  Precision @ 1: 0.981000 Loss: 0.062778 Time: 1911.416823
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-462 at step=462.
+Num examples: 10000  Precision @ 1: 0.981000 Loss: 0.059728 Time: 1930.937393
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-467 at step=467.
+Num examples: 10000  Precision @ 1: 0.979800 Loss: 0.061826 Time: 1951.586507
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-472 at step=472.
+Num examples: 10000  Precision @ 1: 0.980100 Loss: 0.060061 Time: 1971.175098
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-478 at step=478.
+Num examples: 10000  Precision @ 1: 0.981500 Loss: 0.058044 Time: 1990.753286
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-483 at step=483.
+Num examples: 10000  Precision @ 1: 0.981300 Loss: 0.058280 Time: 2013.587195
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-488 at step=488.
+Num examples: 10000  Precision @ 1: 0.981700 Loss: 0.055144 Time: 2034.218690
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-493 at step=493.
+Num examples: 10000  Precision @ 1: 0.981100 Loss: 0.056421 Time: 2053.741744
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-498 at step=498.
+Num examples: 10000  Precision @ 1: 0.979900 Loss: 0.060011 Time: 2073.289091
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-503 at step=503.
+Num examples: 10000  Precision @ 1: 0.980500 Loss: 0.060070 Time: 2092.823968
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-508 at step=508.
+Num examples: 10000  Precision @ 1: 0.982900 Loss: 0.054437 Time: 2113.443018
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-513 at step=513.
+Num examples: 10000  Precision @ 1: 0.981400 Loss: 0.057153 Time: 2132.965233
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-519 at step=519.
+Num examples: 10000  Precision @ 1: 0.981500 Loss: 0.058149 Time: 2154.664477
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-524 at step=524.
+Num examples: 10000  Precision @ 1: 0.980500 Loss: 0.059794 Time: 2174.179042
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-529 at step=529.
+Num examples: 10000  Precision @ 1: 0.982100 Loss: 0.057038 Time: 2193.741441
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-534 at step=534.
+Num examples: 10000  Precision @ 1: 0.979700 Loss: 0.059371 Time: 2213.268370
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-539 at step=539.
+Num examples: 10000  Precision @ 1: 0.983000 Loss: 0.055043 Time: 2232.812726
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-544 at step=544.
+Num examples: 10000  Precision @ 1: 0.981600 Loss: 0.054763 Time: 2253.429689
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-549 at step=549.
+Num examples: 10000  Precision @ 1: 0.978900 Loss: 0.058240 Time: 2275.161342
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-554 at step=554.
+Num examples: 10000  Precision @ 1: 0.978900 Loss: 0.059901 Time: 2294.678059
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-559 at step=559.
+Num examples: 10000  Precision @ 1: 0.982000 Loss: 0.057207 Time: 2314.183938
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-565 at step=565.
+Num examples: 10000  Precision @ 1: 0.980900 Loss: 0.058838 Time: 2333.718851
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-570 at step=570.
+Num examples: 10000  Precision @ 1: 0.982000 Loss: 0.054287 Time: 2353.228827
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-575 at step=575.
+Num examples: 10000  Precision @ 1: 0.982400 Loss: 0.055592 Time: 2372.765630
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-580 at step=580.
+Num examples: 10000  Precision @ 1: 0.983600 Loss: 0.055051 Time: 2392.288668
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-585 at step=585.
+Num examples: 10000  Precision @ 1: 0.981900 Loss: 0.056504 Time: 2412.956314
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-590 at step=590.
+Num examples: 10000  Precision @ 1: 0.983100 Loss: 0.053387 Time: 2432.484551
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-595 at step=595.
+Num examples: 10000  Precision @ 1: 0.983100 Loss: 0.053223 Time: 2452.008888
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-600 at step=600.
+Num examples: 10000  Precision @ 1: 0.982800 Loss: 0.051470 Time: 2472.637964
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-605 at step=605.
+Num examples: 10000  Precision @ 1: 0.983700 Loss: 0.051985 Time: 2492.196643
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-611 at step=611.
+Num examples: 10000  Precision @ 1: 0.983100 Loss: 0.053273 Time: 2511.749172
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-616 at step=616.
+Num examples: 10000  Precision @ 1: 0.980500 Loss: 0.052470 Time: 2534.630757
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-621 at step=621.
+Num examples: 10000  Precision @ 1: 0.978500 Loss: 0.060049 Time: 2554.149543
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-626 at step=626.
+Num examples: 10000  Precision @ 1: 0.980300 Loss: 0.057583 Time: 2573.668016
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-631 at step=631.
+Num examples: 10000  Precision @ 1: 0.979700 Loss: 0.057816 Time: 2593.179851
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-636 at step=636.
+Num examples: 10000  Precision @ 1: 0.981700 Loss: 0.054824 Time: 2612.688252
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-641 at step=641.
+Num examples: 10000  Precision @ 1: 0.978600 Loss: 0.060417 Time: 2632.222634
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-646 at step=646.
+Num examples: 10000  Precision @ 1: 0.982400 Loss: 0.051862 Time: 2653.946315
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-651 at step=651.
+Num examples: 10000  Precision @ 1: 0.981900 Loss: 0.053664 Time: 2673.449972
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-657 at step=657.
+Num examples: 10000  Precision @ 1: 0.981100 Loss: 0.054158 Time: 2693.016739
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-662 at step=662.
+Num examples: 10000  Precision @ 1: 0.982700 Loss: 0.049307 Time: 2712.546481
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-667 at step=667.
+Num examples: 10000  Precision @ 1: 0.983500 Loss: 0.047786 Time: 2732.072707
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-672 at step=672.
+Num examples: 10000  Precision @ 1: 0.982400 Loss: 0.051019 Time: 2751.653852
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-677 at step=677.
+Num examples: 10000  Precision @ 1: 0.983400 Loss: 0.048958 Time: 2771.201016
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-682 at step=682.
+Num examples: 10000  Precision @ 1: 0.984100 Loss: 0.050545 Time: 2792.957047
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-687 at step=687.
+Num examples: 10000  Precision @ 1: 0.984800 Loss: 0.046504 Time: 2812.485817
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-692 at step=692.
+Num examples: 10000  Precision @ 1: 0.983900 Loss: 0.046937 Time: 2832.019613
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-698 at step=698.
+Num examples: 10000  Precision @ 1: 0.984500 Loss: 0.048355 Time: 2851.555870
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-702 at step=702.
+Num examples: 10000  Precision @ 1: 0.983900 Loss: 0.046800 Time: 2871.096259
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-708 at step=708.
+Num examples: 10000  Precision @ 1: 0.983900 Loss: 0.046526 Time: 2892.849030
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-713 at step=713.
+Num examples: 10000  Precision @ 1: 0.984600 Loss: 0.047846 Time: 2912.391255
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-718 at step=718.
+Num examples: 10000  Precision @ 1: 0.983700 Loss: 0.052978 Time: 2931.921373
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-723 at step=723.
+Num examples: 10000  Precision @ 1: 0.983400 Loss: 0.048288 Time: 2953.672294
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-728 at step=728.
+Num examples: 10000  Precision @ 1: 0.980600 Loss: 0.054319 Time: 2973.215332
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-733 at step=733.
+Num examples: 10000  Precision @ 1: 0.982600 Loss: 0.052579 Time: 2992.757501
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-738 at step=738.
+Num examples: 10000  Precision @ 1: 0.983600 Loss: 0.050056 Time: 3012.342928
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-743 at step=743.
+Num examples: 10000  Precision @ 1: 0.984200 Loss: 0.046433 Time: 3031.921391
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-749 at step=749.
+Num examples: 10000  Precision @ 1: 0.985000 Loss: 0.047258 Time: 3051.478444
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-753 at step=753.
+Num examples: 10000  Precision @ 1: 0.985700 Loss: 0.046825 Time: 3071.093596
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-759 at step=759.
+Num examples: 10000  Precision @ 1: 0.983600 Loss: 0.050948 Time: 3090.664537
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-764 at step=764.
+Num examples: 10000  Precision @ 1: 0.984000 Loss: 0.051368 Time: 3111.348913
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-769 at step=769.
+Num examples: 10000  Precision @ 1: 0.985100 Loss: 0.045159 Time: 3130.903761
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-774 at step=774.
+Num examples: 10000  Precision @ 1: 0.984200 Loss: 0.047957 Time: 3150.470039
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-779 at step=779.
+Num examples: 10000  Precision @ 1: 0.986000 Loss: 0.042646 Time: 3170.021778
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-784 at step=784.
+Num examples: 10000  Precision @ 1: 0.985700 Loss: 0.043339 Time: 3189.584303
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-789 at step=789.
+Num examples: 10000  Precision @ 1: 0.986400 Loss: 0.042557 Time: 3209.186846
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-794 at step=794.
+Num examples: 10000  Precision @ 1: 0.986300 Loss: 0.042128 Time: 3228.704205
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-800 at step=800.
+Num examples: 10000  Precision @ 1: 0.985100 Loss: 0.044779 Time: 3251.562252
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-804 at step=804.
+Num examples: 10000  Precision @ 1: 0.984500 Loss: 0.048670 Time: 3271.072209
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-810 at step=810.
+Num examples: 10000  Precision @ 1: 0.984900 Loss: 0.048226 Time: 3291.739081
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-815 at step=815.
+Num examples: 10000  Precision @ 1: 0.984800 Loss: 0.045959 Time: 3311.301040
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-820 at step=820.
+Num examples: 10000  Precision @ 1: 0.985200 Loss: 0.046753 Time: 3330.861529
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-825 at step=825.
+Num examples: 10000  Precision @ 1: 0.984600 Loss: 0.047262 Time: 3350.481323
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-830 at step=830.
+Num examples: 10000  Precision @ 1: 0.984200 Loss: 0.048524 Time: 3370.035839
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-835 at step=835.
+Num examples: 10000  Precision @ 1: 0.983300 Loss: 0.048081 Time: 3389.636369
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-840 at step=840.
+Num examples: 10000  Precision @ 1: 0.983700 Loss: 0.050893 Time: 3409.225215
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-846 at step=846.
+Num examples: 10000  Precision @ 1: 0.982000 Loss: 0.054992 Time: 3431.066624
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-851 at step=851.
+Num examples: 10000  Precision @ 1: 0.983800 Loss: 0.048986 Time: 3450.632036
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-856 at step=856.
+Num examples: 10000  Precision @ 1: 0.984900 Loss: 0.046083 Time: 3471.304657
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-861 at step=861.
+Num examples: 10000  Precision @ 1: 0.985700 Loss: 0.042077 Time: 3490.874805
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-866 at step=866.
+Num examples: 10000  Precision @ 1: 0.984300 Loss: 0.046401 Time: 3511.555200
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-871 at step=871.
+Num examples: 10000  Precision @ 1: 0.985800 Loss: 0.041716 Time: 3531.132131
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-876 at step=876.
+Num examples: 10000  Precision @ 1: 0.984400 Loss: 0.044522 Time: 3550.703111
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-881 at step=881.
+Num examples: 10000  Precision @ 1: 0.983500 Loss: 0.045790 Time: 3570.270921
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-886 at step=886.
+Num examples: 10000  Precision @ 1: 0.984800 Loss: 0.045078 Time: 3593.135370
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-892 at step=892.
+Num examples: 10000  Precision @ 1: 0.983700 Loss: 0.049164 Time: 3612.714937
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_1_aggregate_sync/train_dir/model.ckpt-897 at step=897.
+Num examples: 10000  Precision @ 1: 0.984000 Loss: 0.047212 Time: 3632.441235
