@@ -155,12 +155,14 @@ def plot_time_cdfs(outdir):
     plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_pdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=3*60, rerun=False, launch=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=3*60, rerun=True, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch:
             shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
+            if need_shutdown_after_every_run:
+                shutdown_and_launch(cfg)
             run_tf_and_download_files(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plot_time_loss(outdir)
