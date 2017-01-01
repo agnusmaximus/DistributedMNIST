@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "2_workers_sync",      # Unique name for this specific configuration
+    "name" : "cdf_collect",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 49,
+    "n_workers" : 4,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "50",
+    "num_replicas_to_aggregate" : "5",
 
     # Region speficiation
     "region" : "us-west-2",
@@ -107,7 +107,8 @@ cfg = Cfg({
         "--task_id=TASK_ID "
         "--timeline_logging=false "
         "--interval_method=false "
-        "--interval_ms=4000 "
+        "--worker_times_cdf_method=true "
+        "--interval_ms=100 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],

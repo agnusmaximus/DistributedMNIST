@@ -96,7 +96,7 @@ def plot_time_loss(outdir):
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files)))
     plt.yscale('log')
-    plt.xscale('log')
+    #plt.xscale('log')
     for i, fname in enumerate(files):
         label = fname.split("/")[-1]
         times, losses, precisions, steps = extract_times_losses_precision(fname)
@@ -119,7 +119,7 @@ def plot_time_step(outdir):
     plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=False, launch=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=True, launch=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch:
