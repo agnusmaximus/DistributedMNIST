@@ -1,5 +1,6 @@
 from __future__ import print_function
 import sys
+import json
 import time
 import numpy as np
 import re
@@ -20,7 +21,7 @@ def shutdown_and_launch(cfg):
     launch_args = "tools/tf_ec2.py launch"
     tf_ec2_run(launch_args.split(), cfg)
 
-def run_tf_and_download_evaluator_file(run_time_sec, cfg, evaluator_file_name="out_evaluator", outdir="result_dir"):
+def run_tf_and_download_files(run_time_sec, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", outdir="result_dir"):
 
     kill_args = "tools/tf_ec2.py kill_all_python"
     tf_ec2_run(kill_args.split(), cfg)
@@ -38,6 +39,20 @@ def run_tf_and_download_evaluator_file(run_time_sec, cfg, evaluator_file_name="o
 
     download_evaluator_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, evaluator_file_name, outdir)
     tf_ec2_run(download_evaluator_file_args.split(), cfg)
+
+    download_master_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, master_file_name, outdir)
+    tf_ec2_run(download_master_file_args.split(), cfg)
+
+def extract_compute_times(fname):
+    f = open(fname)
+
+    compute_times = []
+    for line in f:
+        m = re.match(".*ELAPSED TIMES (.*)", line)
+        if m:
+            compute_times = json.loads(m.group(1))
+    f.close()
+    return compute_times
 
 def extract_times_losses_precision(fname):
     f = open(fname)
@@ -62,7 +77,7 @@ def plot_time_precision(outdir):
     plt.cla()
     plt.xlabel("time (s)")
     plt.ylabel("precision (%)")
-    files = glob.glob(outdir + "/*")
+    files = glob.glob(outdir + "/*evaluator*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files)))
     for i, fname in enumerate(files):
@@ -76,7 +91,7 @@ def plot_step_loss(outdir):
     plt.cla()
     plt.xlabel("step")
     plt.ylabel("losses")
-    files = glob.glob(outdir + "/*")
+    files = glob.glob(outdir + "/*evaluator*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files)))
     plt.yscale('log')
@@ -92,7 +107,7 @@ def plot_time_loss(outdir):
     plt.cla()
     plt.xlabel("time (s)")
     plt.ylabel("loss")
-    files = glob.glob(outdir + "/*")
+    files = glob.glob(outdir + "/*evaluator*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files)))
     plt.yscale('log')
@@ -108,7 +123,7 @@ def plot_time_step(outdir):
     plt.cla()
     plt.xlabel("time (s)")
     plt.ylabel("step")
-    files = glob.glob(outdir + "/*")
+    files = glob.glob(outdir + "/*evaluator*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 2.0, len(files)))
     for i, fname in enumerate(files):
@@ -119,18 +134,40 @@ def plot_time_step(outdir):
     plt.legend(loc="upper left", fontsize=8)
     plt.savefig("time_step.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=60*60, rerun=True, launch=True):
+def plot_time_cdfs(outdir):
+    plt.cla()
+    plt.xlabel("Time (s)")
+    plt.ylabel("P(X >= x)")
+    files = glob.glob(outdir + "/*master*")
+    cmap = plt.get_cmap('jet')
+    colors = cmap(np.linspace(0, 2.0, len(files)))
+    for i, fname in enumerate(files):
+        label = fname.split("/")[-1]
+        compute_times = extract_compute_times(fname)
+        compute_times.sort()
+
+        times = []
+        probabs = []
+        for compute_time in compute_times:
+            times.append(compute_time)
+            probabs.append(sum([1 if compute_time <= t else 0 for t in compute_times]) / float(len(compute_times)))
+        plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
+    plt.legend(loc="upper right", fontsize=8)
+    plt.savefig("time_pdfs.png")
+
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=3*60, rerun=False, launch=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch:
             shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
-            run_tf_and_download_evaluator_file(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
+            run_tf_and_download_files(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plot_time_loss(outdir)
     plot_time_step(outdir)
     plot_time_precision(outdir)
     plot_step_loss(outdir)
+    plot_time_cdfs(outdir)
 
 if __name__ == "__main__":
     print("Usage: python benchmark.py [use_dir dir|select_files cfg1 cfg2...] ")
