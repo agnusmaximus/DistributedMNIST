@@ -140,7 +140,7 @@ def plot_time_cdfs(outdir):
     plt.ylabel("P(X >= x)")
     files = glob.glob(outdir + "/*master*")
     cmap = plt.get_cmap('jet')
-    colors = cmap(np.linspace(0, 2.0, len(files)))
+    colors = cmap(np.linspace(0, 1.0, len(files)))
     for i, fname in enumerate(files):
         label = fname.split("/")[-1]
         compute_times = extract_compute_times(fname)
@@ -153,12 +153,12 @@ def plot_time_cdfs(outdir):
             probabs.append(sum([1 if compute_time <= t else 0 for t in compute_times]) / float(len(compute_times)))
         plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
     plt.legend(loc="upper right", fontsize=8)
-    plt.savefig("time_pdfs.png")
+    plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=3*60, rerun=True, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=6*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
-        if launch:
+        if launch and not need_shutdown_after_every_run:
             shutdown_and_launch(cfgs[0])
         for cfg in cfgs:
             if need_shutdown_after_every_run:
