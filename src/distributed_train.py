@@ -180,9 +180,6 @@ def train(target, dataset, cluster_spec):
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
 
-    a = data_flow_ops.FIFOQueue(-1, tf.float32)
-    b = a.dequeue()
-
     # Get chief queue_runners, init_tokens and clean_up_op, which is used to
     # synchronize replicas.
     # More details can be found in sync_replicas_optimizer.
@@ -238,7 +235,7 @@ def train(target, dataset, cluster_spec):
                     len(queue_runners))
 
     if is_chief:
-      if not FLAGS.interval_method and not FLAGS.worker_times_cdf_method:
+      if not FLAGS.interval_method and not FLAGS.worker_times_cdf_method or FLAGS.worker_times_cdf_method:
         sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
