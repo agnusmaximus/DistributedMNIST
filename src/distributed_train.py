@@ -267,7 +267,7 @@ def train(target, dataset, cluster_spec):
         cur_iteration += 1
 
         if FLAGS.worker_times_cdf_method:
-          sess.run([opt.wait_op])
+          sess.run([opt._wait_op])
           timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
         start_time = time.time()
