@@ -227,7 +227,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     """
     return self._opt.compute_gradients(*args, **kwargs)
 
-  def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None):
+  def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None, collect_cdfs=False):
     """Apply gradients to variables.
     This contains most of the synchronization implementation and also wraps the
     apply_gradients() from the real optimizer.
@@ -326,9 +326,15 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           if grad is None:
             aggregated_grad.append(None)
           elif isinstance(grad, ops.Tensor):
-            aggregated_grad.append(grad_accum.take_grad(1))
+            if collect_cdfs:
+              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+            else:
+              aggregated_grad.append(grad_accum.take_grad(1))
           else:
-            aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+            if collect_cdfs:
+              aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
+            else:
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
