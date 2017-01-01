@@ -76,7 +76,6 @@ class TimeoutClient:
         factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
 
   def broadcast_worker_dequeued_token(self, iteration):
-    tf.logging.info("YOAYOAOYAOY")
     for persp in self.perspectives:
       persp.callRemote("worker_dequeued_token", self.worker_id, iteration)
 

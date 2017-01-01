@@ -235,7 +235,7 @@ def train(target, dataset, cluster_spec):
                     len(queue_runners))
 
     if is_chief:
-      if not FLAGS.interval_method and not FLAGS.worker_times_cdf_method or FLAGS.worker_times_cdf_method:
+      if not FLAGS.interval_method or FLAGS.worker_times_cdf_method:
         sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
@@ -264,6 +264,7 @@ def train(target, dataset, cluster_spec):
         cur_iteration += 1
 
         if FLAGS.worker_times_cdf_method:
+          tf.logging.info("YAYAYAY WOOHOO")
           sess.run([opt._wait_op])
           timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
