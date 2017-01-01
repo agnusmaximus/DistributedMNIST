@@ -41,7 +41,7 @@ class TimeoutServer(pb.Root):
     self.compute_times.append((elapsed_time, iteration))
 
     if iteration == self.ITERATION_END_TRACKING and worker_id == 0:
-      elapsed_times = sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING]))
+      elapsed_times = sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING])
       tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
 
   def remote_notify_ready_to_start(self):
