@@ -70,7 +70,7 @@ class TimeoutClient:
     for persp in self.perspectives:
       persp.callRemote("worker_dequeued_token", self.worker_id, iteration)
 
-  def boradcast_worker_finished_computing_gradients(self, iteration):
+  def broadcast_worker_finished_computing_gradients(self, iteration):
     for persp in self.perspectives:
       persp.callRemote("worker_finished_computing_gradients", self.worker_id, iteration)
 
