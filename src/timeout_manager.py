@@ -27,6 +27,7 @@ class TimeoutServer(pb.Root):
     self.worker_dequeue_times = [{}] * self.n_total_workers
     self.worker_finished_computing_gradients_times = [{}] * self.n_total_workers
     self.compute_times = []
+    self.ITERATION_START_TRACKING = 10
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     cur_time = time.time()
@@ -39,7 +40,7 @@ class TimeoutServer(pb.Root):
     elapsed_time = self.worker_finished_computing_gradients_times[worker_id][iteration] - self.worker_dequeue_times[worker_id][iteration]
     self.compute_times.append((elapsed_time, iteration))
     tf.logging.info("COMPUTE TIMES")
-    tf.logging.info(sorted([x[0] for x in self.compute_times]))
+    tf.logging.info(sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING]))
 
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
