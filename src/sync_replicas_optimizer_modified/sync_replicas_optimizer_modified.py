@@ -345,7 +345,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
           self._update_op = update_op
           with ops.control_dependencies([update_op]):
-            sync_op = self._sync_token_queues[worker_id].enqueue(global_step)
+            sync_op = []
+            for cur_worker_id in range(self._total_num_workers):
+              sync_op.append(self._sync_token_queues[cur_worker_id].enqueue(global_step))
+            sync_op = control_flow_ops.group(*(sync_op))
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
