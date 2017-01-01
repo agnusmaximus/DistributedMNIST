@@ -31,12 +31,12 @@ class TimeoutServer(pb.Root):
     self.ITERATION_END_TRACKING = 100
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
-    tf.logging.info("Worker %d dequeued token on iteration %d" % (worker_id, iteration))
+    tf.logging.info("Worker %d dequeued token on iteration %d - %d" % (worker_id, iteration, time.time()))
     cur_time = time.time()
     self.worker_dequeue_times[worker_id][iteration] = cur_time
 
   def remote_worker_finished_computing_gradients(self, worker_id, iteration):
-    tf.logging.info("Worker %d finished computing gradients on iteration %d" % (worker_id, iteration))
+    tf.logging.info("Worker %d finished computing gradients on iteration %d - %d" % (worker_id, iteration, time.time()))
     cur_time = time.time()
     self.worker_finished_computing_gradients_times[worker_id][iteration] = cur_time
 
