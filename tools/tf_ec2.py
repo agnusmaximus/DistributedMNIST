@@ -163,33 +163,30 @@ def tf_ec2_run(argv, configuration):
         summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}]))
 
     # Terminate all request.
-    def terminate_all_requests(method="spot"):
-        if method == "spot":
-            spot_requests = client.describe_spot_instance_requests()
-            spot_request_ids = []
-            for spot_request in spot_requests["SpotInstanceRequests"]:
-               if spot_request["State"] != "cancelled" and spot_request["LaunchSpecification"]["KeyName"] == configuration["key_name"]:
-                  spot_request_id = spot_request["SpotInstanceRequestId"]
-                  spot_request_ids.append(spot_request_id)
+    def terminate_all_requests():
+         spot_requests = client.describe_spot_instance_requests()
+         spot_request_ids = []
+         for spot_request in spot_requests["SpotInstanceRequests"]:
+            if spot_request["State"] != "cancelled" and spot_request["LaunchSpecification"]["KeyName"] == configuration["key_name"]:
+               spot_request_id = spot_request["SpotInstanceRequestId"]
+               spot_request_ids.append(spot_request_id)
 
-            if len(spot_request_ids) != 0:
-                print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
-                client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
+         if len(spot_request_ids) != 0:
+             print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
+             client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
 
-            # Wait until all are cancelled.
-            # TODO: Use waiter class
-            done = False
-            while not done:
-                print("Waiting for all spot requests to be terminated...")
-                done = True
-                spot_requests = client.describe_spot_instance_requests()
-                states = [x["State"] for x in spot_requests["SpotInstanceRequests"] if x["LaunchSpecification"]["KeyName"] == configuration["key_name"]]
-                for state in states:
-                    if state != "cancelled":
-                        done = False
-                sleep_a_bit()
-        else:
-            print("Unsupported terminate method: %s" % method)
+         # Wait until all are cancelled.
+         # TODO: Use waiter class
+         done = False
+         while not done:
+             print("Waiting for all spot requests to be terminated...")
+             done = True
+             spot_requests = client.describe_spot_instance_requests()
+             states = [x["State"] for x in spot_requests["SpotInstanceRequests"] if x["LaunchSpecification"]["KeyName"] == configuration["key_name"]]
+             for state in states:
+                 if state != "cancelled":
+                     done = False
+             sleep_a_bit()
 
     # Terminate all instances in the configuration
     # Note: all_instances = ec2.instances.all() to get all intances
@@ -214,28 +211,41 @@ def tf_ec2_run(argv, configuration):
                 sleep_a_bit()
 
     # Launch instances as specified in the configuration.
-    def launch_instances(method="spot"):
-        if method == "spot":
-            worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
-            master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
-            ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
-            evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
-            specs = [(worker_instance_type, worker_count),
-                     (master_instance_type, master_count),
-                     (ps_instance_type, ps_count),
-                     (evaluator_instance_type, evaluator_count)]
-            for (instance_type, count) in specs:
-                launch_specs = {"KeyName" : configuration["key_name"],
-                                "ImageId" : configuration["image_id"],
-                                "InstanceType" : instance_type,
-                                "Placement" : {"AvailabilityZone":configuration["availability_zone"]},
-                                "SecurityGroups": ["default"]}
-                # TODO: EBS optimized? (Will incur extra hourly cost)
-                client.request_spot_instances(InstanceCount=count,
-                                              LaunchSpecification=launch_specs,
-                                              SpotPrice=configuration["spot_price"])
-        else:
-            print("Unsupported launch method: %s" % method)
+    def launch_instances():
+       method = "spot"
+       if "method" in configuration.keys():
+          method = configuration["method"]
+       worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
+       master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
+       ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
+       evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
+       specs = [(worker_instance_type, worker_count),
+                (master_instance_type, master_count),
+                (ps_instance_type, ps_count),
+                (evaluator_instance_type, evaluator_count)]
+       for (instance_type, count) in specs:
+          launch_specs = {"KeyName" : configuration["key_name"],
+                          "ImageId" : configuration["image_id"],
+                          "InstanceType" : instance_type,
+                          "Placement" : {"AvailabilityZone":configuration["availability_zone"]},
+                          "SecurityGroups": ["default"]}
+          if method == "spot":
+             # TODO: EBS optimized? (Will incur extra hourly cost)
+             client.request_spot_instances(InstanceCount=count,
+                                           LaunchSpecification=launch_specs,
+                                           SpotPrice=configuration["spot_price"])
+          elif method == "reserved":
+             client.run_instances(ImageId=launch_specs["ImageId"],
+                                  MinCount=count,
+                                  MaxCount=count,
+                                  KeyName=launch_specs["KeyName"],
+                                  InstanceType=launch_specs["InstanceType"],
+                                  Placement=launch_specs["Placement"],
+                                  SecurityGroups=launch_specs["SecurityGroups"])
+          else:
+             print("Unknown method: %s" % method)
+             sys.exit(-1)
+
 
     # TODO: use waiter class?
     def wait_until_running_instances_initialized():
@@ -256,33 +266,30 @@ def tf_ec2_run(argv, configuration):
     # Waits until status requests are all fulfilled.
     # Prints out status of request in between time waits.
     # TODO: Use waiter class
-    def wait_until_instance_request_status_fulfilled(method="spot"):
-        if method == "spot":
-            requests_fulfilled = False
-            n_active_or_open = 0
-            while not requests_fulfilled or n_active_or_open == 0:
-                requests_fulfilled = True
-                statuses = client.describe_spot_instance_requests()
-                print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
-                print("-------------------------------------------")
-                n_active_or_open = 0
-                for instance_request in statuses["SpotInstanceRequests"]:
-                    if instance_request["LaunchSpecification"]["KeyName"] != configuration["key_name"]:
-                       continue
-                    sid = instance_request["SpotInstanceRequestId"]
-                    machine_type = instance_request["LaunchSpecification"]["InstanceType"]
-                    price = instance_request["SpotPrice"]
-                    state = instance_request["State"]
-                    status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
-                    if state == "active" or state == "open":
-                        n_active_or_open += 1
-                        print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
-                        if state != "active":
-                            requests_fulfilled = False
-                print("-------------------------------------------")
-                sleep_a_bit()
-        else:
-            print("Unsupported instance request method: %s" % method)
+    def wait_until_instance_request_status_fulfilled():
+         requests_fulfilled = False
+         n_active_or_open = 0
+         while not requests_fulfilled or n_active_or_open == 0:
+             requests_fulfilled = True
+             statuses = client.describe_spot_instance_requests()
+             print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
+             print("-------------------------------------------")
+             n_active_or_open = 0
+             for instance_request in statuses["SpotInstanceRequests"]:
+                 if instance_request["LaunchSpecification"]["KeyName"] != configuration["key_name"]:
+                    continue
+                 sid = instance_request["SpotInstanceRequestId"]
+                 machine_type = instance_request["LaunchSpecification"]["InstanceType"]
+                 price = instance_request["SpotPrice"]
+                 state = instance_request["State"]
+                 status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
+                 if state == "active" or state == "open":
+                     n_active_or_open += 1
+                     print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
+                     if state != "active":
+                         requests_fulfilled = False
+             print("-------------------------------------------")
+             sleep_a_bit()
 
     # Create a client to the instance
     def connect_client(instance):
@@ -715,8 +722,12 @@ def tf_ec2_run(argv, configuration):
     # We also want a shared filesystem to write model checkpoints.
     # For simplicity we will have the user specify the filesystem via the config.
     def launch(argv):
+        method = "spot"
+        if "method" in configuration:
+           method = configuration["method"]
         launch_instances()
-        wait_until_instance_request_status_fulfilled()
+        if method == "spot":
+           wait_until_instance_request_status_fulfilled()
         wait_until_running_instances_initialized()
         setup_nfs()
 

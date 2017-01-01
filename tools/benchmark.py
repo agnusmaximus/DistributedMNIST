@@ -155,7 +155,7 @@ def plot_time_cdfs(outdir):
     plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=6*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=6*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
