@@ -28,6 +28,7 @@ class TimeoutServer(pb.Root):
     self.worker_finished_computing_gradients_times = [{}] * self.n_total_workers
     self.compute_times = []
     self.ITERATION_START_TRACKING = 10
+    self.ITERATION_END_TRACKING = 100
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     cur_time = time.time()
