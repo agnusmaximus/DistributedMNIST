@@ -346,7 +346,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
           self._update_op = update_op
           with ops.control_dependencies([update_op]):
             sync_op = []
-            for cur_worker_id in range(self._total_num_workers):
+            for cur_worker_id in range(self._total_num_replicas):
               sync_op.append(self._sync_token_queues[cur_worker_id].enqueue(global_step))
             sync_op = control_flow_ops.group(*(sync_op))
 
