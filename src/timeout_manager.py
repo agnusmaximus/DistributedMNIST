@@ -36,7 +36,7 @@ class TimeoutServer(pb.Root):
     cur_time = time.time()
     self.worker_finished_computing_gradients_times[worker_id][iteration] = cur_time
 
-    elapsed_time = self.worker_finished_computing_gradients_times[worker_id][iteration] - self.worker_dequeue_times[worker_id][iteration])
+    elapsed_time = self.worker_finished_computing_gradients_times[worker_id][iteration] - self.worker_dequeue_times[worker_id][iteration]
     self.compute_times.append((elapsed_time, iteration))
     tf.logging.info("Compute times", [x[0] for x in self.compute_times])
 
