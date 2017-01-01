@@ -33,6 +33,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
+tf.app.flags.DEFINE_boolean('worker_times_cdf_method', False, 'Track worker times cdf')
 tf.app.flags.DEFINE_boolean('interval_method', False, 'Use the interval method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
@@ -171,7 +172,7 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    if FLAGS.interval_method:
+    if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
     else:
       apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
@@ -265,6 +266,10 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
+        if FLAGS.worker_times_cdf_method:
+          sess.run([opt.wait_op])
+          timeout_client.broadcast_worker_dequeued_token(cur_iteration)
+
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
@@ -276,6 +281,9 @@ def train(target, dataset, cluster_spec):
           run_options.output_partition_graphs=True
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+
+        if FLAGS.worker_times_cdf_method:
+          timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 

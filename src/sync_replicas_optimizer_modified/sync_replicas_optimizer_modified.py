@@ -268,6 +268,16 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
     self.ready_for_local_init_op = variables.report_uninitialized_variables(
       variables.all_variables())
 
+    # A queue for each worker that contains the token to continue to the next step
+    # (optional)
+    self.token_queues = []
+    for i in range(self._total_num_replicas):
+      self.token_queues.append(data_flow_ops.FIFOQueue(-1,
+                                                       global_step.dtype.base_dtype,
+                                                       shapes=()))
+
+    # The wait op waits for the current worker to dequeue a token from its respective token queue
+    self._wait_op = self.token_queues[worker_id].dequeue()
 
     # Replicas have to wait until they can get a token from the token queue
     # BEFORE begining to compute gradients.
@@ -342,6 +352,8 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
         with ops.control_dependencies([self.print_accum_sizes]):
           update_op = self._opt.apply_gradients(aggregated_grads_and_vars, global_step)
           self._update_op = update_op
+          with ops.control_dependencies([update_op]):
+            self.token_queues[worker_id].enqueue(global_step)
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
