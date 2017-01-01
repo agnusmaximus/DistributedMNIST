@@ -39,7 +39,7 @@ class TimeoutServer(pb.Root):
     elapsed_time = self.worker_finished_computing_gradients_times[worker_id][iteration] - self.worker_dequeue_times[worker_id][iteration]
     self.compute_times.append((elapsed_time, iteration))
     tf.logging.info("COMPUTE TIMES")
-    tf.logging.info([x[0] for x in self.compute_times])
+    tf.logging.info(sorted([x[0] for x in self.compute_times]))
 
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
