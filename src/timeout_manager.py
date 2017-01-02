@@ -27,7 +27,7 @@ class TimeoutServer(pb.Root):
     self.worker_dequeue_times = [{}] * self.n_total_workers
     self.worker_finished_computing_gradients_times = [{}] * self.n_total_workers
     self.compute_times = []
-    self.iteration_start_times = []
+    self.iteration_start_times = {}
     self.ITERATION_START_TRACKING = 10
     self.ITERATION_END_TRACKING = 100
 
@@ -49,7 +49,7 @@ class TimeoutServer(pb.Root):
     if iteration == self.ITERATION_END_TRACKING and worker_id == 0:
       elapsed_times = sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING])
       tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
-      iteration_times = [x[i+1] - x[i] for i in range(len(self.iteration_start_times)-1)]
+      iteration_times = [self.iteration_start_times[i+1] - self.iteration_start_times[i] for i in range(len(self.iteration_start_times)-1)]
       tf.logging.info("ITERATION TIMES %s" % str(iteration_times))
 
   def remote_notify_ready_to_start(self):
