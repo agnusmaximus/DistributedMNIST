@@ -1,0 +1,2162 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-0 at step=0.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-0 at step=0.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-0 at step=0.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-0 at step=0.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-0 at step=0.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-12 at step=12.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-12 at step=12.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-12 at step=12.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-12 at step=12.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-12 at step=12.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-30 at step=30.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-30 at step=30.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-30 at step=30.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-30 at step=30.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-30 at step=30.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-47 at step=47.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-47 at step=47.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-47 at step=47.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-47 at step=47.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-65 at step=65.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-65 at step=65.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-65 at step=65.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-65 at step=65.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-65 at step=65.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-83 at step=83.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-83 at step=83.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-83 at step=83.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-83 at step=83.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-100 at step=100.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-100 at step=100.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-100 at step=100.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-100 at step=100.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-100 at step=100.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-115 at step=115.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-115 at step=115.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-115 at step=115.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-115 at step=115.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-133 at step=133.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-133 at step=133.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-133 at step=133.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-133 at step=133.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-133 at step=133.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-150 at step=150.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-150 at step=150.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-150 at step=150.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-150 at step=150.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-167 at step=167.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-167 at step=167.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-167 at step=167.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-167 at step=167.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-167 at step=167.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-184 at step=184.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-184 at step=184.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-184 at step=184.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-184 at step=184.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-202 at step=202.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-202 at step=202.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-202 at step=202.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-202 at step=202.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-202 at step=202.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-220 at step=220.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-220 at step=220.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-220 at step=220.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-220 at step=220.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-236 at step=236.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-236 at step=236.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-236 at step=236.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-236 at step=236.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-236 at step=236.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-254 at step=254.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-254 at step=254.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-254 at step=254.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-254 at step=254.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-271 at step=271.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-271 at step=271.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-271 at step=271.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-271 at step=271.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-271 at step=271.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-288 at step=288.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-288 at step=288.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-288 at step=288.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-288 at step=288.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-305 at step=305.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-305 at step=305.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-305 at step=305.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-305 at step=305.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-305 at step=305.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-322 at step=322.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-322 at step=322.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-322 at step=322.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-322 at step=322.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-322 at step=322.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-340 at step=340.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-340 at step=340.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-340 at step=340.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-340 at step=340.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-357 at step=357.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-357 at step=357.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-357 at step=357.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-357 at step=357.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-357 at step=357.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-375 at step=375.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-375 at step=375.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-375 at step=375.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-375 at step=375.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-392 at step=392.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-392 at step=392.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-392 at step=392.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-392 at step=392.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-392 at step=392.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-409 at step=409.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-409 at step=409.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-409 at step=409.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-409 at step=409.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-426 at step=426.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-426 at step=426.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-426 at step=426.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-426 at step=426.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-426 at step=426.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-443 at step=443.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-443 at step=443.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-443 at step=443.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-443 at step=443.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-461 at step=461.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-461 at step=461.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-461 at step=461.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-461 at step=461.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-461 at step=461.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-477 at step=477.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-477 at step=477.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-477 at step=477.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-477 at step=477.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-494 at step=494.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-494 at step=494.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-494 at step=494.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-494 at step=494.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-494 at step=494.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-511 at step=511.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-511 at step=511.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-511 at step=511.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-511 at step=511.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-528 at step=528.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-528 at step=528.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-528 at step=528.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-528 at step=528.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-528 at step=528.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-544 at step=544.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-544 at step=544.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-544 at step=544.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-544 at step=544.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-561 at step=561.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-561 at step=561.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-561 at step=561.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-561 at step=561.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-561 at step=561.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-578 at step=578.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-578 at step=578.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-578 at step=578.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-578 at step=578.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-595 at step=595.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-595 at step=595.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-595 at step=595.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-595 at step=595.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-595 at step=595.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-612 at step=612.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-612 at step=612.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-612 at step=612.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-612 at step=612.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-612 at step=612.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-629 at step=629.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-629 at step=629.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-629 at step=629.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-629 at step=629.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-645 at step=645.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-645 at step=645.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-645 at step=645.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-645 at step=645.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-645 at step=645.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-662 at step=662.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-662 at step=662.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-662 at step=662.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-662 at step=662.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-678 at step=678.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-678 at step=678.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-678 at step=678.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-678 at step=678.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-678 at step=678.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-694 at step=694.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-694 at step=694.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-694 at step=694.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-694 at step=694.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-711 at step=711.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-711 at step=711.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-711 at step=711.
+W tensorflow/core/framework/op_kernel.cc:975] Resource exhausted: OOM when allocating tensor with shape[10000,28,28,32]
+Some resource has been exhausted.
+
+  For example, this error might be raised if a per-user quota is
+  exhausted, or perhaps the entire file system is out of space.
+
+  @@__init__
+  
+OOM when allocating tensor with shape[10000,28,28,32]
+	 [[Node: BiasAdd = BiasAdd[T=DT_FLOAT, data_format="NHWC", _device="/job:localhost/replica:0/task:0/cpu:0"](Conv2D, Variable_1/read)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/t2_small_cdf/train_dir/model.ckpt-711 at step=711.

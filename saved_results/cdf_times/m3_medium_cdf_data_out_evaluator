@@ -1,0 +1,52 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319828 Time: 49.478401
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-16 at step=16.
+Num examples: 10000  Precision @ 1: 0.779100 Loss: 0.828796 Time: 87.489271
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-37 at step=37.
+Num examples: 10000  Precision @ 1: 0.910600 Loss: 0.327101 Time: 125.140904
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-58 at step=58.
+Num examples: 10000  Precision @ 1: 0.936700 Loss: 0.220679 Time: 162.840080
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-79 at step=79.
+Num examples: 10000  Precision @ 1: 0.950500 Loss: 0.171326 Time: 200.411657
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-90 at step=90.
+Num examples: 10000  Precision @ 1: 0.956200 Loss: 0.151856 Time: 238.014829
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-111 at step=111.
+Num examples: 10000  Precision @ 1: 0.962200 Loss: 0.132096 Time: 275.673561
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-132 at step=132.
+Num examples: 10000  Precision @ 1: 0.965700 Loss: 0.111381 Time: 313.290162
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-154 at step=154.
+Num examples: 10000  Precision @ 1: 0.970200 Loss: 0.099783 Time: 350.847811
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-175 at step=175.
+Num examples: 10000  Precision @ 1: 0.970100 Loss: 0.095900 Time: 388.457190
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-196 at step=196.
+Num examples: 10000  Precision @ 1: 0.976100 Loss: 0.080552 Time: 426.053620
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-218 at step=218.
+Num examples: 10000  Precision @ 1: 0.978400 Loss: 0.071476 Time: 463.643815
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-239 at step=239.
+Num examples: 10000  Precision @ 1: 0.978900 Loss: 0.069301 Time: 501.282551
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-249 at step=249.
+Num examples: 10000  Precision @ 1: 0.978200 Loss: 0.070924 Time: 538.899576
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-271 at step=271.
+Num examples: 10000  Precision @ 1: 0.980200 Loss: 0.064617 Time: 576.484046
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-292 at step=292.
+Num examples: 10000  Precision @ 1: 0.981600 Loss: 0.061352 Time: 614.045637
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-313 at step=313.
+Num examples: 10000  Precision @ 1: 0.981900 Loss: 0.055833 Time: 651.584185
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-334 at step=334.
+Num examples: 10000  Precision @ 1: 0.982300 Loss: 0.056414 Time: 689.167846
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-356 at step=356.
+Num examples: 10000  Precision @ 1: 0.981100 Loss: 0.053893 Time: 726.760099
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-377 at step=377.
+Num examples: 10000  Precision @ 1: 0.983900 Loss: 0.052521 Time: 764.306842
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-398 at step=398.
+Num examples: 10000  Precision @ 1: 0.984400 Loss: 0.049002 Time: 801.942997
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-409 at step=409.
+Num examples: 10000  Precision @ 1: 0.983900 Loss: 0.049926 Time: 839.487619
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-430 at step=430.
+Num examples: 10000  Precision @ 1: 0.985400 Loss: 0.048710 Time: 877.077557
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-451 at step=451.
