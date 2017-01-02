@@ -54,6 +54,17 @@ def extract_compute_times(fname):
     f.close()
     return compute_times
 
+def extract_iteration_times(fname):
+    f = open(fname)
+
+    compute_times = []
+    for line in f:
+        m = re.match(".*ITERATION TIMES (.*)", line)
+        if m:
+            compute_times = json.loads(m.group(1))
+    f.close()
+    return compute_times
+
 def extract_times_losses_precision(fname):
     f = open(fname)
 
@@ -140,7 +151,7 @@ def plot_time_cdfs(outdir):
     plt.ylabel("P(X >= x)")
     files = glob.glob(outdir + "/*master*")
     cmap = plt.get_cmap('jet')
-    colors = cmap(np.linspace(0, 1.0, len(files)))
+    colors = cmap(np.linspace(0, 1.0, len(files) * 2))
     for i, fname in enumerate(files):
         label = fname.split("/")[-1]
         compute_times = extract_compute_times(fname)
@@ -152,10 +163,21 @@ def plot_time_cdfs(outdir):
             times.append(compute_time)
             probabs.append(sum([1 if compute_time <= t else 0 for t in compute_times]) / float(len(compute_times)))
         plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
+
+        # Also plot the iteration times on top of the cdfs
+        times = []
+        probabs = []
+        iteration_times = extract_iteration_times(fname)
+        iteration_times.sort()
+        for iteration_time in iteration_times:
+            times.append(iteration_time)
+            probabs.append(sum([1 if iteration_time <= t else 0 for t in iteration_times]) / float(len(iteration_times)))
+        plt.plot(times, probabs, linestyle='solid', label=label + "_iteration", color=colors[i + len(files)])
+
     plt.legend(loc="upper right", fontsize=8)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=15*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
