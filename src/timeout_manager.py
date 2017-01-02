@@ -49,7 +49,7 @@ class TimeoutServer(pb.Root):
     if iteration == self.ITERATION_END_TRACKING and worker_id == 0:
       elapsed_times = sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING])
       tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
-      selected_iteration_start_times = [x for i,x in enumerate(self.iteration_start_times) if i > self.ITERATION_START_TRACKING]
+      selected_iteration_start_times = [x for i,x in self.iteration_start_times.items() if i > self.ITERATION_START_TRACKING]
       iteration_times = [selected_iteration_start_times[i+1] - selected_iteration_start_times[i] for i in range(len(selected_iteration_start_times)-1)]
       tf.logging.info("ITERATION TIMES %s" % str(iteration_times))
 
