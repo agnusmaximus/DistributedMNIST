@@ -8,6 +8,7 @@ import numpy as np
 from twisted.spread import pb
 from twisted.internet import reactor
 from threading import Thread, Timer
+from twisted.internet.protocol import Protocol, ReconnectingClientFactory
 
 ##################
 # RPC procedures #
@@ -60,8 +61,32 @@ class TimeoutServer(pb.Root):
   def remote_is_ready_to_start(self):
     return (self.worker_id, self.ready_to_start)
 
-class TimeoutClient:
+class Echo(Protocol):
+    def dataReceived(self, data):
+        stdout.write(data)
+
+class TimeoutClient(ReconnectingClientFactory):
+
+  def startedConnecting(self, connector):
+      print 'Started to connect.'
+
+  def buildProtocol(self, addr):
+      print 'Connected.'
+      print 'Resetting reconnection delay'
+      self.resetDelay()
+      return Echo()
+
+  def clientConnectionLost(self, connector, reason):
+      print 'Lost connection.  Reason:', reason
+      ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
+
+  def clientConnectionFailed(self, connector, reason):
+      print 'Connection failed. Reason:', reason
+      ReconnectingClientFactory.clientConnectionFailed(self, connector,
+                                                       reason)
+
   def __init__(self, tf_flags):
+    super(TimeoutClient, self).__init__()
     self.tf_flags = tf_flags
     self.worker_id = self.tf_flags.task_id
     hosts = self.tf_flags.worker_hosts.split(",")
@@ -75,18 +100,11 @@ class TimeoutClient:
     for i, host in enumerate(hosts):
       factory = pb.PBClientFactory()
       tf.logging.info("Connecting to %s:%d" % (host, self.tf_flags.rpc_port))
-      d = reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
-      #if i == self.worker_id:
-      #  factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
-      #else:
-      #  factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+      reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
       if i == self.worker_id:
-        #d.addCallback(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
-        d.addCallback(self.connected_self)
+        factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       else:
-        #d.addCallback(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
-        d.addCallback(self.connected)
-      d.addErrback(self.connect_failure, host)
+        factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
 
   def broadcast_worker_dequeued_token(self, iteration):
     for persp in self.perspectives:
@@ -142,12 +160,12 @@ class TimeoutClient:
 
   def connect_failure(self, *args, **kwargs):
     tf.logging.info("RPC error, something failed: ")
-    time.sleep(1)
-    host = "".join(args[1:])
-    factory = pb.PBClientFactory()
-    tf.logging.info("Trying reconnecting to %s:%d" % (host, self.tf_flags.rpc_port))
-    reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
-    factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
+    #time.sleep(1)
+    #host = "".join(args[1:])
+    #factory = pb.PBClientFactory()
+    #tf.logging.info("Trying reconnecting to %s:%d" % (host, self.tf_flags.rpc_port))
+    #reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
+    #factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=(host))
 
 # Separate manager process to oversee training on workers.
 def launch_manager(sess, tf_flags):
