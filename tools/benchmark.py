@@ -52,7 +52,8 @@ def extract_compute_times(fname):
         if m:
             compute_times = json.loads(m.group(1))
     f.close()
-    return compute_times
+    print(fname, compute_times)
+    return [x[0] for x in compute_times]
 
 def extract_iteration_times(fname):
     f = open(fname)
@@ -177,7 +178,7 @@ def plot_time_cdfs(outdir):
     plt.legend(loc="upper right", fontsize=6)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
