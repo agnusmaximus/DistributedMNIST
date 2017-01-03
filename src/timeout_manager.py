@@ -65,25 +65,21 @@ class Echo(Protocol):
     def dataReceived(self, data):
         stdout.write(data)
 
+class EchoClientFactory(ClientFactory):
+    def startedConnecting(self, connector):
+        print 'Started to connect.'
+
+    def buildProtocol(self, addr):
+        print 'Connected.'
+        return Echo()
+
+    def clientConnectionLost(self, connector, reason):
+        print 'Lost connection.  Reason:', reason
+
+    def clientConnectionFailed(self, connector, reason):
+        print 'Connection failed. Reason:', reason
+
 class TimeoutClient(ReconnectingClientFactory):
-
-  def startedConnecting(self, connector):
-      print 'Started to connect.'
-
-  def buildProtocol(self, addr):
-      print 'Connected.'
-      print 'Resetting reconnection delay'
-      self.resetDelay()
-      return Echo()
-
-  def clientConnectionLost(self, connector, reason):
-      print 'Lost connection.  Reason:', reason
-      ReconnectingClientFactory.clientConnectionLost(self, connector, reason)
-
-  def clientConnectionFailed(self, connector, reason):
-      print 'Connection failed. Reason:', reason
-      ReconnectingClientFactory.clientConnectionFailed(self, connector,
-                                                       reason)
 
   def __init__(self, tf_flags):
     self.tf_flags = tf_flags
@@ -97,7 +93,8 @@ class TimeoutClient(ReconnectingClientFactory):
     self.servers_ready = set([])
 
     for i, host in enumerate(hosts):
-      factory = pb.PBClientFactory()
+      #factory = pb.PBClientFactory()
+      factory = EchoClientFactory()
       tf.logging.info("Connecting to %s:%d" % (host, self.tf_flags.rpc_port))
       reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
       if i == self.worker_id:
