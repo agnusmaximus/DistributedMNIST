@@ -112,6 +112,7 @@ class TimeoutClient:
   def connected(self, perspective):
     self.perspectives.append(perspective)
     tf.logging.info("Connected!")
+    tf.logging.info("%d %d" % (len(self.hosts), len(self.perspectives)))
     self.ready = (len(self.hosts) == len(self.perspectives))
     if self.ready:
       tf.logging.info("Ready!")
