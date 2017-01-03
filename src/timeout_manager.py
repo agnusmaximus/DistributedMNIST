@@ -61,17 +61,9 @@ class TimeoutServer(pb.Root):
   def remote_is_ready_to_start(self):
     return (self.worker_id, self.ready_to_start)
 
-class Echo(Protocol):
-    def dataReceived(self, data):
-        stdout.write(data)
-
 class EchoClientFactory(pb.PBClientFactory):
     def startedConnecting(self, connector):
         print 'Started to connect.'
-
-    def buildProtocol(self, addr):
-        print 'Connected.'
-        return Echo()
 
     def clientConnectionLost(self, connector, reason):
         print 'Lost connection.  Reason:', reason
