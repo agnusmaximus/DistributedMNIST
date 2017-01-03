@@ -39,10 +39,10 @@ cfg = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "t2.small",
-    "worker_type" : "t2.small",
-    "ps_type" : "t2.small",
-    "evaluator_type" : "t2.small",
+    "master_type" : "m3.medium",
+    "worker_type" : "m3.medium",
+    "ps_type" : "m3.medium",
+    "evaluator_type" : "m3.medium",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
