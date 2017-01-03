@@ -45,7 +45,7 @@ def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator",
 
     #time.sleep(run_time_sec)
     while not check_if_reached_iters(cluster_string, n_iters, cfg):
-        time.sleep(8 * 60)
+        time.sleep(60)
 
     tf_ec2_run(kill_args.split(), cfg)
 

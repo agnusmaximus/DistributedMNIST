@@ -100,6 +100,8 @@ class TimeoutClient:
       persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.fail)
 
   def ready_to_start(self):
+    tf.logging.info(self.servers_ready)
+    tf.logging.info("Num servers ready: %d" % len(self.servers_ready))
     return self.ready and len(self.servers_ready) == len(self.hosts)
 
   def signal_server_ready(self):
