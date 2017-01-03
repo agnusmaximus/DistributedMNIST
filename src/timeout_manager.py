@@ -71,7 +71,7 @@ class EchoClientFactory(pb.PBClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         tf.logging.info('Connection failed. Reason: %s' % str(reason))
-        self.resetTimeout()
+        #self.resetTimeout()
         connector.connect()
 
 class TimeoutClient():
