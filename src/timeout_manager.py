@@ -175,7 +175,8 @@ def launch_manager(sess, tf_flags):
   reactor.listenTCP(tf_flags.rpc_port, rpc_server)
   rpc_client = TimeoutClient(tf_flags)
   #Thread(target=reactor.run, args=(False,)).start()
-  Thread(target=reactor.run).start()
+  #Thread(target=reactor.run).start()
+  reactor.run()
 
   while not rpc_client.ready_to_start():
     rpc_client.check_ready_to_start()
