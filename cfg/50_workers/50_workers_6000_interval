@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "50_workers_9000_interval",      # Unique name for this specific configuration
+    "name" : "50_workers_6000_interval",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -79,7 +79,7 @@ Cfg({
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
 	"--interval_method=true "
-	"--interval_ms=9000 "
+	"--interval_ms=6000 "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "

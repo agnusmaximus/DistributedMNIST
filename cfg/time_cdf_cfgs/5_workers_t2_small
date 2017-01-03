@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "m4_2x_large_cdf",      # Unique name for this specific configuration
+    "name" : "t2_small_cdf",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -13,15 +13,17 @@ Cfg({
     "region" : "us-west-2",
     "availability_zone" : "us-west-2b",
 
+    "method" : "reserved",
+
     # Machine type - instance type configuration.
-    "master_type" : "m4.2xlarge",
-    "worker_type" : "m4.2xlarge",
-    "ps_type" : "m4.2xlarge",
-    "evaluator_type" : "m4.2xlarge",
+    "master_type" : "t2.small",
+    "worker_type" : "t2.small",
+    "ps_type" : "t2.small",
+    "evaluator_type" : "t2.small",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
-    "spot_price" : ".12",                 # Has to be a string
+    "spot_price" : ".03",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname

@@ -1,0 +1,53 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319829 Time: 42.572323
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+Raised when an operation iterates past the valid input range.
+
+  This exception is raised in "end-of-file" conditions, such as when a
+  [`queue.dequeue()`](../../api_docs/python/io_ops.md#QueueBase.dequeue)
+  operation is blocked on an empty queue, and a
+  [`queue.close()`](../../api_docs/python/io_ops.md#QueueBase.close)
+  operation executes.
+
+  @@__init__
+  
+Read less bytes than requested
+	 [[Node: save/RestoreV2_4 = RestoreV2[dtypes=[DT_FLOAT], _device="/job:localhost/replica:0/task:0/cpu:0"](_recv_save/Const_0, save/RestoreV2_4/tensor_names, save/RestoreV2_4/shape_and_slices)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319834 Time: 131.390264
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-1 at step=1.
+Num examples: 10000  Precision @ 1: 0.153200 Loss: 4.110097 Time: 173.774764
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-3 at step=3.
+Num examples: 10000  Precision @ 1: 0.328800 Loss: 3.049744 Time: 211.239842
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-5 at step=5.
+Num examples: 10000  Precision @ 1: 0.531000 Loss: 2.389415 Time: 248.661428
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-7 at step=7.
+Num examples: 10000  Precision @ 1: 0.618900 Loss: 1.616577 Time: 286.102980
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-9 at step=9.
+Num examples: 10000  Precision @ 1: 0.691200 Loss: 1.075928 Time: 323.518532
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-10 at step=10.
+Num examples: 10000  Precision @ 1: 0.748100 Loss: 0.993704 Time: 360.919981
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-12 at step=12.
+Num examples: 10000  Precision @ 1: 0.716000 Loss: 0.957724 Time: 398.359348
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-14 at step=14.
+Num examples: 10000  Precision @ 1: 0.830000 Loss: 0.795451 Time: 435.792723
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-17 at step=17.
+Num examples: 10000  Precision @ 1: 0.811400 Loss: 0.745403 Time: 473.273732
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-19 at step=19.
+Num examples: 10000  Precision @ 1: 0.817500 Loss: 0.686104 Time: 510.738797
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-21 at step=21.
+Num examples: 10000  Precision @ 1: 0.858700 Loss: 0.558943 Time: 548.183842
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-23 at step=23.
+Num examples: 10000  Precision @ 1: 0.879300 Loss: 0.505010 Time: 585.631938
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-26 at step=26.
+Num examples: 10000  Precision @ 1: 0.893300 Loss: 0.436967 Time: 623.094688
+Succesfully loaded model from /home/ubuntu/inception_shared/m3_medium_cdf/train_dir/model.ckpt-28 at step=28.

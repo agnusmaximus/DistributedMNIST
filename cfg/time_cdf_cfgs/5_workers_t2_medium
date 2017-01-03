@@ -1,5 +1,5 @@
 Cfg({
-    "name" : "50_workers_48_aggregate_sync",      # Unique name for this specific configuration
+    "name" : "t2_medium_cdf",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -7,17 +7,19 @@ Cfg({
     "n_workers" : 49,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "48",
+    "num_replicas_to_aggregate" : "50",
 
     # Region speficiation
     "region" : "us-west-2",
     "availability_zone" : "us-west-2b",
 
+    "method" : "reserved",
+
     # Machine type - instance type configuration.
-    "master_type" : "m3.large",
-    "worker_type" : "m3.large",
-    "ps_type" : "m3.large",
-    "evaluator_type" : "m3.large",
+    "master_type" : "t2.medium",
+    "worker_type" : "t2.medium",
+    "ps_type" : "t2.medium",
+    "evaluator_type" : "t2.medium",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
@@ -41,7 +43,6 @@ Cfg({
         "mkdir %(base_out_dir)s",
     ],
 
-
     # Command specification
     # Master pre commands are run only by the master
     "master_pre_commands" :
@@ -58,9 +59,9 @@ Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "128",
+    "batch_size" : "1024",
     "initial_learning_rate" : ".0008",
-    "learning_rate_decay_factor" : "1",
+    "learning_rate_decay_factor" : ".98",
     "num_epochs_per_decay" : "1.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
@@ -81,6 +82,9 @@ Cfg({
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
+        "--timeline_logging=false "
+        "--interval_method=false "
+        "--worker_times_cdf_method=true "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
@@ -88,7 +92,7 @@ Cfg({
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
-        # Wait a bit
+        # Sleep a bit
         "sleep 30",
 
         # Evaluation command

@@ -43,6 +43,37 @@ def run_tf_and_download_files(run_time_sec, cfg, evaluator_file_name="out_evalua
     download_master_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, master_file_name, outdir)
     tf_ec2_run(download_master_file_args.split(), cfg)
 
+def print_worker_sorted_times(fname):
+    print("File: %s" % fname)
+    print("-----------------------------")
+    f = open(fname)
+
+    compute_times = []
+    for line in f:
+        m = re.match(".*ELAPSED TIMES (.*)", line)
+        if m:
+            compute_times = eval(m.group(1))
+    f.close()
+    worker_times = {}
+    for time, worker in compute_times:
+        if worker not in worker_times:
+            worker_times[worker] = []
+        worker_times[worker].append(time)
+    for k,v in sorted(worker_times.items(), key=lambda x:x[0]):
+        v.sort()
+        #print("Worker %d" % k)
+        #print(" ".join([str(x) for x in v]))
+
+    all_times = worker_times.values()
+    a = []
+    for time in all_times:
+        a = a + time
+    all_times = a
+    print("Stdev: ", np.std(all_times))
+    print("Max: ", np.max(all_times))
+    print("90 Percentile:", np.percentile(all_times, 90))
+
+
 def extract_compute_times(fname):
     f = open(fname)
 
@@ -50,10 +81,20 @@ def extract_compute_times(fname):
     for line in f:
         m = re.match(".*ELAPSED TIMES (.*)", line)
         if m:
-            compute_times = json.loads(m.group(1))
+            compute_times = eval(m.group(1))
     f.close()
-    print(fname, compute_times)
     return [x[0] for x in compute_times]
+
+def extract_compute_times_no_master(fname):
+    f = open(fname)
+
+    compute_times = []
+    for line in f:
+        m = re.match(".*ELAPSED TIMES (.*)", line)
+        if m:
+            compute_times = eval(m.group(1))
+    f.close()
+    return [x[0] for x in compute_times if x[1] != 14 and x[1] != 25]
 
 def extract_iteration_times(fname):
     f = open(fname)
@@ -150,7 +191,7 @@ def plot_time_cdfs(outdir):
     plt.cla()
     plt.xlabel("Time (s)")
     plt.ylabel("P(X >= x)")
-    files = glob.glob(outdir + "/*master*")
+    files = glob.glob(outdir + "/*t2*master*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files) * 2))
     for i, fname in enumerate(files):
@@ -168,17 +209,20 @@ def plot_time_cdfs(outdir):
         # Also plot the iteration times on top of the cdfs
         times = []
         probabs = []
-        iteration_times = extract_iteration_times(fname)
+        #iteration_times = extract_iteration_times(fname)
+        iteration_times = extract_compute_times_no_master(fname)
         iteration_times.sort()
         for iteration_time in iteration_times:
             times.append(iteration_time)
             probabs.append(sum([1 if iteration_time <= t else 0 for t in iteration_times]) / float(len(iteration_times)))
-        plt.plot(times, probabs, linestyle='solid', label=label + "_iteration", color=colors[i + len(files)])
+        plt.plot(times, probabs, linestyle='solid', label=label + "_no_worker_25_14", color=colors[i + len(files)])
+
+        print_worker_sorted_times(fname)
 
     plt.legend(loc="upper right", fontsize=6)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
