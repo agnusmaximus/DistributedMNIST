@@ -65,7 +65,7 @@ class Echo(Protocol):
     def dataReceived(self, data):
         stdout.write(data)
 
-class EchoClientFactory(PBClientFactory):
+class EchoClientFactory(pb.PBClientFactory):
     def startedConnecting(self, connector):
         print 'Started to connect.'
 
@@ -79,7 +79,7 @@ class EchoClientFactory(PBClientFactory):
     def clientConnectionFailed(self, connector, reason):
         print 'Connection failed. Reason:', reason
 
-class TimeoutClient(ReconnectingClientFactory):
+class TimeoutClient():
 
   def __init__(self, tf_flags):
     self.tf_flags = tf_flags
