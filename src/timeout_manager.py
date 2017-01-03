@@ -92,9 +92,11 @@ class TimeoutClient():
       tf.logging.info("Connecting to %s:%d" % (host, self.tf_flags.rpc_port))
       reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
       if i == self.worker_id:
-        factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        factory.getRootObject().addCallback(self.connected_self)
+        #factory.getRootObject().addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       else:
-        factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        factory.getRootObject().addCallback(self.connected)
+        #factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
 
   def broadcast_worker_dequeued_token(self, iteration):
     for persp in self.perspectives:
