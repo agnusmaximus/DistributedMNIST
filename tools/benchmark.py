@@ -21,7 +21,19 @@ def shutdown_and_launch(cfg):
     launch_args = "tools/tf_ec2.py launch"
     tf_ec2_run(launch_args.split(), cfg)
 
-def run_tf_and_download_files(run_time_sec, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", outdir="result_dir"):
+def check_if_reached_iters(n_iters, cfg, master_file_name="out_master", outdir="/tmp/"):
+    download_evaluator_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, master_file_name, outdir)
+    fname = tf_ec2_run(download_evaluator_file_args.split(), cfg)
+    f = open(fname, "r")
+    cur_iteration = 0
+    for line in f:
+        m = re.match(".*step ([0-9]*),.*", line)
+        if m:
+            cur_iteration = max(cur_iteration, int(m.group(1)))
+    print("Currently on iteration %d" % cur_iteration)
+    return cur_iteration > n_iters
+
+def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", outdir="result_dir"):
 
     kill_args = "tools/tf_ec2.py kill_all_python"
     tf_ec2_run(kill_args.split(), cfg)
@@ -31,7 +43,9 @@ def run_tf_and_download_files(run_time_sec, cfg, evaluator_file_name="out_evalua
     cluster_specs = tf_ec2_run(run_args.split(), cfg)
     cluster_string = cluster_specs["cluster_string"]
 
-    time.sleep(run_time_sec)
+    #time.sleep(run_time_sec)
+    while not check_if_reached_iters(n_iters, cfg):
+        sleep(8 * 60)
 
     tf_ec2_run(kill_args.split(), cfg)
 
@@ -71,8 +85,11 @@ def print_worker_sorted_times(fname):
     all_times = a
     print("Stdev: ", np.std(all_times))
     print("Max: ", np.max(all_times))
+    print("80 Percentile:", np.percentile(all_times, 80))
     print("90 Percentile:", np.percentile(all_times, 90))
-
+    print("95 Percentile:", np.percentile(all_times, 95))
+    print("99 Percentile:", np.percentile(all_times, 99))
+    print("Mean:", sum(all_times)/float(len(all_times)))
 
 def extract_compute_times(fname):
     f = open(fname)
@@ -190,8 +207,9 @@ def plot_time_step(outdir):
 def plot_time_cdfs(outdir):
     plt.cla()
     plt.xlabel("Time (s)")
-    plt.ylabel("P(X >= x)")
-    files = glob.glob(outdir + "/*t2*master*")
+    #plt.ylabel("P(X <= x)")
+    plt.ylabel("Count")
+    files = glob.glob(outdir + "/*t2*small*master*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files) * 2))
     for i, fname in enumerate(files):
@@ -199,12 +217,14 @@ def plot_time_cdfs(outdir):
         compute_times = extract_compute_times(fname)
         compute_times.sort()
 
+        plt.hist(compute_times, 50, alpha=.75)
+
         times = []
         probabs = []
         for compute_time in compute_times:
             times.append(compute_time)
-            probabs.append(sum([1 if compute_time <= t else 0 for t in compute_times]) / float(len(compute_times)))
-        plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
+            probabs.append(sum([1 if compute_time >= t else 0 for t in compute_times]) / float(len(compute_times)))
+        #plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
 
         # Also plot the iteration times on top of the cdfs
         times = []
@@ -214,15 +234,15 @@ def plot_time_cdfs(outdir):
         iteration_times.sort()
         for iteration_time in iteration_times:
             times.append(iteration_time)
-            probabs.append(sum([1 if iteration_time <= t else 0 for t in iteration_times]) / float(len(iteration_times)))
-        plt.plot(times, probabs, linestyle='solid', label=label + "_no_worker_25_14", color=colors[i + len(files)])
+            probabs.append(sum([1 if iteration_time >= t else 0 for t in iteration_times]) / float(len(iteration_times)))
+        #plt.plot(times, probabs, linestyle='solid', label=label + "_no_worker_25_14", color=colors[i + len(files)])
 
         print_worker_sorted_times(fname)
 
     plt.legend(loc="upper right", fontsize=6)
-    plt.savefig("time_cdfs.png")
+    plt.savefig("histogram.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=500, rerun=False, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
@@ -230,7 +250,7 @@ def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", ti
         for cfg in cfgs:
             if need_shutdown_after_every_run:
                 shutdown_and_launch(cfg)
-            run_tf_and_download_files(time_limit, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
+            run_tf_and_download_files(n_iters, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plot_time_loss(outdir)
     plot_time_step(outdir)
