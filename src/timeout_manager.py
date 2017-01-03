@@ -70,6 +70,7 @@ class EchoClientFactory(pb.PBClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         print 'Connection failed. Reason:', reason
+        time.sleep(5)
         connector.connect()
 
 class TimeoutClient():
