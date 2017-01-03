@@ -65,7 +65,7 @@ class Echo(Protocol):
     def dataReceived(self, data):
         stdout.write(data)
 
-class EchoClientFactory(ClientFactory):
+class EchoClientFactory(PBClientFactory):
     def startedConnecting(self, connector):
         print 'Started to connect.'
 
