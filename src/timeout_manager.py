@@ -63,13 +63,13 @@ class TimeoutServer(pb.Root):
 
 class EchoClientFactory(pb.PBClientFactory):
     def startedConnecting(self, connector):
-        print 'Started to connect.'
+        tf.logging.info 'Started to connect.'
 
     def clientConnectionLost(self, connector, reason):
-        print 'Lost connection.  Reason:', reason
+        tf.logging.info 'Lost connection.  Reason:', reason
 
     def clientConnectionFailed(self, connector, reason):
-        print 'Connection failed. Reason:', reason
+        tf.logging.info 'Connection failed. Reason:', reason
         time.sleep(5)
         connector.connect()
 
