@@ -86,7 +86,6 @@ class TimeoutClient(ReconnectingClientFactory):
                                                        reason)
 
   def __init__(self, tf_flags):
-    ReconnectingClientFactory.__init__(self)
     self.tf_flags = tf_flags
     self.worker_id = self.tf_flags.task_id
     hosts = self.tf_flags.worker_hosts.split(",")
