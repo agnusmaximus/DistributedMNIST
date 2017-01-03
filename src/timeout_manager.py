@@ -81,9 +81,12 @@ class TimeoutClient:
       #else:
       #  factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
       if i == self.worker_id:
-        d.addCallbacks(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        #d.addCallback(self.connected_self, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        d.addCallback(self.connected_self)
       else:
-        d.addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        #d.addCallback(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
+        d.addCallback(self.connected)
+      d.addErrback(self.connect_failure, host)
 
   def broadcast_worker_dequeued_token(self, iteration):
     for persp in self.perspectives:
