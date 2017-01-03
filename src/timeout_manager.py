@@ -66,10 +66,10 @@ class EchoClientFactory(pb.PBClientFactory):
         tf.logging.info('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
-        tf.logging.info('Lost connection.  Reason:', reason)
+        tf.logging.info('Lost connection.  Reason: %s' % str(reason))
 
     def clientConnectionFailed(self, connector, reason):
-        tf.logging.info('Connection failed. Reason:', reason)
+        tf.logging.info('Connection failed. Reason: %s' % str(reason))
         time.sleep(5)
         connector.connect()
 
