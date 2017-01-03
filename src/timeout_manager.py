@@ -44,10 +44,10 @@ class TimeoutServer(pb.Root):
     self.worker_finished_computing_gradients_times[worker_id][iteration] = cur_time
 
     elapsed_time = self.worker_finished_computing_gradients_times[worker_id][iteration] - self.worker_dequeue_times[worker_id][iteration]
-    self.compute_times.append((elapsed_time, iteration))
+    self.compute_times.append((worker_id, elapsed_time, iteration))
 
     if iteration > self.ITERATION_START_TRACKING and worker_id == 0:
-      elapsed_times = sorted([x[0] for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING])
+      elapsed_times = sorted([(x[1],x[0]) for x in self.compute_times if x[1] > self.ITERATION_START_TRACKING], key=lambda x: x[0])
       tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
       selected_iteration_start_times = [x for i,x in self.iteration_start_times.items() if i > self.ITERATION_START_TRACKING]
       iteration_times = [selected_iteration_start_times[i+1] - selected_iteration_start_times[i] for i in range(len(selected_iteration_start_times)-1)]

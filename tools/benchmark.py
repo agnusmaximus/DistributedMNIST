@@ -174,10 +174,10 @@ def plot_time_cdfs(outdir):
             probabs.append(sum([1 if iteration_time <= t else 0 for t in iteration_times]) / float(len(iteration_times)))
         plt.plot(times, probabs, linestyle='solid', label=label + "_iteration", color=colors[i + len(files)])
 
-    plt.legend(loc="upper right", fontsize=8)
+    plt.legend(loc="upper right", fontsize=6)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", time_limit=10*60, rerun=False, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
