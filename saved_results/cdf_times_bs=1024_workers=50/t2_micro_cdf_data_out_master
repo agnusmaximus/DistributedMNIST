@@ -1,0 +1,1936 @@
+INFO:tensorflow:PS hosts are: ['172.31.17.29:1234']
+INFO:tensorflow:Worker hosts are: ['172.31.27.240:1234', '172.31.20.87:1234', '172.31.20.197:1234', '172.31.26.188:1234', '172.31.26.254:1234', '172.31.20.78:1234', '172.31.30.51:1234', '172.31.25.117:1234', '172.31.30.45:1234', '172.31.23.168:1234', '172.31.30.119:1234', '172.31.26.48:1234', '172.31.29.192:1234', '172.31.23.237:1234', '172.31.18.119:1234', '172.31.18.136:1234', '172.31.30.160:1234', '172.31.26.10:1234', '172.31.28.179:1234', '172.31.21.135:1234', '172.31.18.12:1234', '172.31.26.13:1234', '172.31.23.46:1234', '172.31.25.16:1234', '172.31.28.8:1234', '172.31.28.135:1234', '172.31.30.59:1234', '172.31.27.138:1234', '172.31.27.142:1234', '172.31.28.10:1234', '172.31.16.8:1234', '172.31.30.8:1234', '172.31.16.23:1234', '172.31.26.23:1234', '172.31.31.143:1234', '172.31.18.103:1234', '172.31.20.115:1234', '172.31.26.227:1234', '172.31.17.158:1234', '172.31.24.30:1234', '172.31.21.112:1234', '172.31.29.159:1234', '172.31.28.109:1234', '172.31.23.110:1234', '172.31.22.110:1234', '172.31.29.50:1234', '172.31.24.28:1234', '172.31.19.103:1234', '172.31.27.239:1234', '172.31.27.225:1234']
+I tensorflow/core/distributed_runtime/rpc/grpc_channel.cc:197] Initialize GrpcChannelCache for job ps -> {0 -> 172.31.17.29:1234}
+I tensorflow/core/distributed_runtime/rpc/grpc_channel.cc:197] Initialize GrpcChannelCache for job worker -> {0 -> localhost:1234, 1 -> 172.31.20.87:1234, 2 -> 172.31.20.197:1234, 3 -> 172.31.26.188:1234, 4 -> 172.31.26.254:1234, 5 -> 172.31.20.78:1234, 6 -> 172.31.30.51:1234, 7 -> 172.31.25.117:1234, 8 -> 172.31.30.45:1234, 9 -> 172.31.23.168:1234, 10 -> 172.31.30.119:1234, 11 -> 172.31.26.48:1234, 12 -> 172.31.29.192:1234, 13 -> 172.31.23.237:1234, 14 -> 172.31.18.119:1234, 15 -> 172.31.18.136:1234, 16 -> 172.31.30.160:1234, 17 -> 172.31.26.10:1234, 18 -> 172.31.28.179:1234, 19 -> 172.31.21.135:1234, 20 -> 172.31.18.12:1234, 21 -> 172.31.26.13:1234, 22 -> 172.31.23.46:1234, 23 -> 172.31.25.16:1234, 24 -> 172.31.28.8:1234, 25 -> 172.31.28.135:1234, 26 -> 172.31.30.59:1234, 27 -> 172.31.27.138:1234, 28 -> 172.31.27.142:1234, 29 -> 172.31.28.10:1234, 30 -> 172.31.16.8:1234, 31 -> 172.31.30.8:1234, 32 -> 172.31.16.23:1234, 33 -> 172.31.26.23:1234, 34 -> 172.31.31.143:1234, 35 -> 172.31.18.103:1234, 36 -> 172.31.20.115:1234, 37 -> 172.31.26.227:1234, 38 -> 172.31.17.158:1234, 39 -> 172.31.24.30:1234, 40 -> 172.31.21.112:1234, 41 -> 172.31.29.159:1234, 42 -> 172.31.28.109:1234, 43 -> 172.31.23.110:1234, 44 -> 172.31.22.110:1234, 45 -> 172.31.29.50:1234, 46 -> 172.31.24.28:1234, 47 -> 172.31.19.103:1234, 48 -> 172.31.27.239:1234, 49 -> 172.31.27.225:1234}
+I tensorflow/core/distributed_runtime/rpc/grpc_server_lib.cc:211] Started server with target: grpc://localhost:1234
+INFO:tensorflow:TimeoutReplicas: total_num_replicas=50
+WARNING:tensorflow:From /home/ubuntu/DistributedMNIST/src/sync_replicas_optimizer_modified/sync_replicas_optimizer_modified.py:269 in apply_gradients.: all_variables (from tensorflow.python.ops.variables) is deprecated and will be removed after 2017-03-02.
+Instructions for updating:
+Please use tf.global_variables instead.
+INFO:tensorflow:Grad Tensor("gradients/Conv2D_grad/tuple/control_dependency_1:0", shape=(5, 5, 1, 32), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/BiasAdd_grad/tuple/control_dependency_1:0", shape=(32,), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/Conv2D_1_grad/tuple/control_dependency_1:0", shape=(5, 5, 32, 64), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/BiasAdd_1_grad/tuple/control_dependency_1:0", shape=(64,), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/MatMul_grad/tuple/control_dependency_1:0", shape=(3136, 512), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/add_grad/tuple/control_dependency_1:0", shape=(512,), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/MatMul_1_grad/tuple/control_dependency_1:0", shape=(512, 10), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+INFO:tensorflow:Grad Tensor("gradients/add_1_grad/tuple/control_dependency_1:0", shape=(10,), dtype=float32, device=/job:worker/task:0) assigned to /job:ps/task:0
+WARNING:tensorflow:From /home/ubuntu/DistributedMNIST/src/distributed_train.py:197 in train.: initialize_all_variables (from tensorflow.python.ops.variables) is deprecated and will be removed after 2017-03-02.
+Instructions for updating:
+Use `tf.global_variables_initializer` instead.
+WARNING:tensorflow:From /usr/local/lib/python2.7/dist-packages/tensorflow/python/training/supervisor.py:344 in __init__.: __init__ (from tensorflow.python.training.summary_io) is deprecated and will be removed after 2016-11-30.
+Instructions for updating:
+Please switch to tf.summary.FileWriter. The interface and behavior is the same; this is just a rename.
+INFO:tensorflow:2017-01-03 04:05:56.102780 Supervisor
+I tensorflow/core/distributed_runtime/master_session.cc:993] Start master session 1cf6e29001bac94a with config: 
+allow_soft_placement: true
+
+INFO:tensorflow:Started 0 queues for processing input data.
+INFO:tensorflow:global_step/sec: 0
+INFO:tensorflow:Worker 0: starting status server...
+INFO:tensorflow:Connecting to 172.31.27.240:1235
+INFO:tensorflow:Connecting to 172.31.20.87:1235
+INFO:tensorflow:Connecting to 172.31.20.197:1235
+INFO:tensorflow:Connecting to 172.31.26.188:1235
+INFO:tensorflow:Connecting to 172.31.26.254:1235
+INFO:tensorflow:Connecting to 172.31.20.78:1235
+INFO:tensorflow:Connecting to 172.31.30.51:1235
+INFO:tensorflow:Connecting to 172.31.25.117:1235
+INFO:tensorflow:Connecting to 172.31.30.45:1235
+INFO:tensorflow:Connecting to 172.31.23.168:1235
+INFO:tensorflow:Connecting to 172.31.30.119:1235
+INFO:tensorflow:Connecting to 172.31.26.48:1235
+INFO:tensorflow:Connecting to 172.31.29.192:1235
+INFO:tensorflow:Connecting to 172.31.23.237:1235
+INFO:tensorflow:Connecting to 172.31.18.119:1235
+INFO:tensorflow:Connecting to 172.31.18.136:1235
+INFO:tensorflow:Connecting to 172.31.30.160:1235
+INFO:tensorflow:Connecting to 172.31.26.10:1235
+INFO:tensorflow:Connecting to 172.31.28.179:1235
+INFO:tensorflow:Connecting to 172.31.21.135:1235
+INFO:tensorflow:Connecting to 172.31.18.12:1235
+INFO:tensorflow:Connecting to 172.31.26.13:1235
+INFO:tensorflow:Connecting to 172.31.23.46:1235
+INFO:tensorflow:Connecting to 172.31.25.16:1235
+INFO:tensorflow:Connecting to 172.31.28.8:1235
+INFO:tensorflow:Connecting to 172.31.28.135:1235
+INFO:tensorflow:Connecting to 172.31.30.59:1235
+INFO:tensorflow:Connecting to 172.31.27.138:1235
+INFO:tensorflow:Connecting to 172.31.27.142:1235
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Connecting to 172.31.28.10:1235
+INFO:tensorflow:Connecting to 172.31.16.8:1235
+INFO:tensorflow:Connecting to 172.31.30.8:1235
+INFO:tensorflow:Connecting to 172.31.16.23:1235
+INFO:tensorflow:Connecting to 172.31.26.23:1235
+INFO:tensorflow:Connecting to 172.31.31.143:1235
+INFO:tensorflow:Connecting to 172.31.18.103:1235
+INFO:tensorflow:Connecting to 172.31.20.115:1235
+INFO:tensorflow:Connecting to 172.31.26.227:1235
+INFO:tensorflow:Connecting to 172.31.17.158:1235
+INFO:tensorflow:Connecting to 172.31.24.30:1235
+INFO:tensorflow:Connecting to 172.31.21.112:1235
+INFO:tensorflow:Connecting to 172.31.29.159:1235
+INFO:tensorflow:Connecting to 172.31.28.109:1235
+INFO:tensorflow:Connecting to 172.31.23.110:1235
+INFO:tensorflow:Connecting to 172.31.22.110:1235
+INFO:tensorflow:Connecting to 172.31.29.50:1235
+INFO:tensorflow:Connecting to 172.31.24.28:1235
+INFO:tensorflow:Connecting to 172.31.19.103:1235
+INFO:tensorflow:Connecting to 172.31.27.239:1235
+INFO:tensorflow:Connecting to 172.31.27.225:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.20.197:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.254:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.188:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.51:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.20.78:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.25.117:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.45:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.48:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.119:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.29.192:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.23.237:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.18.136:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.18.119:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.10:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.28.179:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.21.135:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.13:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.23.46:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.28.8:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.59:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.28.10:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.27.138:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.8:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.16.23:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.23:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.16.8:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.31.143:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.18.103:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.17.158:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.227:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.21.112:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.24.30:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.29.159:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.28.109:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.23.110:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.22.110:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.24.28:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.19.103:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.27.239:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.29.50:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.27.225:1235
+INFO:tensorflow:Connected!
+INFO:tensorflow:1 of 50
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.20.197:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.254:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.188:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.51:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.20.78:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.25.117:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.45:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.26.48:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.30.119:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.29.192:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.23.237:1235
+INFO:tensorflow:RPC error, something failed: 
+INFO:tensorflow:Trying reconnecting to 172.31.18.119:1235
+INFO:tensorflow:Connected!
+INFO:tensorflow:2 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:3 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:4 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:5 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:6 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:7 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:8 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:9 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:10 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:11 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:12 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:13 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:14 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:15 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:16 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:17 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:18 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:19 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:20 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:21 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:22 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:23 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:24 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:25 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:26 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:27 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:28 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:29 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:30 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:31 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:32 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:33 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:34 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:35 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:36 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:37 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:38 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:39 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:40 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:41 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:42 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:43 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:44 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:45 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:46 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:47 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:48 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:49 of 50
+INFO:tensorflow:Connected!
+INFO:tensorflow:Ready!
+INFO:tensorflow:Signaling ready to self's server
+INFO:tensorflow:Server ready to start!
+INFO:tensorflow:Worker 25 is ready to begin...
+INFO:tensorflow:Worker 20 is ready to begin...
+INFO:tensorflow:Worker 0 is ready to begin...
+INFO:tensorflow:Worker 28 is ready to begin...
+INFO:tensorflow:Worker 19 is ready to begin...
+INFO:tensorflow:Worker 23 is ready to begin...
+INFO:tensorflow:Worker 17 is ready to begin...
+INFO:tensorflow:Worker 15 is ready to begin...
+INFO:tensorflow:Worker 18 is ready to begin...
+INFO:tensorflow:Worker 31 is ready to begin...
+INFO:tensorflow:Worker 22 is ready to begin...
+INFO:tensorflow:Worker 24 is ready to begin...
+INFO:tensorflow:Worker 32 is ready to begin...
+INFO:tensorflow:Worker 26 is ready to begin...
+INFO:tensorflow:Worker 21 is ready to begin...
+INFO:tensorflow:Worker 27 is ready to begin...
+INFO:tensorflow:Worker 29 is ready to begin...
+INFO:tensorflow:Worker 33 is ready to begin...
+INFO:tensorflow:Worker 30 is ready to begin...
+INFO:tensorflow:Worker 34 is ready to begin...
+INFO:tensorflow:Worker 38 is ready to begin...
+INFO:tensorflow:Worker 41 is ready to begin...
+INFO:tensorflow:Worker 39 is ready to begin...
+INFO:tensorflow:Worker 40 is ready to begin...
+INFO:tensorflow:Worker 35 is ready to begin...
+INFO:tensorflow:Worker 37 is ready to begin...
+INFO:tensorflow:Worker 43 is ready to begin...
+INFO:tensorflow:Worker 47 is ready to begin...
+INFO:tensorflow:Worker 44 is ready to begin...
+INFO:tensorflow:Worker 46 is ready to begin...
+INFO:tensorflow:Worker 42 is ready to begin...
+INFO:tensorflow:Worker 48 is ready to begin...
+INFO:tensorflow:Worker 4 is ready to begin...
+INFO:tensorflow:Worker 3 is ready to begin...
+INFO:tensorflow:Worker 45 is ready to begin...
+INFO:tensorflow:Worker 8 is ready to begin...
+INFO:tensorflow:Worker 49 is ready to begin...
+INFO:tensorflow:Worker 6 is ready to begin...
+INFO:tensorflow:Worker 2 is ready to begin...
+INFO:tensorflow:Worker 7 is ready to begin...
+INFO:tensorflow:Worker 12 is ready to begin...
+INFO:tensorflow:Worker 5 is ready to begin...
+INFO:tensorflow:Worker 10 is ready to begin...
+INFO:tensorflow:Worker 13 is ready to begin...
+INFO:tensorflow:Worker 11 is ready to begin...
+INFO:tensorflow:Worker 14 is ready to begin...
+INFO:tensorflow:Worker 1 is ready to begin...
+INFO:tensorflow:Worker 16 is ready to begin...
+INFO:tensorflow:Worker 36 is ready to begin...
+INFO:tensorflow:Worker 9 is ready to begin...
+INFO:tensorflow:Worker 24 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 22 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 47 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 25 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 16 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 29 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 13 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 49 dequeued token on iteration 0 - 1483416450
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 41 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 0 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 4 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 35 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 46 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 12 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 18 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 23 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 27 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 48 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 1 dequeued token on iteration 0 - 1483416450
+INFO:tensorflow:Worker 15 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 2 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 20 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 39 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 43 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 17 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 21 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 26 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 45 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 44 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 40 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 33 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 34 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 7 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 8 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 38 dequeued token on iteration 0 - 1483416451
+INFO:tensorflow:Worker 32 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 28 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 10 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 36 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 42 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 9 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 19 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 11 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 3 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 31 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 14 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 6 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 5 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 37 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 30 dequeued token on iteration 0 - 1483416452
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 0: 2017-01-03 04:07:37.762586: step 0, loss = 7.818113(147.6 examples/sec; 6.940  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 0 - 1483416457
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 0 - 1483416458
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 0 - 1483416459
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 0 - 1483416459
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 0 - 1483416459
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 0 - 1483416459
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 0 - 1483416459
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 0 - 1483416460
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 0 - 1483416461
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 0 - 1483416462
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 0 - 1483416462
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 0 - 1483416492
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 0 - 1483416492
+INFO:tensorflow:Worker 0 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 1 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 7 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 4 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 9 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 10 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 2 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 16 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 5 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 26 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 12 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 6 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 20 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 23 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 8 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 19 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 18 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 11 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 17 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 24 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 21 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 15 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 13 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 3 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 22 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 35 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 37 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 31 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 38 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 29 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 39 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 30 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 43 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 28 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 33 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 40 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 36 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 32 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 34 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 42 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 44 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 49 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 47 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 45 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 48 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 41 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 46 dequeued token on iteration 1 - 1483416492
+INFO:tensorflow:Worker 27 dequeued token on iteration 1 - 1483416493
+INFO:tensorflow:Worker 14 dequeued token on iteration 1 - 1483416493
+INFO:tensorflow:Worker 25 dequeued token on iteration 1 - 1483416493
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 0: 2017-01-03 04:08:19.498241: step 1, loss = 6.570301(156.8 examples/sec; 6.529  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 1 - 1483416499
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 1 - 1483416499
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 1 - 1483416499
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 1 - 1483416499
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 1 - 1483416499
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 1 - 1483416500
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 1 - 1483416500
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 1 - 1483416500
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 1 - 1483416500
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 1 - 1483416501
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:global_step/sec: 0.00833311
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 1 - 1483416502
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 1 - 1483416529
+INFO:tensorflow:Worker 0 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 1 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 4 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 2 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 16 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 5 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 8 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 10 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 7 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 9 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 13 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 3 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 11 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 6 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 17 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 15 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 12 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 19 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 18 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 14 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 35 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 33 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 24 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 36 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 40 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 39 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 32 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 22 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 44 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 21 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 42 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 37 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 48 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 38 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 26 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 27 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 43 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 41 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 47 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 49 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 45 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 34 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 31 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 30 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 46 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 20 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 28 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 23 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 29 dequeued token on iteration 2 - 1483416535
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 1 - 1483416535
+INFO:tensorflow:Worker 25 dequeued token on iteration 2 - 1483416535
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 2 - 1483416541
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 2 - 1483416541
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 2 - 1483416542
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 2 - 1483416542
+INFO:tensorflow:Worker 0: 2017-01-03 04:09:02.224408: step 2, loss = 5.968125(148.4 examples/sec; 6.899  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 2 - 1483416543
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 2 - 1483416544
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 2 - 1483416565
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 2 - 1483416565
+INFO:tensorflow:Worker 0 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 1 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 4 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 2 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 7 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 11 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 12 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 9 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 5 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 16 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 10 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 13 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 17 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 3 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 21 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 6 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 8 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 19 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 20 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 15 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 22 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 23 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 18 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 26 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 35 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 27 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 36 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 24 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 28 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 31 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 33 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 30 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 39 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 32 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 40 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 29 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 44 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 41 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 34 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 42 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 47 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 43 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 38 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 37 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 48 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 45 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 46 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 49 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 14 dequeued token on iteration 3 - 1483416565
+INFO:tensorflow:Worker 25 dequeued token on iteration 3 - 1483416565
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 3 - 1483416572
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 3 - 1483416572
+INFO:tensorflow:Worker 0: 2017-01-03 04:09:32.558156: step 3, loss = 5.209408(152.5 examples/sec; 6.717  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 3 - 1483416572
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 3 - 1483416572
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 3 - 1483416573
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 3 - 1483416573
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 3 - 1483416573
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 3 - 1483416573
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 3 - 1483416573
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 3 - 1483416574
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 3 - 1483416575
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 3 - 1483416593
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 3 - 1483416596
+INFO:tensorflow:Worker 0 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 9 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 8 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 4 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 1 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 2 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 7 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 11 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 10 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 5 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 19 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 12 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 16 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 13 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 18 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 22 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 3 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 17 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 23 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 21 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 15 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 20 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 6 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 30 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 32 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 24 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 35 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 26 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 27 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 29 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 28 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 34 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 38 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 36 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 33 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 31 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 42 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 37 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 39 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 40 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 44 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 41 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 45 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 43 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 46 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 47 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 49 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 48 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 14 dequeued token on iteration 4 - 1483416596
+INFO:tensorflow:Worker 25 dequeued token on iteration 4 - 1483416596
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 4 - 1483416602
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 4 - 1483416603
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 4 - 1483416603
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 4 - 1483416603
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 4 - 1483416603
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 0: 2017-01-03 04:10:04.343837: step 4, loss = 4.444201(125.6 examples/sec; 8.154  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 4 - 1483416604
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 4 - 1483416605
+INFO:tensorflow:global_step/sec: 0.0250007
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 4 - 1483416624
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 4 - 1483416626
+INFO:tensorflow:Worker 0 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 1 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 7 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 4 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 9 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 6 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 2 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 12 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 11 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 13 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 5 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 10 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 15 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 8 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 3 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 16 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 35 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 34 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 24 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 33 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 49 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 32 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 21 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 30 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 39 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 43 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 38 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 47 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 18 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 37 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 17 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 42 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 44 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 48 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 36 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 22 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 26 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 19 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 20 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 29 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 27 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 31 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 45 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 40 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 23 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 28 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 46 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 41 dequeued token on iteration 5 - 1483416626
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 14 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 25 dequeued token on iteration 5 - 1483416626
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 5 - 1483416633
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 5 - 1483416633
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 5 - 1483416633
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 5 - 1483416634
+INFO:tensorflow:Worker 0: 2017-01-03 04:10:34.598046: step 5, loss = 3.448893(132.7 examples/sec; 7.717  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 5 - 1483416634
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 5 - 1483416634
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 5 - 1483416634
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 5 - 1483416634
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 5 - 1483416635
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 5 - 1483416636
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 5 - 1483416654
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 5 - 1483416657
+INFO:tensorflow:Worker 0 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 4 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 9 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 1 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 3 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 7 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 2 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 13 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 11 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 5 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 12 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 10 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 6 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 16 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 15 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 20 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 19 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 17 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 8 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 26 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 23 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 21 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 22 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 24 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 18 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 30 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 35 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 38 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 34 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 37 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 36 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 31 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 29 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 32 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 39 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 44 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 28 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 45 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 42 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 43 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 14 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 48 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 33 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 41 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 46 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 40 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 49 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 47 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 27 dequeued token on iteration 6 - 1483416657
+INFO:tensorflow:Worker 25 dequeued token on iteration 6 - 1483416657
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 6 - 1483416663
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 6 - 1483416663
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 6 - 1483416664
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 6 - 1483416664
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 6 - 1483416664
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 0: 2017-01-03 04:11:05.485859: step 6, loss = 2.526279(124.7 examples/sec; 8.215  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 6 - 1483416665
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 6 - 1483416666
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 6 - 1483416667
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 6 - 1483416667
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 6 - 1483416667
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 6 - 1483416685
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 6 - 1483416687
+INFO:tensorflow:Worker 0 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 1 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 35 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 6 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 12 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 4 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 45 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 37 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 2 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 23 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 7 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 5 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 16 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 32 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 8 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 11 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 19 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 20 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 14 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 17 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 44 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 48 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 9 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 49 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 10 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 39 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 42 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 31 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 40 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 29 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 26 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 13 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 30 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 47 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 24 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 36 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 28 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 3 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 15 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 43 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 34 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 46 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 38 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 18 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 27 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 21 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 33 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 41 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 22 dequeued token on iteration 7 - 1483416687
+INFO:tensorflow:Worker 25 dequeued token on iteration 7 - 1483416687
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 7 - 1483416693
+INFO:tensorflow:Worker 0: 2017-01-03 04:11:33.940621: step 7, loss = 2.224025(161.3 examples/sec; 6.347  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 7 - 1483416694
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 7 - 1483416694
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 7 - 1483416694
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 7 - 1483416694
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 7 - 1483416694
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 7 - 1483416695
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 7 - 1483416696
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 7 - 1483416697
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 7 - 1483416715
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 7 - 1483416718
+INFO:tensorflow:Worker 0 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 4 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 1 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 9 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 3 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 7 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 2 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 12 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 11 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 5 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 10 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 8 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 6 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 35 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 43 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 29 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 22 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 38 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 44 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 16 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 42 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 28 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 46 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 23 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 30 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 39 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 33 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 32 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 21 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 24 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 18 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 48 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 49 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 36 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 13 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 15 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 19 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 17 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 31 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 41 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 34 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 45 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 37 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 47 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 27 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 40 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 26 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 25 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 20 dequeued token on iteration 8 - 1483416718
+INFO:tensorflow:Worker 14 dequeued token on iteration 8 - 1483416718
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 8 - 1483416724
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 8 - 1483416724
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 8 - 1483416724
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 8 - 1483416725
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 8 - 1483416725
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 8 - 1483416725
+INFO:tensorflow:Worker 0: 2017-01-03 04:12:05.745368: step 8, loss = 1.842273(132.9 examples/sec; 7.704  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 8 - 1483416726
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 8 - 1483416727
+INFO:tensorflow:global_step/sec: 0.0333333
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 8 - 1483416745
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 8 - 1483416748
+INFO:tensorflow:Worker 0 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 1 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 2 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 35 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 11 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 36 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 4 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 15 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 7 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 25 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 9 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 12 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 45 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 17 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 47 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 16 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 3 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 5 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 10 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 22 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 8 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 13 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 48 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 44 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 37 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 34 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 49 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 6 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 41 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 19 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 40 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 31 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 18 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 27 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 21 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 26 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 20 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 28 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 46 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 42 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 23 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 29 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 38 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 32 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 24 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 43 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 33 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 30 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 39 dequeued token on iteration 9 - 1483416748
+INFO:tensorflow:Worker 14 dequeued token on iteration 9 - 1483416748
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 9 - 1483416754
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 0: 2017-01-03 04:12:35.395783: step 9, loss = 1.495825(146.6 examples/sec; 6.985  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 9 - 1483416755
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 9 - 1483416756
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 9 - 1483416757
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 9 - 1483416758
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 9 - 1483416776
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 9 - 1483416778
+INFO:tensorflow:Worker 0 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 7 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 4 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 6 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 1 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 2 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 5 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 9 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 8 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 3 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 22 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 36 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 12 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 35 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 13 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 47 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 24 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 42 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 16 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 48 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 21 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 34 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 31 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 43 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 19 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 38 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 11 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 44 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 41 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 20 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 18 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 27 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 10 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 49 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 15 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 28 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 37 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 17 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 32 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 39 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 45 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 40 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 30 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 33 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 26 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 46 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 29 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 23 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 25 dequeued token on iteration 10 - 1483416778
+INFO:tensorflow:Worker 14 dequeued token on iteration 10 - 1483416778
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 10 - 1483416785
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 10 - 1483416785
+INFO:tensorflow:Worker 0: 2017-01-03 04:13:05.476335: step 10, loss = 1.326728(156.5 examples/sec; 6.543  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 10 - 1483416785
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 10 - 1483416785
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 10 - 1483416786
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 10 - 1483416786
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 10 - 1483416786
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 10 - 1483416787
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 10 - 1483416788
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 10 - 1483416806
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 10 - 1483416809
+INFO:tensorflow:Worker 0 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 4 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 6 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 7 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 1 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 2 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 5 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 3 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 9 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 13 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 8 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 12 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 11 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 18 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 10 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 16 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 17 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 23 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 20 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 15 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 21 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 19 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 27 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 24 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 30 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 26 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 28 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 29 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 33 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 32 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 31 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 34 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 22 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 25 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 35 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 40 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 39 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 38 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 36 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 41 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 42 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 49 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 37 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 44 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 48 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 46 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 47 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 45 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 43 dequeued token on iteration 11 - 1483416809
+INFO:tensorflow:Worker 14 dequeued token on iteration 11 - 1483416809
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 11 - 1483416815
+INFO:tensorflow:Worker 0: 2017-01-03 04:13:35.642692: step 11, loss = 1.406511(159.9 examples/sec; 6.405  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 11 - 1483416815
+INFO:tensorflow:ELAPSED TIMES [(6.307383060455322, 2), (6.3338470458984375, 0)]
+INFO:tensorflow:ITERATION TIMES []
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 11 - 1483416815
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 11 - 1483416815
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 11 - 1483416816
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 11 - 1483416816
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 11 - 1483416816
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 11 - 1483416816
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 11 - 1483416816
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 11 - 1483416817
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 11 - 1483416818
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 11 - 1483416837
+INFO:tensorflow:Worker 0 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 1 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 16 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 4 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 9 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 2 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 5 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 6 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 7 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 26 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 11 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 15 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 8 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 24 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 10 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 17 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 12 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 3 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 29 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 13 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 22 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 20 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 21 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 19 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 23 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 28 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 18 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 27 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 35 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 33 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 38 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 30 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 31 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 34 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 40 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 48 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 49 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 36 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 44 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 42 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 41 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 37 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 47 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 39 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 46 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 43 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 45 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 32 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 25 dequeued token on iteration 12 - 1483416862
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 11 - 1483416862
+INFO:tensorflow:Worker 14 dequeued token on iteration 12 - 1483416862
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:global_step/sec: 0.0316947
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 12 - 1483416868
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 12 - 1483416868
+INFO:tensorflow:ELAPSED TIMES [(6.0823259353637695, 13), (6.207880973815918, 0), (6.307383060455322, 2), (6.3338470458984375, 0), (6.477658987045288, 1), (6.592010021209717, 10), (6.774608850479126, 9), (6.830545902252197, 47), (7.36074686050415, 4), (7.450834035873413, 35), (7.532772064208984, 28), (7.764530897140503, 21), (8.102066993713379, 41), (8.104764938354492, 16), (8.195348978042603, 43), (8.28619384765625, 33), (8.321085929870605, 6), (8.339061975479126, 48), (8.425472021102905, 5), (8.439867973327637, 27), (8.489667892456055, 39), (8.518265962600708, 36), (8.54613184928894, 22), (8.550232887268066, 7), (8.585747957229614, 32), (8.598026990890503, 11), (8.626834869384766, 17), (8.632875919342041, 40), (8.655184984207153, 19), (8.695260047912598, 44), (8.72104787826538, 30), (8.742393970489502, 26), (8.759896993637085, 34), (8.785379886627197, 3), (8.816751956939697, 12), (8.83208703994751, 13), (8.85366702079773, 42), (8.85824704170227, 49), (8.883075952529907, 45), (8.905340909957886, 38), (8.92523193359375, 8), (8.94776201248169, 31), (8.969621896743774, 20), (8.97500205039978, 29), (9.02527403831482, 24), (9.045934915542603, 18), (9.049685001373291, 23), (9.102027893066406, 46), (9.10311484336853, 15), (9.12758994102478, 37), (27.936648845672607, 25), (53.012956857681274, 14)]
+INFO:tensorflow:ITERATION TIMES [52.916537046432495]
+INFO:tensorflow:Worker 0: 2017-01-03 04:14:28.613776: step 12, loss = 1.386355(158.6 examples/sec; 6.455  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 12 - 1483416868
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 12 - 1483416868
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 12 - 1483416869
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 12 - 1483416869
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 12 - 1483416869
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 12 - 1483416869
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 12 - 1483416870
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 12 - 1483416871
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 12 - 1483416912
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 12 - 1483416931
+INFO:tensorflow:Worker 0 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 4 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 5 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 2 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 1 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 3 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 16 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 8 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 9 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 19 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 23 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 11 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 17 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 6 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 34 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 12 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 48 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 7 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 26 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 10 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 42 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 36 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 28 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 15 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 35 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 37 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 13 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 20 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 45 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 40 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 18 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 47 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 44 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 49 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 21 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 31 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 32 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 27 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 33 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 41 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 38 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 39 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 46 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 43 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 30 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 22 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 24 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 29 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 14 dequeued token on iteration 13 - 1483416931
+INFO:tensorflow:Worker 25 dequeued token on iteration 13 - 1483416931
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 13 - 1483416937
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 13 - 1483416937
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 13 - 1483416937
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 13 - 1483416937
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 13 - 1483416937
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:Worker 0: 2017-01-03 04:15:38.633832: step 13, loss = 1.235368(135.2 examples/sec; 7.575  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:ELAPSED TIMES [(6.0823259353637695, 13), (6.207880973815918, 0), (6.307383060455322, 2), (6.3338470458984375, 0), (6.355378150939941, 5), (6.401387929916382, 1), (6.4355628490448, 37), (6.459729194641113, 4), (6.477658987045288, 1), (6.592010021209717, 10), (6.639587163925171, 1), (6.668745994567871, 40), (6.715501070022583, 13), (6.774608850479126, 9), (6.830545902252197, 47), (6.8688719272613525, 2), (7.078211784362793, 9), (7.325014114379883, 35), (7.36074686050415, 4), (7.363313913345337, 7), (7.450834035873413, 35), (7.456824064254761, 0), (7.506626844406128, 5), (7.532772064208984, 28), (7.634602785110474, 16), (7.764147996902466, 42), (7.764530897140503, 21), (7.935932874679565, 10), (7.962875843048096, 48), (8.02267599105835, 18), (8.059839010238647, 49), (8.08873200416565, 27), (8.102066993713379, 41), (8.104764938354492, 16), (8.117687940597534, 11), (8.195348978042603, 43), (8.203983783721924, 40), (8.254119873046875, 43), (8.255515813827515, 47), (8.28619384765625, 33), (8.28748083114624, 31), (8.321085929870605, 6), (8.32496190071106, 12), (8.339061975479126, 48), (8.397717952728271, 6), (8.425472021102905, 5), (8.431879997253418, 4), (8.439867973327637, 27), (8.487758874893188, 3), (8.489667892456055, 39), (8.515240907669067, 17), (8.518265962600708, 36), (8.53883695602417, 39), (8.54613184928894, 22), (8.550232887268066, 7), (8.557973861694336, 41), (8.560601949691772, 32), (8.585747957229614, 32), (8.598026990890503, 11), (8.611624002456665, 35), (8.626834869384766, 17), (8.632875919342041, 40), (8.64114785194397, 20), (8.655184984207153, 19), (8.664757013320923, 30), (8.695260047912598, 44), (8.704023838043213, 34), (8.706055879592896, 26), (8.706738948822021, 46), (8.72104787826538, 30), (8.723837852478027, 23), (8.742393970489502, 26), (8.744843006134033, 36), (8.759896993637085, 34), (8.785379886627197, 3), (8.799818992614746, 44), (8.816751956939697, 12), (8.830103874206543, 38), (8.83208703994751, 13), (8.844765901565552, 45), (8.85366702079773, 42), (8.855450868606567, 8), (8.85824704170227, 49), (8.871704816818237, 28), (8.876827955245972, 24), (8.883075952529907, 45), (8.896407842636108, 19), (8.905340909957886, 38), (8.910039901733398, 29), (8.92523193359375, 8), (8.94698691368103, 15), (8.94776201248169, 31), (8.947927951812744, 22), (8.964480876922607, 21), (8.969621896743774, 20), (8.970448970794678, 33), (8.97500205039978, 29), (9.02527403831482, 24), (9.045934915542603, 18), (9.049685001373291, 23), (9.102027893066406, 46), (9.10311484336853, 15), (9.12758994102478, 37), (27.936648845672607, 25), (50.14136290550232, 25), (53.012956857681274, 14), (68.64680695533752, 14)]
+INFO:tensorflow:ITERATION TIMES [52.916537046432495, 68.90796303749084]
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 13 - 1483416938
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 13 - 1483416939
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 13 - 1483416940
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 13 - 1483416981
+INFO:tensorflow:global_step/sec: 0.00878766
+INFO:tensorflow:Worker 0 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 2 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 1 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 4 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 12 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 7 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 9 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 6 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 11 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 3 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 10 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 5 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 8 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 15 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 13 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 16 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 35 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 36 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 30 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 18 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 19 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 40 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 37 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 42 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 22 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 44 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 47 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 43 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 49 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 48 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 33 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 39 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 29 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 26 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 41 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 46 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 17 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 28 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 34 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 20 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 21 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 23 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 38 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 45 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 27 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 32 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 24 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 31 dequeued token on iteration 14 - 1483416999
+I tensorflow/core/kernels/logging_ops.cc:79] Accum sizes[0][0][0][0][0][0][0][0][0]
+INFO:tensorflow:Worker 14 finished computing gradients on iteration 13 - 1483416999
+INFO:tensorflow:Worker 25 dequeued token on iteration 14 - 1483416999
+INFO:tensorflow:Worker 14 dequeued token on iteration 14 - 1483417000
+INFO:tensorflow:Worker 0 finished computing gradients on iteration 14 - 1483417006
+INFO:tensorflow:ELAPSED TIMES [(6.059599876403809, 0), (6.0823259353637695, 13), (6.207880973815918, 0), (6.307383060455322, 2), (6.3338470458984375, 0), (6.355378150939941, 5), (6.401387929916382, 1), (6.4355628490448, 37), (6.459729194641113, 4), (6.477658987045288, 1), (6.592010021209717, 10), (6.639587163925171, 1), (6.668745994567871, 40), (6.715501070022583, 13), (6.774608850479126, 9), (6.830545902252197, 47), (6.8688719272613525, 2), (7.078211784362793, 9), (7.325014114379883, 35), (7.36074686050415, 4), (7.363313913345337, 7), (7.450834035873413, 35), (7.456824064254761, 0), (7.49907112121582, 2), (7.506626844406128, 5), (7.532772064208984, 28), (7.634602785110474, 16), (7.724896192550659, 42), (7.764147996902466, 42), (7.764530897140503, 21), (7.787180185317993, 37), (7.804262161254883, 10), (7.935932874679565, 10), (7.962875843048096, 48), (8.01248812675476, 44), (8.02267599105835, 18), (8.059839010238647, 49), (8.08873200416565, 27), (8.09459400177002, 27), (8.102066993713379, 41), (8.104764938354492, 16), (8.117687940597534, 11), (8.195348978042603, 43), (8.203983783721924, 40), (8.230043172836304, 23), (8.254119873046875, 43), (8.255515813827515, 47), (8.28619384765625, 33), (8.28748083114624, 31), (8.307401180267334, 18), (8.321085929870605, 6), (8.32496190071106, 12), (8.331258058547974, 39), (8.339061975479126, 48), (8.359299182891846, 8), (8.397717952728271, 6), (8.425472021102905, 5), (8.431879997253418, 4), (8.439867973327637, 27), (8.459295988082886, 26), (8.487758874893188, 3), (8.489667892456055, 39), (8.515240907669067, 17), (8.518265962600708, 36), (8.53024697303772, 31), (8.53883695602417, 39), (8.54613184928894, 22), (8.548366069793701, 16), (8.550232887268066, 7), (8.557973861694336, 41), (8.560601949691772, 32), (8.565723180770874, 41), (8.585747957229614, 32), (8.598026990890503, 11), (8.611624002456665, 35), (8.626834869384766, 17), (8.632538080215454, 33), (8.632875919342041, 40), (8.635013103485107, 7), (8.64114785194397, 20), (8.651278018951416, 15), (8.655184984207153, 19), (8.664757013320923, 30), (8.695260047912598, 44), (8.699542045593262, 24), (8.700447082519531, 34), (8.704023838043213, 34), (8.706055879592896, 26), (8.706738948822021, 46), (8.72104787826538, 30), (8.723837852478027, 23), (8.734533071517944, 20), (8.739498138427734, 11), (8.742393970489502, 26), (8.744843006134033, 36), (8.759896993637085, 34), (8.760042190551758, 36), (8.772614002227783, 19), (8.785379886627197, 3), (8.789654016494751, 21), (8.799818992614746, 44), (8.816751956939697, 12), (8.819624185562134, 3), (8.830103874206543, 38), (8.83208703994751, 13), (8.840874195098877, 45), (8.844765901565552, 45), (8.85366702079773, 42), (8.855450868606567, 8), (8.85824704170227, 49), (8.871704816818237, 28), (8.876827955245972, 24), (8.879743099212646, 29), (8.880048990249634, 22), (8.883075952529907, 45), (8.896407842636108, 19), (8.89683198928833, 28), (8.905340909957886, 38), (8.909350156784058, 48), (8.910039901733398, 29), (8.92523193359375, 8), (8.92723298072815, 9), (8.94698691368103, 15), (8.94776201248169, 31), (8.947927951812744, 22), (8.964480876922607, 21), (8.969621896743774, 20), (8.970448970794678, 33), (8.97500205039978, 29), (8.99266505241394, 47), (8.994362115859985, 32), (9.011198043823242, 49), (9.02527403831482, 24), (9.045934915542603, 18), (9.049685001373291, 23), (9.050714015960693, 30), (9.051717042922974, 17), (9.064632177352905, 12), (9.102027893066406, 46), (9.102778196334839, 6), (9.10311484336853, 15), (9.103814125061035, 38), (9.11661696434021, 46), (9.12758994102478, 37), (9.13595700263977, 43), (27.936648845672607, 25), (50.14136290550232, 25), (50.222424030303955, 25), (53.012956857681274, 14), (68.64680695533752, 14), (68.79611706733704, 14)]
+INFO:tensorflow:ITERATION TIMES [52.916537046432495, 68.90796303749084, 68.76032400131226]
+INFO:tensorflow:Worker 0: 2017-01-03 04:16:46.177679: step 14, loss = 1.105567(161.0 examples/sec; 6.360  sec/batch)
+INFO:tensorflow:A new iteration...
+INFO:tensorflow:YAYAYAY WOOHOO
+INFO:tensorflow:Worker 47 finished computing gradients on iteration 14 - 1483417006
+INFO:tensorflow:Worker 40 finished computing gradients on iteration 14 - 1483417006
+INFO:tensorflow:Worker 49 finished computing gradients on iteration 14 - 1483417006
+INFO:tensorflow:Worker 36 finished computing gradients on iteration 14 - 1483417006
+INFO:tensorflow:Worker 44 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 37 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 4 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 5 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 48 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 43 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 1 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 42 finished computing gradients on iteration 14 - 1483417007
+INFO:tensorflow:Worker 15 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 2 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 35 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 9 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 34 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 12 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 28 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 46 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 16 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 26 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 30 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 11 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 19 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 41 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 24 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 39 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 32 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 23 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 29 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 3 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 22 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 31 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 27 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 33 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 13 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 8 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 38 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 21 finished computing gradients on iteration 14 - 1483417008
+INFO:tensorflow:Worker 10 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 7 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 17 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 18 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 45 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 20 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 6 finished computing gradients on iteration 14 - 1483417009
+INFO:tensorflow:Worker 25 finished computing gradients on iteration 14 - 1483417050
+INFO:tensorflow:Error reported to Coordinator: <class 'tensorflow.python.framework.errors_impl.UnavailableError'>, {"created":"@1483417059.306855304","description":"EOF","file":"external/grpc/src/core/lib/iomgr/tcp_posix.c","file_line":235,"grpc_status":14}
+Unexpected error: <class 'tensorflow.python.framework.errors_impl.UnavailableError'>
+Traceback (most recent call last):
+  File "src/mnist_distributed_train.py", line 49, in <module>
+    tf.app.run()
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/platform/app.py", line 43, in run
+    sys.exit(main(sys.argv[:1] + flags_passthrough))
+  File "src/mnist_distributed_train.py", line 45, in main
+    distributed_train.train(server.target, dataset.train, cluster_spec)
+  File "/home/ubuntu/DistributedMNIST/src/distributed_train.py", line 268, in train
+    sess.run([opt._wait_op])
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 766, in run
+    run_metadata_ptr)
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 964, in _run
+    feed_dict_string, options, run_metadata)
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 1014, in _do_run
+    target_list, options, run_metadata)
+  File "/usr/local/lib/python2.7/dist-packages/tensorflow/python/client/session.py", line 1034, in _do_call
+    raise type(e)(node_def, op, message)
+tensorflow.python.framework.errors_impl.UnavailableError: {"created":"@1483417059.306855304","description":"EOF","file":"external/grpc/src/core/lib/iomgr/tcp_posix.c","file_line":235,"grpc_status":14}
