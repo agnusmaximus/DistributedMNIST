@@ -21,7 +21,7 @@ def shutdown_and_launch(cfg):
     launch_args = "tools/tf_ec2.py launch"
     tf_ec2_run(launch_args.split(), cfg)
 
-def check_if_reached_iters(n_iters, cfg, master_file_name="out_master", outdir="/tmp/"):
+def check_if_reached_iters(cluster_string, n_iters, cfg, master_file_name="out_master", outdir="/tmp/"):
     download_evaluator_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, master_file_name, outdir)
     fname = tf_ec2_run(download_evaluator_file_args.split(), cfg)
     f = open(fname, "r")
@@ -44,8 +44,8 @@ def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator",
     cluster_string = cluster_specs["cluster_string"]
 
     #time.sleep(run_time_sec)
-    while not check_if_reached_iters(n_iters, cfg):
-        sleep(8 * 60)
+    while not check_if_reached_iters(cluster_string, n_iters, cfg):
+        time.sleep(8 * 60)
 
     tf_ec2_run(kill_args.split(), cfg)
 
@@ -242,7 +242,7 @@ def plot_time_cdfs(outdir):
     plt.legend(loc="upper right", fontsize=6)
     plt.savefig("histogram.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=500, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=500, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:

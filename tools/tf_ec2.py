@@ -255,10 +255,16 @@ def tf_ec2_run(argv, configuration):
             done = True
             live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
             ids = [x.id for x in live_instances]
-            resps = client.describe_instance_status(InstanceIds=ids)
-            for resp in resps["InstanceStatuses"]:
-                if resp["InstanceStatus"]["Status"] != "ok":
-                    done = False
+            resps_list = [client.describe_instance_status(InstanceIds=ids[i:i+50]) for i in range(0, len(ids), 50)]
+            statuses = []
+            for resp in resps_list:
+               statuses += [x["InstanceStatus"]["Status"] for x in resp["InstanceStatuses"]]
+            #resps = client.describe_instance_status(InstanceIds=ids)
+            #for resp in resps["InstanceStatuses"]:
+            #    if resp["InstanceStatus"]["Status"] != "ok":
+            #        done = False
+            print(statuses)
+            done = statuses.count("ok") == len(statuses)
             if len(ids) <= 0:
                 done = False
             sleep_a_bit()
@@ -627,6 +633,8 @@ def tf_ec2_run(argv, configuration):
        scp.get("%s" % name, local_path=local_path)
        scp.close()
        client.close()
+
+       return local_path
 
     def download_outdir(argv):
         if len(argv) != 4:
