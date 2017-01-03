@@ -96,6 +96,7 @@ class TimeoutClient:
       self.servers_ready.add(wid)
 
   def check_ready_to_start(self):
+    print("Checking ready to start: %d" % len(self.perspectives))
     for persp in self.perspectives:
       persp.callRemote("is_ready_to_start").addCallbacks(self.server_ready_to_start, self.fail)
 

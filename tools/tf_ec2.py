@@ -29,7 +29,7 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 4,
+    "n_workers" : 99,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "5",
@@ -39,10 +39,10 @@ cfg = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m3.large",
-    "worker_type" : "m3.large",
-    "ps_type" : "m3.large",
-    "evaluator_type" : "m3.large",
+    "master_type" : "t2.small",
+    "worker_type" : "t2.small",
+    "ps_type" : "t2.small",
+    "evaluator_type" : "t2.small",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
