@@ -207,9 +207,9 @@ def plot_time_step(outdir):
 def plot_time_cdfs(outdir):
     plt.cla()
     plt.xlabel("Time (s)")
-    #plt.ylabel("P(X <= x)")
-    plt.ylabel("Count")
-    files = glob.glob(outdir + "/*t2*small*master*")
+    plt.ylabel("P(X <= x)")
+    #plt.ylabel("Count")
+    files = glob.glob(outdir + "/*master*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files) * 2))
     for i, fname in enumerate(files):
@@ -217,32 +217,33 @@ def plot_time_cdfs(outdir):
         compute_times = extract_compute_times(fname)
         compute_times.sort()
 
-        plt.hist(compute_times, 50, alpha=.75)
+        #plt.hist(compute_times, 50, alpha=.75)
 
         times = []
         probabs = []
         for compute_time in compute_times:
             times.append(compute_time)
             probabs.append(sum([1 if compute_time >= t else 0 for t in compute_times]) / float(len(compute_times)))
-        #plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
+        plt.plot(times, probabs, linestyle='solid', label=label, color=colors[i])
 
         # Also plot the iteration times on top of the cdfs
-        times = []
-        probabs = []
+        #times = []
+        #probabs = []
         #iteration_times = extract_iteration_times(fname)
-        iteration_times = extract_compute_times_no_master(fname)
-        iteration_times.sort()
-        for iteration_time in iteration_times:
-            times.append(iteration_time)
-            probabs.append(sum([1 if iteration_time >= t else 0 for t in iteration_times]) / float(len(iteration_times)))
+        #iteration_times = extract_compute_times_no_master(fname)
+        #iteration_times.sort()
+        #for iteration_time in iteration_times:
+        #    times.append(iteration_time)
+        #    probabs.append(sum([1 if iteration_time >= t else 0 for t in iteration_times]) / float(len(iteration_times)))
         #plt.plot(times, probabs, linestyle='solid', label=label + "_no_worker_25_14", color=colors[i + len(files)])
 
         print_worker_sorted_times(fname)
 
     plt.legend(loc="upper right", fontsize=6)
-    plt.savefig("histogram.png")
+    #plt.savefig("histogram.png")
+    plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=500, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:

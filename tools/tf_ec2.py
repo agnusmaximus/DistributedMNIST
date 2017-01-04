@@ -29,7 +29,7 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 3,
+    "n_workers" : 1,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "5",
@@ -39,10 +39,10 @@ cfg = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m3.medium",
-    "worker_type" : "m3.medium",
-    "ps_type" : "m3.medium",
-    "evaluator_type" : "m3.medium",
+    "master_type" : "m3.large",
+    "worker_type" : "m3.large",
+    "ps_type" : "m3.large",
+    "evaluator_type" : "m3.large",
     "image_id" : "ami-fb69de9b",          # US west
 
     # Launch specifications
@@ -309,25 +309,30 @@ def tf_ec2_run(argv, configuration):
     # and executes command on instance, returning the stdout.
     # Executes everything in one session, and returns all output from all the commands.
     def run_ssh_commands(instance, commands):
-        print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, "\n".join(commands)))
+        done = False
+        while not done:
+           try:
+              print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, "\n".join(commands)))
 
-        # Always need to exit
-        commands.append("exit")
+              # Always need to exit
+              commands.append("exit")
 
-        # Set up ssh client
-        client = connect_client(instance)
+              # Set up ssh client
+              client = connect_client(instance)
 
-        # Clear the stdout from ssh'ing in
-        # For each command perform command and read stdout
-        commandstring = "\n".join(commands)
-        stdin, stdout, stderr = client.exec_command(commandstring)
-        output = stdout.read()
+              # Clear the stdout from ssh'ing in
+              # For each command perform command and read stdout
+              commandstring = "\n".join(commands)
+              stdin, stdout, stderr = client.exec_command(commandstring)
+              output = stdout.read()
 
-        # Close down
-        stdout.close()
-        stdin.close()
-        client.close()
-
+              # Close down
+              stdout.close()
+              stdin.close()
+              client.close()
+              done = True
+           except:
+              done = False
         return output
 
     def run_ssh_commands_parallel(instance, commands, q):
@@ -398,8 +403,9 @@ def tf_ec2_run(argv, configuration):
         # Check the requirements are satisfied.
         print("Checking whether # of running instances satisfies the configuration...")
         for k,v in instance_type_to_instance_map.items():
-            print("%s - %d running vs %d required" % (k,len(v),reqs[k]))
-            if len(v) < reqs[k]:
+            n_required = 0 if k not in reqs else reqs[k]
+            print("%s - %d running vs %d required" % (k,len(v),n_required))
+            if len(v) < n_required:
                 print("Error, running instances failed to satisfy configuration requirements")
                 sys.exit(0)
         print("Success, running instances satisfy configuration requirement")
