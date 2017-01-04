@@ -64,6 +64,10 @@ class TimeoutServer(pb.Root):
     return (self.worker_id, self.ready_to_start)
 
 class RetryTimeoutProtocol(Protocol, TimeoutMixin):
+
+    def __init__(self, factory):
+        self.factory = factory
+
     def connectionMade(self):
         self.setTimeout(30)
 
@@ -73,16 +77,18 @@ class RetryTimeoutProtocol(Protocol, TimeoutMixin):
     def timeoutConnection(self):
         tf.logging.info("Timed out... Retrying...")
         self.transport.abortConnection()
-        self.connect()
+        self.factory.connect()
 
 class TimeoutReconnectClientFactory(pb.PBClientFactory):
 
+    def retry_connect(self):
+        connector.connect()
+
     def buildProtocol(self, addr):
         tf.logging.info('Connection by %s' % str(addr))
-        return RetryTimeoutProtocol()
+        return RetryTimeoutProtocol(self)
 
     def startedConnecting(self, connector):
-        tf.logging.info("cONNECTOR: %s" % str(type(connector).__name__))
         tf.logging.info('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
