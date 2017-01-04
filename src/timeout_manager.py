@@ -188,7 +188,6 @@ def launch_manager(sess, tf_flags):
   Thread(target=reactor.run, args=(False,)).start()
 
   while not rpc_client.ready_to_start():
-    tf.logging.info("YAOYAOYO")
     rpc_client.check_ready_to_start()
     time.sleep(1)
 
