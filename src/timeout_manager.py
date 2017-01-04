@@ -82,6 +82,7 @@ class TimeoutReconnectClientFactory(pb.PBClientFactory):
         return RetryTimeoutProtocol()
 
     def startedConnecting(self, connector):
+        tf.logging.info("cONNECTOR: %s" % str(type(connector)))
         tf.logging.info('Started to connect.')
 
     def clientConnectionLost(self, connector, reason):
