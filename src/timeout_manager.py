@@ -9,6 +9,8 @@ from twisted.spread import pb
 from twisted.internet import reactor
 from threading import Thread, Timer
 from twisted.internet.protocol import Protocol, ReconnectingClientFactory
+from twisted.protocols.policies import TimeoutMixin
+from twisted.internet.protocol import Protocol
 
 ##################
 # RPC procedures #
@@ -61,7 +63,21 @@ class TimeoutServer(pb.Root):
   def remote_is_ready_to_start(self):
     return (self.worker_id, self.ready_to_start)
 
-class EchoClientFactory(pb.PBClientFactory):
+class RetryTimeoutProtocol(Protocol, TimeoutMixin):
+    def connectionMade(self):
+        self.setTimeout(60)
+
+    def dataReceived(self, data):
+        self.resetTimeout()
+
+    def timeoutConnection(self):
+        self.transport.abortConnection()
+
+class TimeoutReconnectClientFactory(pb.PBClientFactory):
+
+    def buildProtocol(self, addr):
+          print 'Connection by', addr
+          return RetryTimeoutProtocol()
 
     def startedConnecting(self, connector):
         tf.logging.info('Started to connect.')
@@ -71,7 +87,6 @@ class EchoClientFactory(pb.PBClientFactory):
 
     def clientConnectionFailed(self, connector, reason):
         tf.logging.info('Connection failed. Reason: %s' % str(reason))
-        #self.resetTimeout()
         connector.connect()
 
 class TimeoutClient():
@@ -89,7 +104,7 @@ class TimeoutClient():
 
     for i, host in enumerate(hosts):
       #factory = pb.PBClientFactory()
-      factory = EchoClientFactory()
+      factory = TimeoutReconnectClientFactory()
       tf.logging.info("Connecting to %s:%d" % (host, self.tf_flags.rpc_port))
       reactor.connectTCP(host, self.tf_flags.rpc_port, factory)
       if i == self.worker_id:
