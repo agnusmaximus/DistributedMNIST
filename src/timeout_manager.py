@@ -92,7 +92,7 @@ class TimeoutReconnectClientFactory(pb.PBClientFactory, ReconnectingClientFactor
 
     def clientConnectionFailed(self, connector, reason):
         tf.logging.info('Connection failed. Reason: %s' % str(reason))
-        ReconnectingClientFactory.clientConnectionFailed(self.connector, reason)
+        ReconnectingClientFactory.clientConnectionFailed(self, connector, reason)
         #connector.connect()
 
 class TimeoutClient():
