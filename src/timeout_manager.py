@@ -32,7 +32,7 @@ class TimeoutServer(pb.Root):
     self.compute_times = []
     self.iteration_start_times = {}
     self.ITERATION_START_TRACKING = 10
-    self.ITERATION_END_TRACKING = 100
+    self.ITERATION_END_TRACKING = 500
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     tf.logging.info("Worker %d dequeued token on iteration %d - %d" % (worker_id, iteration, time.time()))
@@ -51,10 +51,12 @@ class TimeoutServer(pb.Root):
 
     if iteration > self.ITERATION_START_TRACKING and worker_id == 0:
       elapsed_times = sorted([(x[1],x[0]) for x in self.compute_times if x[2] > self.ITERATION_START_TRACKING], key=lambda x: x[0])
-      tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
       selected_iteration_start_times = [x for i,x in self.iteration_start_times.items() if i > self.ITERATION_START_TRACKING]
       iteration_times = [selected_iteration_start_times[i+1] - selected_iteration_start_times[i] for i in range(len(selected_iteration_start_times)-1)]
-      tf.logging.info("ITERATION TIMES %s" % str(iteration_times))
+
+      if iteration % 50 == 0 or iteration == self.ITERATION_END_TRACKING:
+        tf.logging.info("ELAPSED TIMES %s" % str(elapsed_times))
+        tf.logging.info("ITERATION TIMES %s" % str(iteration_times))
 
   def remote_notify_ready_to_start(self):
     tf.logging.info("Server ready to start!")
