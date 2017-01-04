@@ -76,7 +76,7 @@ class RetryTimeoutProtocol(Protocol, TimeoutMixin):
 class TimeoutReconnectClientFactory(pb.PBClientFactory):
 
     def buildProtocol(self, addr):
-        tf.logging.info('Connection by', addr)
+        tf.logging.info('Connection by %', str(addr))
         return RetryTimeoutProtocol()
 
     def startedConnecting(self, connector):
