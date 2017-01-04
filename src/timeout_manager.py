@@ -65,13 +65,15 @@ class TimeoutServer(pb.Root):
 
 class RetryTimeoutProtocol(Protocol, TimeoutMixin):
     def connectionMade(self):
-        self.setTimeout(60)
+        self.setTimeout(30)
 
     def dataReceived(self, data):
         self.resetTimeout()
 
     def timeoutConnection(self):
+        tf.logging.info("Timed out... Retrying...")
         self.transport.abortConnection()
+        self.connect()
 
 class TimeoutReconnectClientFactory(pb.PBClientFactory):
 
