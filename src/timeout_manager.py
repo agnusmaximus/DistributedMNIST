@@ -75,16 +75,10 @@ class RetryTimeoutProtocol(Protocol, TimeoutMixin):
         self.resetTimeout()
 
     def timeoutConnection(self):
-        tf.logging.info("Timed out... Retrying...")
+        tf.logging.info("Timed out...")
         self.transport.abortConnection()
-        self.factory.retry_connect()
 
 class TimeoutReconnectClientFactory(pb.PBClientFactory):
-
-    def retry_connect(self):
-        if self.connector:
-          tf.logging.info("Retry connect...")
-          self.connector.connect()
 
     def buildProtocol(self, addr):
         tf.logging.info('Connection by %s' % str(addr))
@@ -92,7 +86,6 @@ class TimeoutReconnectClientFactory(pb.PBClientFactory):
 
     def startedConnecting(self, connector):
         tf.logging.info('Started to connect.')
-        self.connector = connector
 
     def clientConnectionLost(self, connector, reason):
         tf.logging.info('Lost connection.  Reason: %s' % str(reason))
