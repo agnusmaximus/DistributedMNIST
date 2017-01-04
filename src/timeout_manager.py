@@ -82,7 +82,7 @@ class RetryTimeoutProtocol(Protocol, TimeoutMixin):
 class TimeoutReconnectClientFactory(pb.PBClientFactory):
 
     def retry_connect(self):
-        if self.connectory:
+        if self.connector:
           tf.logging.info("Retry connect...")
           self.connector.connect()
 
