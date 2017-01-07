@@ -125,7 +125,7 @@ class TimeoutClient():
 
   def broadcast_parameters_updated(self, step):
     for persp in self.perspectives:
-      persp.callRemote(parameters_updated, step)
+      persp.callRemote("parameters_updated", step)
 
   def broadcast_worker_dequeued_token(self, iteration):
     for persp in self.perspectives:
