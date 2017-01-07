@@ -156,7 +156,7 @@ def loss(logits, labels):
   Returns:
     loss: Loss tensor of type float.
   """
-  return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits, labels))
+  return tf.reduce_mean(tf.nn.sparse_softmax_cross_entropy_with_logits(logits=logits, labels=labels))
 
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
