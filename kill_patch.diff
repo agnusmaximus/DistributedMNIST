@@ -1,0 +1,546 @@
+diff --git a/tensorflow/c/c_api.cc b/tensorflow/c/c_api.cc
+index 9fc399a..d2d493f 100644
+--- a/tensorflow/c/c_api.cc
++++ b/tensorflow/c/c_api.cc
+@@ -19,6 +19,7 @@ limitations under the License.
+ #include <limits>
+ #include <memory>
+ #include <vector>
++#include <iostream>
+ 
+ #include "tensorflow/cc/saved_model/loader.h"
+ #include "tensorflow/core/common_runtime/shape_refiner.h"
+@@ -324,6 +325,12 @@ TF_DeprecatedSession* TF_NewDeprecatedSession(const TF_SessionOptions* opt,
+   }
+ }
+ 
++void TF_KillSession(TF_DeprecatedSession* s, TF_Status *status){
++  std::cout << "c_api.cc - TF_KillSession..." << std::endl;
++  //status->status = s->session->Kill();
++  s->session->Kill();
++}
++
+ void TF_CloseDeprecatedSession(TF_DeprecatedSession* s, TF_Status* status) {
+   status->status = s->session->Close();
+ }
+diff --git a/tensorflow/c/c_api.h b/tensorflow/c/c_api.h
+index 3ea2d31..3c8c2c1 100644
+--- a/tensorflow/c/c_api.h
++++ b/tensorflow/c/c_api.h
+@@ -952,6 +952,8 @@ extern void TF_SessionPRun(TF_Session*, const char* handle,
+ 
+ typedef struct TF_DeprecatedSession TF_DeprecatedSession;
+ 
++extern void TF_KillSession(TF_DeprecatedSession*, TF_Status* status);
++
+ extern TF_DeprecatedSession* TF_NewDeprecatedSession(const TF_SessionOptions*,
+                                                      TF_Status* status);
+ extern void TF_CloseDeprecatedSession(TF_DeprecatedSession*, TF_Status* status);
+diff --git a/tensorflow/core/common_runtime/direct_session.cc b/tensorflow/core/common_runtime/direct_session.cc
+index 7dc6db6..2a69611 100644
+--- a/tensorflow/core/common_runtime/direct_session.cc
++++ b/tensorflow/core/common_runtime/direct_session.cc
+@@ -18,6 +18,7 @@ limitations under the License.
+ #include <atomic>
+ #include <string>
+ #include <vector>
++#include <iostream>
+ 
+ #include "tensorflow/core/common_runtime/constant_folding.h"
+ #include "tensorflow/core/common_runtime/debugger_state_interface.h"
+@@ -368,6 +369,7 @@ Status DirectSession::Run(const RunOptions& run_options,
+                           const std::vector<string>& target_nodes,
+                           std::vector<Tensor>* outputs,
+                           RunMetadata* run_metadata) {
++  std::cout << "DirectSession - Run()" << std::endl;
+   TF_RETURN_IF_ERROR(CheckNotClosed());
+   direct_session_runs->GetCell()->IncrementBy(1);
+   {
+@@ -413,6 +415,12 @@ Status DirectSession::Run(const RunOptions& run_options,
+   RunState run_state(args.step_id, &devices_);
+   run_state.rendez = new IntraProcessRendezvous(device_mgr_.get());
+   CancellationManager step_cancellation_manager;
++  
++  {
++    mutex_lock cur_step_l(cur_step_cancellation_manager_lock_);
++    cur_step_cancellation_manager_ = &step_cancellation_manager;
++    cur_run_state_ = &run_state;
++  }
+ 
+   // Send inputs.
+   TF_RETURN_IF_ERROR(SendInputs(inputs, executors_and_keys, run_state.rendez));
+@@ -524,6 +532,7 @@ Status DirectSession::Run(const RunOptions& run_options,
+ 
+   // Build and return the cost model as instructed.
+   mutex_lock l(executor_lock_);
++
+   ++executors_and_keys->step_count;
+   if (update_cost_model) {
+     // Build the cost model
+@@ -639,6 +648,7 @@ Status DirectSession::PRunSetup(const std::vector<string>& input_names,
+ Status DirectSession::PRun(const string& handle, const NamedTensorList& inputs,
+                            const std::vector<string>& output_names,
+                            std::vector<Tensor>* outputs) {
++  
+   TF_RETURN_IF_ERROR(CheckNotClosed());
+   std::vector<string> parts = str_util::Split(handle, ';');
+   const string& key = parts[0];
+@@ -1170,6 +1180,11 @@ Status DirectSession::CreateGraphs(
+   return ::tensorflow::Status::OK();
+ }
+ 
++::tensorflow::Status DirectSession::Kill() {
++  cur_run_state_->executors_done.KillConditionVariableWakeup();
++  return ::tensorflow::Status::OK();
++}
++
+ DirectSession::RunState::RunState(
+     const std::vector<string>& pending_input_names,
+     const std::vector<string>& pending_output_names, int64 step_id,
+@@ -1207,6 +1222,7 @@ DirectSession::RunState::~RunState() {
+ void DirectSession::WaitForNotification(RunState* run_state,
+                                         CancellationManager* cm,
+                                         int64 timeout_in_ms) {
++
+   Status status =
+       WaitForNotification(&run_state->executors_done, timeout_in_ms);
+   if (!status.ok()) {
+@@ -1231,7 +1247,11 @@ void DirectSession::WaitForNotification(RunState* run_state,
+                     "Timed out waiting for notification");
+     }
+   } else {
+-    notification->WaitForNotification();
++    bool was_killed = notification->WaitForNotification();
++    if (was_killed) {
++      return Status(error::DEADLINE_EXCEEDED,
++                    "Killed");
++    }
+   }
+   return Status::OK();
+ }
+diff --git a/tensorflow/core/common_runtime/direct_session.h b/tensorflow/core/common_runtime/direct_session.h
+index 24cde9b..d4556c7 100644
+--- a/tensorflow/core/common_runtime/direct_session.h
++++ b/tensorflow/core/common_runtime/direct_session.h
+@@ -97,6 +97,8 @@ class DirectSession : public Session {
+ 
+   ::tensorflow::Status Close() override;
+ 
++  ::tensorflow::Status Kill() override;
++
+   void ExportCostModels(CostModelManager::CostModelMap* cost_models) {
+     cost_model_manager_.ExportCostModels(cost_models);
+   }
+@@ -245,6 +247,7 @@ class DirectSession : public Session {
+   // Schedules 'c' for execution on pool.
+   void SchedClosure(thread::ThreadPool* pool, std::function<void()> c);
+ 
++  mutex cur_step_cancellation_manager_lock_;
+   mutex executor_lock_;  // protects executors_
+   // Holds mappings from signature to the executors that process
+   // it. The reason for a level of indirection around mapped_type is
+@@ -301,6 +304,9 @@ class DirectSession : public Session {
+ 
+   // EXPERIMENTAL: debugger (tfdbg) related
+   friend class DebugGateway;
++
++  CancellationManager *cur_step_cancellation_manager_;
++  RunState *cur_run_state_;
+ };
+ 
+ }  // end namespace tensorflow
+diff --git a/tensorflow/core/common_runtime/executor.h b/tensorflow/core/common_runtime/executor.h
+index 239c966..8f1b8ab 100644
+--- a/tensorflow/core/common_runtime/executor.h
++++ b/tensorflow/core/common_runtime/executor.h
+@@ -16,6 +16,8 @@ limitations under the License.
+ #ifndef TENSORFLOW_COMMON_RUNTIME_EXECUTOR_H_
+ #define TENSORFLOW_COMMON_RUNTIME_EXECUTOR_H_
+ 
++#include <iostream>
++
+ #include "tensorflow/core/common_runtime/device.h"
+ #include "tensorflow/core/framework/rendezvous.h"
+ #include "tensorflow/core/framework/session_state.h"
+diff --git a/tensorflow/core/distributed_runtime/local_master.cc b/tensorflow/core/distributed_runtime/local_master.cc
+index 684f265..282839d 100644
+--- a/tensorflow/core/distributed_runtime/local_master.cc
++++ b/tensorflow/core/distributed_runtime/local_master.cc
+@@ -36,7 +36,10 @@ Status WaitForNotification(CallOptions* call_options, Notification* n) {
+       return errors::DeadlineExceeded("Operation timed out.");
+     }
+   } else {
+-    n->WaitForNotification();
++    bool killed = n->WaitForNotification();
++    if (killed) {
++      return errors::DeadlineExceeded("Killed");
++    }
+   }
+   return Status::OK();
+ }
+@@ -47,53 +50,90 @@ LocalMaster::LocalMaster(Master* master_impl) : master_impl_(master_impl) {}
+ Status LocalMaster::CreateSession(CallOptions* call_options,
+                                   const CreateSessionRequest* request,
+                                   CreateSessionResponse* response) {
+-  Notification n;
++  Notification *n = new Notification();
+   Status ret;
+-  master_impl_->CreateSession(request, response, [&n, &ret](const Status& s) {
++  master_impl_->CreateSession(request, response, [n, &ret](const Status& s) {
+     ret.Update(s);
+-    n.Notify();
++    n->Notify();
+   });
+-  TF_RETURN_IF_ERROR(WaitForNotification(call_options, &n));
++
++  {
++    mutex_lock l(step_notifications_mu_);
++    step_notifications_.push_back(n);
++  }
++
++  TF_RETURN_IF_ERROR(WaitForNotification(call_options, n));
+   return ret;
+ }
+ 
+ Status LocalMaster::ExtendSession(CallOptions* call_options,
+                                   const ExtendSessionRequest* request,
+                                   ExtendSessionResponse* response) {
+-  Notification n;
++  Notification *n = new Notification();
+   Status ret;
+-  master_impl_->ExtendSession(request, response, [&n, &ret](const Status& s) {
++  master_impl_->ExtendSession(request, response, [n, &ret](const Status& s) {
+     ret.Update(s);
+-    n.Notify();
++    n->Notify();
+   });
+-  TF_RETURN_IF_ERROR(WaitForNotification(call_options, &n));
++
++  {
++    mutex_lock l(step_notifications_mu_);
++    step_notifications_.push_back(n);
++  }
++
++  TF_RETURN_IF_ERROR(WaitForNotification(call_options, n));
+   return ret;
+ }
+ 
+ Status LocalMaster::PartialRunSetup(CallOptions* call_options,
+                                     const PartialRunSetupRequest* request,
+                                     PartialRunSetupResponse* response) {
+-  Notification n;
++  Notification *n = new Notification();
+   Status ret;
+-  master_impl_->PartialRunSetup(request, response, [&n, &ret](const Status& s) {
++  master_impl_->PartialRunSetup(request, response, [n, &ret](const Status& s) {
+     ret.Update(s);
+-    n.Notify();
++    n->Notify();
+   });
+-  TF_RETURN_IF_ERROR(WaitForNotification(call_options, &n));
++  
++  {
++    mutex_lock l(step_notifications_mu_);
++    step_notifications_.push_back(n);
++  }
++
++  TF_RETURN_IF_ERROR(WaitForNotification(call_options, n));
+   return ret;
+ }
+ 
++Status LocalMaster::Kill() {
++  std::cout << "LocalMaster - Kill()" << std::endl;
++  {
++    mutex_lock l(step_notifications_mu_);
++    while (!step_notifications_.empty()) {
++      Notification *n = step_notifications_.back();
++      step_notifications_.pop_back();
++      n->KillConditionVariableWakeup();
++      delete n;
++    }
++  }
++  return Status::OK();
++}
++
+ Status LocalMaster::RunStep(CallOptions* call_options,
+                             RunStepRequestWrapper* request,
+                             RunStepResponse* response) {
+-  Notification n;
++  Notification *n = new Notification();
+   Status ret;
+   master_impl_->RunStep(call_options, request, response,
+-                        [&n, &ret](const Status& s) {
++                        [n, &ret](const Status& s) {
+                           ret.Update(s);
+-                          n.Notify();
++                          n->Notify();
+                         });
+-  TF_RETURN_IF_ERROR(WaitForNotification(call_options, &n));
++  
++  {
++    mutex_lock l(step_notifications_mu_);
++    step_notifications_.push_back(n);
++  }
++  TF_RETURN_IF_ERROR(WaitForNotification(call_options, n));
+   return ret;
+ }
+ 
+@@ -104,13 +144,17 @@ MutableRunStepRequestWrapper* LocalMaster::CreateRunStepRequest() {
+ Status LocalMaster::CloseSession(CallOptions* call_options,
+                                  const CloseSessionRequest* request,
+                                  CloseSessionResponse* response) {
+-  Notification n;
++  Notification *n = new Notification();
+   Status ret;
+-  master_impl_->CloseSession(request, response, [&n, &ret](const Status& s) {
++  master_impl_->CloseSession(request, response, [n, &ret](const Status& s) {
+     ret.Update(s);
+-    n.Notify();
++    n->Notify();
+   });
+-  TF_RETURN_IF_ERROR(WaitForNotification(call_options, &n));
++  {
++    mutex_lock l(step_notifications_mu_);
++    step_notifications_.push_back(n);
++  }
++  TF_RETURN_IF_ERROR(WaitForNotification(call_options, n));
+   return ret;
+ }
+ 
+diff --git a/tensorflow/core/distributed_runtime/local_master.h b/tensorflow/core/distributed_runtime/local_master.h
+index 9c80bfd..80f226e 100644
+--- a/tensorflow/core/distributed_runtime/local_master.h
++++ b/tensorflow/core/distributed_runtime/local_master.h
+@@ -17,8 +17,10 @@ limitations under the License.
+ #define THIRD_PARTY_TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_LOCAL_MASTER_REGISTRY_H_
+ 
+ #include <memory>
++#include <vector>
+ 
+ #include "tensorflow/core/distributed_runtime/master_interface.h"
++#include "tensorflow/core/lib/core/notification.h"
+ 
+ namespace tensorflow {
+ 
+@@ -57,6 +59,8 @@ class LocalMaster : public MasterInterface {
+ 
+   MutableRunStepRequestWrapper* CreateRunStepRequest() override;
+ 
++  Status Kill() override;
++
+   Status CloseSession(CallOptions* call_options,
+                       const CloseSessionRequest* request,
+                       CloseSessionResponse* response) override;
+@@ -88,6 +92,9 @@ class LocalMaster : public MasterInterface {
+   // objects of this type.
+   LocalMaster(Master* master_impl);
+ 
++  std::vector<Notification *> step_notifications_;
++  mutex step_notifications_mu_;
++
+   TF_DISALLOW_COPY_AND_ASSIGN(LocalMaster);
+ };
+ 
+diff --git a/tensorflow/core/distributed_runtime/master_interface.h b/tensorflow/core/distributed_runtime/master_interface.h
+index 5ddedc0..c649546 100644
+--- a/tensorflow/core/distributed_runtime/master_interface.h
++++ b/tensorflow/core/distributed_runtime/master_interface.h
+@@ -16,6 +16,8 @@ limitations under the License.
+ #ifndef TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_MASTER_INTERFACE_H_
+ #define TENSORFLOW_CORE_DISTRIBUTED_RUNTIME_MASTER_INTERFACE_H_
+ 
++#include <iostream>
++
+ #include "tensorflow/core/distributed_runtime/call_options.h"
+ #include "tensorflow/core/distributed_runtime/message_wrappers.h"
+ #include "tensorflow/core/lib/core/errors.h"
+@@ -45,6 +47,10 @@ class MasterInterface {
+     return errors::Unimplemented("Partial run not implemented for this master");
+   }
+ 
++  virtual Status Kill() {
++    std::cout << "master_inferface.h - Kill() unimplemented" << std::endl;
++  }
++
+   virtual Status RunStep(CallOptions* call_options,
+                          RunStepRequestWrapper* request,
+                          RunStepResponse* response) = 0;
+diff --git a/tensorflow/core/distributed_runtime/master_session.cc b/tensorflow/core/distributed_runtime/master_session.cc
+index 58f97fe..1161c7e 100644
+--- a/tensorflow/core/distributed_runtime/master_session.cc
++++ b/tensorflow/core/distributed_runtime/master_session.cc
+@@ -16,6 +16,7 @@ limitations under the License.
+ #include "tensorflow/core/distributed_runtime/master_session.h"
+ 
+ #include <unordered_map>
++#include <iostream>
+ #include <unordered_set>
+ #include <vector>
+ 
+@@ -1158,6 +1159,7 @@ Status MasterSession::PartialRunSetup(const PartialRunSetupRequest* req,
+ 
+   rcg->Ref();
+   RunState* run_state = new RunState(inputs, outputs, rcg, step_id, count);
++  cur_run_state_ = run_state;
+   {
+     mutex_lock l(mu_);
+     partial_runs_.emplace(
+@@ -1405,6 +1407,12 @@ Status MasterSession::DoRunWithLocalExecution(CallOptions* opts,
+   return Status::OK();
+ }
+ 
++Status MasterSession::Kill() {
++  std::cout << "MasterSession - Kill()" << std::endl;
++  //cur_run_state_->executors_done.KillConditionVariableWakeup();
++  return Status::OK();
++}
++
+ Status MasterSession::Close() {
+   cancellation_manager_->StartCancel();
+   std::vector<ReffedClientGraph*> to_unref;
+diff --git a/tensorflow/core/distributed_runtime/master_session.h b/tensorflow/core/distributed_runtime/master_session.h
+index 8ab4653..8f29cb2 100644
+--- a/tensorflow/core/distributed_runtime/master_session.h
++++ b/tensorflow/core/distributed_runtime/master_session.h
+@@ -87,6 +87,7 @@ class MasterSession : public core::RefCounted {
+   //
+   // Close() may block the caller thread for a long time.
+   Status Close();
++  Status Kill();
+ 
+  private:
+   SessionOptions session_opts_;
+@@ -185,6 +186,8 @@ class MasterSession : public core::RefCounted {
+   Status BuildAndRegisterPartitions(ReffedClientGraph* rcg);
+ 
+   TF_DISALLOW_COPY_AND_ASSIGN(MasterSession);
++
++  RunState *cur_run_state_;
+ };
+ 
+ }  // end namespace tensorflow
+diff --git a/tensorflow/core/distributed_runtime/rpc/grpc_session.cc b/tensorflow/core/distributed_runtime/rpc/grpc_session.cc
+index 61b6475..f3335bc 100644
+--- a/tensorflow/core/distributed_runtime/rpc/grpc_session.cc
++++ b/tensorflow/core/distributed_runtime/rpc/grpc_session.cc
+@@ -301,6 +301,11 @@ Status GrpcSession::PRun(const string& handle,
+                    /* run_metadata */ nullptr, handle);
+ }
+ 
++Status GrpcSession::Kill() {
++  std::cout << "GrpcSession - Kill()" << std::endl;  
++  return master_->Kill();
++}
++
+ Status GrpcSession::Close() {
+   CloseSessionRequest req;
+   {
+diff --git a/tensorflow/core/distributed_runtime/rpc/grpc_session.h b/tensorflow/core/distributed_runtime/rpc/grpc_session.h
+index bc1bab7..5bc5f14 100644
+--- a/tensorflow/core/distributed_runtime/rpc/grpc_session.h
++++ b/tensorflow/core/distributed_runtime/rpc/grpc_session.h
+@@ -80,6 +80,7 @@ class GrpcSession : public Session {
+   Status Extend(const RunOptions& run_options, const GraphDef& graph) override;
+ 
+   Status Close() override;
++  Status Kill() override;
+ 
+   // NOTE: This API is still experimental and may change.
+   ::tensorflow::Status PRunSetup(const std::vector<string>& input_names,
+diff --git a/tensorflow/core/platform/default/notification.h b/tensorflow/core/platform/default/notification.h
+index 13d2317..0013cde 100644
+--- a/tensorflow/core/platform/default/notification.h
++++ b/tensorflow/core/platform/default/notification.h
+@@ -27,13 +27,14 @@ namespace tensorflow {
+ 
+ class Notification {
+  public:
+-  Notification() : notified_(false) {}
++   Notification() : notified_(false), killed_(false) {}
+   ~Notification() {}
+ 
+   void Notify() {
+     mutex_lock l(mu_);
+     assert(!notified_);
+     notified_ = true;
++    killed_ = false;
+     cv_.notify_all();
+   }
+ 
+@@ -42,11 +43,20 @@ class Notification {
+     return notified_;
+   }
+ 
+-  void WaitForNotification() {
++  bool WaitForNotification() {
+     mutex_lock l(mu_);
+-    while (!notified_) {
++    while (!notified_ && !killed_) {
+       cv_.wait(l);
+     }
++    bool was_killed = killed_;
++    if (killed_) killed_ = false;    
++    return was_killed;
++  }
++
++  void KillConditionVariableWakeup() {
++    mutex_lock l(mu_);
++    killed_ = true;
++    cv_.notify_all();
+   }
+ 
+  private:
+@@ -60,7 +70,7 @@ class Notification {
+ 
+   mutex mu_;
+   condition_variable cv_;
+-  bool notified_;
++  bool notified_, killed_;
+ };
+ 
+ inline bool WaitForNotificationWithTimeout(Notification* n,
+diff --git a/tensorflow/core/public/session.h b/tensorflow/core/public/session.h
+index b2f998c..e0464df 100644
+--- a/tensorflow/core/public/session.h
++++ b/tensorflow/core/public/session.h
+@@ -140,6 +140,11 @@ class Session {
+         "session.");
+   }
+ 
++  virtual Status Kill() {
++    std::cout << "Did not implement kill for " << typeid(*this).name() << std::endl;
++    return errors::Unimplemented("Kill() is not supported for this session.");
++  }
++
+   /// \brief Like `Run`, but allows users to pass in a `RunOptions` proto and
+   /// to retrieve non-Tensor metadata output via a `RunMetadata` proto for this
+   /// step.  `run_metadata` may be nullptr, in which case any metadata output is
+diff --git a/tensorflow/python/client/session.py b/tensorflow/python/client/session.py
+index c1a8191..0662363 100644
+--- a/tensorflow/python/client/session.py
++++ b/tensorflow/python/client/session.py
+@@ -553,6 +553,12 @@ class BaseSession(SessionInterface):
+     finally:
+       tf_session.TF_DeleteSessionOptions(opts)
+ 
++  def kill(self):
++    with self._extend_lock:
++      if self._opened and not self._closed:
++        with errors.raise_exception_on_not_ok_status() as status:
++          tf_session.TF_KillSession(self._session, status)
++
+   def close(self):
+     """Closes this session.
+ 
+diff --git a/tensorflow/python/client/tf_session.i b/tensorflow/python/client/tf_session.i
+index 779d480..c1de726 100644
+--- a/tensorflow/python/client/tf_session.i
++++ b/tensorflow/python/client/tf_session.i
+@@ -161,6 +161,7 @@ tensorflow::ImportNumpy();
+ %unignore TF_NewBufferFromString;
+ %unignore TF_DeleteBuffer;
+ %unignore TF_GetBuffer;
++%unignore TF_KillSession;
+ %unignore TF_NewStatus;
+ %unignore TF_DeleteStatus;
+ %unignore TF_GetCode;
