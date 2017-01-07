@@ -358,6 +358,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             for cur_worker_id in range(self._total_num_replicas):
               sync_op.append(self._sync_token_queues[cur_worker_id].enqueue(global_step))
             sync_op = control_flow_ops.group(*(sync_op))
+            sync_op = logging_ops.Print(global_step, [global_step], message="I should be syncing...")
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
