@@ -318,7 +318,7 @@ def train(target, dataset, cluster_spec):
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Killed at time %f" % time.time())
       except:
-        print("Unexpected error:", sys.exc_info()[0])
+        tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
         raise
 
     if is_chief:
