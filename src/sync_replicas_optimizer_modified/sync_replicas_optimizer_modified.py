@@ -211,7 +211,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       tf.logging.info("Interval update...")
       sess.run([self._update_op])
       timeout_client.broadcast_parameters_updated(self.n_updates)
-      self.n_updates += 1
+      self._n_updates += 1
       Timer(FLAGS.interval_ms / float(1000), interval_update).start()
     Timer(FLAGS.interval_ms / float(1000), interval_update).start()
 
