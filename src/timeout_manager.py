@@ -16,7 +16,8 @@ from twisted.internet.protocol import Protocol
 # RPC procedures #
 ##################
 class TimeoutServer(pb.Root):
-  def __init__(self, tf_flags):
+  def __init__(self, tf_flags, sess):
+    self.sess = sess
     self.tf_flags = tf_flags
     self.worker_id = self.tf_flags.task_id
     self.n_total_workers = len(self.tf_flags.worker_hosts.split(","))
@@ -33,6 +34,10 @@ class TimeoutServer(pb.Root):
     self.iteration_start_times = {}
     self.ITERATION_START_TRACKING = 10
     self.ITERATION_END_TRACKING = 500
+
+  def remote_parameters_updated(self, step):
+    tf.logging.info("Parameters have been updated on step %d" % step)
+
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     tf.logging.info("Worker %d dequeued token on iteration %d - %d" % (worker_id, iteration, time.time()))
@@ -118,6 +123,10 @@ class TimeoutClient():
         factory.getRootObject().addCallback(self.connected)
         #factory.getRootObject().addCallbacks(self.connected, self.connect_failure, errbackArgs=[host], errbackKeywords=[])
 
+  def broadcast_parameters_updated(self, step):
+    for persp in self.perspectives:
+      persp.callRemote(parameters_updated, step)
+
   def broadcast_worker_dequeued_token(self, iteration):
     for persp in self.perspectives:
       persp.callRemote("worker_dequeued_token", self.worker_id, iteration)
@@ -183,7 +192,7 @@ class TimeoutClient():
 def launch_manager(sess, tf_flags):
   # Launch a separate thread in the background that checks whether the
   # machine is a straggler.
-  timeout_server = TimeoutServer(tf_flags)
+  timeout_server = TimeoutServer(tf_flags, sess)
   rpc_server = pb.PBServerFactory(timeout_server)
   reactor.listenTCP(tf_flags.rpc_port, rpc_server)
   rpc_client = TimeoutClient(tf_flags)

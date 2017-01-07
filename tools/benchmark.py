@@ -69,27 +69,46 @@ def print_worker_sorted_times(fname):
             compute_times = eval(m.group(1))
     f.close()
     worker_times = {}
-    for time, worker in compute_times:
+    for time, worker, iteration in compute_times:
         if worker not in worker_times:
             worker_times[worker] = []
         worker_times[worker].append(time)
-    for k,v in sorted(worker_times.items(), key=lambda x:x[0]):
-        v.sort()
-        #print("Worker %d" % k)
-        #print(" ".join([str(x) for x in v]))
+
+    iteration_times = {}
+    for time, worker, iteration in compute_times:
+        if iteration not in iteration_times:
+            iteration_times[iteration] = []
+        iteration_times[iteration].append(time)
+
+    percentile_100_times = []
+    percentile_99_times = []
+    percentile_95_times = []
+    for iteration, times in iteration_times.items():
+        percentile_99_times.append(np.percentile(times, 99, interpolation="nearest"))
+        percentile_95_times.append(np.percentile(times, 95, interpolation="nearest"))
+        percentile_100_times.append(np.percentile(times, 100, interpolation="nearest"))
 
     all_times = worker_times.values()
     a = []
     for time in all_times:
         a = a + time
     all_times = a
+
     print("Stdev: ", np.std(all_times))
     print("Max: ", np.max(all_times))
     print("80 Percentile:", np.percentile(all_times, 80))
     print("90 Percentile:", np.percentile(all_times, 90))
     print("95 Percentile:", np.percentile(all_times, 95))
     print("99 Percentile:", np.percentile(all_times, 99))
+    print("Mean of 95 percentile (across iterations)", sum(percentile_95_times) / float(len(percentile_95_times)))
+    print("Med of 95 percentile (across iterations)", np.median(percentile_95_times))
+    print("Mean of 99 percentile (across iterations)", sum(percentile_99_times) / float(len(percentile_99_times)))
+    print("Med of 99 percentile (across iterations)", np.median(percentile_99_times))
+    print("Mean of 100 percentile (across iterations)", sum(percentile_100_times) / float(len(percentile_100_times)))
+    print("Med of 100 percentile (across iterations)", np.median(percentile_100_times))
     print("Mean:", sum(all_times)/float(len(all_times)))
+
+    print(percentile_99_times)
 
 def extract_compute_times(fname):
     f = open(fname)
@@ -209,7 +228,7 @@ def plot_time_cdfs(outdir):
     plt.xlabel("Time (s)")
     plt.ylabel("P(X <= x)")
     #plt.ylabel("Count")
-    files = glob.glob(outdir + "/*master*")
+    files = glob.glob(outdir + "/*t2*large*master*")
     cmap = plt.get_cmap('jet')
     colors = cmap(np.linspace(0, 1.0, len(files) * 2))
     for i, fname in enumerate(files):
@@ -243,7 +262,7 @@ def plot_time_cdfs(outdir):
     #plt.savefig("histogram.png")
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=False, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:

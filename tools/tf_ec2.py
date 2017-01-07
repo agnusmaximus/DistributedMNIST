@@ -24,26 +24,26 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "cdf_collect",      # Unique name for this specific configuration
+    "name" : "Timeout",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 1,
+    "n_workers" : 5,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "5",
+    "num_replicas_to_aggregate" : "6",
 
     # Region speficiation
     "region" : "us-west-2",
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m3.large",
-    "worker_type" : "m3.large",
-    "ps_type" : "m3.large",
-    "evaluator_type" : "m3.large",
-    "image_id" : "ami-fb69de9b",          # US west
+    "master_type" : "t2.medium",
+    "worker_type" : "t2.medium",
+    "ps_type" : "t2.medium",
+    "evaluator_type" : "t2.medium",
+    "image_id" : "ami-d57fccb5",
 
     # Launch specifications
     "spot_price" : ".03",                 # Has to be a string
@@ -96,7 +96,7 @@ cfg = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "sudo python src/mnist_distributed_train.py "
+        "python src/mnist_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
@@ -106,8 +106,8 @@ cfg = Cfg({
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--timeline_logging=false "
-        "--interval_method=false "
-        "--worker_times_cdf_method=true "
+        "--interval_method=true "
+        "--worker_times_cdf_method=false "
         "--interval_ms=100 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
