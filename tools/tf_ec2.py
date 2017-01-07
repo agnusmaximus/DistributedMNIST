@@ -110,7 +110,7 @@ cfg = Cfg({
         "--timeline_logging=false "
         "--interval_method=true "
         "--worker_times_cdf_method=false "
-        "--interval_ms=100 "
+        "--interval_ms=1000 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
