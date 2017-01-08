@@ -243,7 +243,7 @@ def train(target, dataset, cluster_spec):
 
     # TIMEOUT client overseer.
     # Even if not using timeout, we want to wait until all machines are ready.
-    #timeout_client, timeout_server = launch_manager(sess, FLAGS)
+    timeout_client, timeout_server = launch_manager(sess, FLAGS)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
@@ -279,7 +279,7 @@ def train(target, dataset, cluster_spec):
 
         if FLAGS.worker_times_cdf_method:
           sess.run([opt._wait_op])
-          #timeout_client.broadcast_worker_dequeued_token(cur_iteration)
+          timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -294,8 +294,7 @@ def train(target, dataset, cluster_spec):
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
 
         if FLAGS.worker_times_cdf_method:
-          pass
-          #timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
+          timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
