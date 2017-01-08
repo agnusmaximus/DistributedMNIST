@@ -312,7 +312,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               with ops.control_dependencies([checkpoint_print_op_1]):
-                apply_grad_op = grad_accum.apply_grad(grad, local_Step=self._local_step._ref())
+                apply_grad_op = grad_accum.apply_grad(grad, local_step=self._local_step._ref())
                 with ops.control_dependencies([apply_grad_op]):
                   checkpoint_print_op_2 = logging_ops.Print(global_step, [global_step], message="Done applying gradient for variable %d" % index)
                   train_ops.append(checkpoint_print_op_2)
@@ -325,7 +325,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               with ops.control_dependencies([checkpoint_print_op_1]):
-                apply_grad_op = grad_accum.apply_grad(grad, local_Step=self._local_step._ref())
+                apply_grad_op = grad_accum.apply_grad(grad, local_step=self._local_step._ref())
                 with ops.control_dependencies([apply_grad_op]):
                   checkpoint_print_op_2 = logging_ops.Print(global_step, [global_step], message="Done applying gradient for variable %d" % index)
                   train_ops.append(checkpoint_print_op_2)
