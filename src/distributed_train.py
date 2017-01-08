@@ -256,12 +256,13 @@ def train(target, dataset, cluster_spec):
     if FLAGS.task_id == 0 and FLAGS.interval_method:
       opt.start_interval_updates(sess, timeout_client)
 
-    #def test_sess_kill():
-    #  tf.logging.info("Testing sess kill")
-    #  if FLAGS.task_id != 0:
-    #    sess.kill()
+    def test_sess_kill():
+      tf.logging.info("Testing sess kill")
+      if FLAGS.task_id != 0:
+        sess.kill()
+      Timer(1, test_sess_kill).start()
 
-    #Timer(10, test_sess_kill).start()
+    Timer(10, test_sess_kill).start()
 
     while not sv.should_stop():
       try:
@@ -272,7 +273,8 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
-        sess.run([opt._wait_op], options=tf.RunOptions(timeout_in_ms=10000))
+        #sess.run([opt._wait_op], options=tf.RunOptions(timeout_in_ms=10000))
+        sess.run([opt._wait_op])
         #sess.run([test_print_op])
 
         if FLAGS.worker_times_cdf_method:
