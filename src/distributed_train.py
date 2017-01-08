@@ -263,7 +263,7 @@ def train(target, dataset, cluster_spec):
         # Increment current iteration
         cur_iteration += 1
 
-        sess.run([opt._wait_op])
+        #sess.run([opt._wait_op])
 
         if FLAGS.worker_times_cdf_method:
           sess.run([opt._wait_op])
