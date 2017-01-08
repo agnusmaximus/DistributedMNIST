@@ -325,22 +325,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       for index, (grad, var) in enumerate(grads_and_vars):
         with ops.device(var.device):
           grad_accum = self._accumulator_list[index][0]
-          n_accumulated = grad_accum.num_accumulated()
-          print_accumulated_op = logging_ops.Print(n_accumulated, [n_accumulated], message="Variable %d accumulated" % index)
           if grad is None:
             aggregated_grad.append(None)
           elif isinstance(grad, ops.Tensor):
             if collect_cdfs:
               aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
             else:
-              with ops.control_dependencies([print_accumulated_op]):
-                aggregated_grad.append(grad_accum.take_grad(1))
+              aggregated_grad.append(grad_accum.take_grad(1))
           else:
             if collect_cdfs:
               aggregated_grad.append(grad_accum.take_grad(self._total_num_replicas))
             else:
-              with ops.control_dependencies([print_accumulated_op]):
-                aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
+              aggregated_grad.append(grad_accum.take_indexed_slices_grad(1))
 
       aggregated_grads_and_vars = zip(aggregated_grad, var_list)
 
@@ -361,7 +357,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             for cur_worker_id in range(self._total_num_replicas):
               sync_op.append(self._sync_token_queues[cur_worker_id].enqueue(global_step))
             sync_op = control_flow_ops.group(*(sync_op))
-            sync_op = logging_ops.Print(global_step, [global_step], message="I should be syncing...")
 
         # dummy_queue is passed to the queue runner. Don't use the real queues
         # because the queue runner doesn't automatically reopen it once it
