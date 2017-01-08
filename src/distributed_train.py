@@ -254,8 +254,7 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
 
     if FLAGS.task_id == 0 and FLAGS.interval_method:
-      #opt.start_interval_updates(sess, timeout_client)
-      opt.start_interval_updates(sess)
+      opt.start_interval_updates(sess, timeout_client)
 
     def test_sess_kill():
       tf.logging.info("Testing sess kill")
