@@ -303,6 +303,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
+          checkpoint_print_op_1 = logging_ops.Print("Applying gradient for variable %d" % index)
           with ops.device(var.device):
             if grad is None:
               continue
@@ -310,16 +311,18 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_grad(grad,
-                                                     local_step=self._local_step._ref()))
+              with ops.control_dependencies([checkpoint_print_op_1]):
+                train_ops.append(grad_accum.apply_grad(grad,
+                                                       local_step=self._local_step._ref()))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
               grad_accum = self._accumulator_list[index][0]
 
-              train_ops.append(grad_accum.apply_indexed_slices_grad(
-                grad, local_step=self._local_step._ref()))
+              with ops.control_dependencies([checkpoint_print_op_1]):
+                train_ops.append(grad_accum.apply_indexed_slices_grad(
+                  grad, local_step=self._local_step._ref()))
 
       # Phase 2 gradient applying
       for index, (grad, var) in enumerate(grads_and_vars):
