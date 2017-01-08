@@ -329,6 +329,8 @@ def train(target, dataset, cluster_spec):
           next_summary_time += FLAGS.save_summaries_secs
       except tf.errors.DeadlineExceededError:
         tf.logging.info("Killed at time %f" % time.time())
+        sess.run([test_print_op])
+        sys.exit(-1)
       except:
         tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
         raise
