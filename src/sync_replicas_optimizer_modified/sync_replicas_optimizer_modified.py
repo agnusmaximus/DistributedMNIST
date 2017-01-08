@@ -206,11 +206,12 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
                                                                   shapes=(),
                                                                   shared_name="sync_token_q_%d" % worker)
 
-  def start_interval_updates(self, sess, timeout_client):
+  #def start_interval_updates(self, sess, timeout_client):
+  def start_interval_updates(self, sess):
     def interval_update():
       tf.logging.info("Interval update...")
       sess.run([self._update_op])
-      timeout_client.broadcast_parameters_updated(self._n_updates)
+      #timeout_client.broadcast_parameters_updated(self._n_updates)
       self._n_updates += 1
       Timer(FLAGS.interval_ms / float(1000), interval_update).start()
     Timer(FLAGS.interval_ms / float(1000), interval_update).start()
