@@ -39,7 +39,8 @@ class TimeoutServer(pb.Root):
     tf.logging.info("Parameters have been updated on step %d.." % step)
     tf.logging.info("Start killing at time %f" % time.time())
     try:
-      self.sess.kill()
+      #self.sess.kill()
+      pass
     except:
       tf.logging.info("Exception caught in timeout manager...")
 
