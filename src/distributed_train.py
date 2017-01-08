@@ -274,7 +274,7 @@ def train(target, dataset, cluster_spec):
         cur_iteration += 1
 
         #sess.run([opt._wait_op], options=tf.RunOptions(timeout_in_ms=10000))
-        sess.run([opt._wait_op])
+        #sess.run([opt._wait_op])
         #sess.run([test_print_op])
 
         if FLAGS.worker_times_cdf_method:
