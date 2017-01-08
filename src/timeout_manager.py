@@ -38,12 +38,7 @@ class TimeoutServer(pb.Root):
   def remote_parameters_updated(self, step):
     tf.logging.info("Parameters have been updated on step %d.." % step)
     tf.logging.info("Start killing at time %f" % time.time())
-    if self.worker_id != 0:
-      try:
-        self.sess.kill()
-      except:
-        tf.logging.info("Exception caught in timeout manager...")
-    tf.logging.info("Done sending kill signal...")
+    self.sess.kill()
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     tf.logging.info("Worker %d dequeued token on iteration %d - %d" % (worker_id, iteration, time.time()))
