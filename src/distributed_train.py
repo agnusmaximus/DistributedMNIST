@@ -196,6 +196,8 @@ def train(target, dataset, cluster_spec):
     # Build an initialization operation to run below.
     init_op = tf.initialize_all_variables()
 
+    test_print_op = logging_ops.Print(0, [0], message="Test print success")
+
     # We run the summaries in the same thread as the training operations by
     # passing in None for summary_op to avoid a summary_thread being started.
     # Running summaries and training operations in parallel could run out of
@@ -264,6 +266,7 @@ def train(target, dataset, cluster_spec):
         cur_iteration += 1
 
         #sess.run([opt._wait_op])
+        sess.run([test_print_op])
 
         if FLAGS.worker_times_cdf_method:
           sess.run([opt._wait_op])
