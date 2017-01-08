@@ -258,7 +258,8 @@ def train(target, dataset, cluster_spec):
 
     def test_sess_kill():
       tf.logging.info("Testing sess kill")
-      sess.kill()
+      if FLAGS.task_id != 0:
+        sess.kill()
 
     Timer(10, test_sess_kill).start()
 
