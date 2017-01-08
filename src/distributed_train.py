@@ -290,7 +290,9 @@ def train(target, dataset, cluster_spec):
         if FLAGS.timeline_logging:
           run_options.trace_level=tf.RunOptions.FULL_TRACE
           run_options.output_partition_graphs=True
-        run_options.timeout_in_ms = 8000
+        run_options.timeout_in_ms = 800
+
+        tf.logging.info("Running %f..." % time.time())
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
 
