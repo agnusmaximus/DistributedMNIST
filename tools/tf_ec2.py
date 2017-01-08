@@ -34,17 +34,17 @@ cfg = Cfg({
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "6",
 
-    "method" : "reserved",
+    #"method" : "reserved",
 
     # Region speficiation
     "region" : "us-west-2",
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "t2.medium",
-    "worker_type" : "t2.medium",
-    "ps_type" : "t2.medium",
-    "evaluator_type" : "t2.medium",
+    "master_type" : "m3.medium",
+    "worker_type" : "m3.medium",
+    "ps_type" : "m3.medium",
+    "evaluator_type" : "m3.medium",
     "image_id" : "ami-bd3b88dd",
 
     # Launch specifications
