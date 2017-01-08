@@ -303,7 +303,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
-          checkpoint_print_op_1 = logging_ops.Print("Applying gradient for variable %d" % index)
+          checkpoint_print_op_1 = logging_ops.Print(global_step, [global_step], message="Applying gradient for variable %d" % index)
           with ops.device(var.device):
             if grad is None:
               continue
