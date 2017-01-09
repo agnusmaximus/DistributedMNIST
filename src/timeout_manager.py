@@ -40,8 +40,7 @@ class TimeoutServer(pb.Root):
     tf.logging.info("Start killing at time %f" % time.time())
     try:
       if self.worker_id != 0:
-        pass
-        #self.sess.kill()
+        self.sess.kill()
     except:
       tf.logging.info("Exception caught in timeout manager...")
 
