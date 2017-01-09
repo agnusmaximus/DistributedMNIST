@@ -228,9 +228,10 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       A list of (gradient, variable) pairs.
     """
     with ops.control_dependencies([logging_ops.Print(0, [0], message="Starting to compute gradients")]):
-      compute_grad_op = self._opt.compute_gradients(*args, **kwargs)
-      with ops.control_dependencies([compute_grad_op]):
-        return logging_ops.Print(0, [0], message="Done computing gradients")
+      grads_and_vars = self._opt.compute_gradients(*args, **kwargs)
+      for index, (grad, var) in enumerate(grads_and_vars):
+        with ops.control_dependencies([grad]):
+          grads_and_vars[index][0] = logging_ops.Print(grad, [0], message="Done computing gradient %d" % index)
 
   def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None, collect_cdfs=False):
     """Apply gradients to variables.
