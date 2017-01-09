@@ -231,7 +231,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       grads_and_vars = self._opt.compute_gradients(*args, **kwargs)
       for index, (grad, var) in enumerate(grads_and_vars):
         with ops.control_dependencies([grad]):
-          grads_and_vars[index][0] = logging_ops.Print(grad, [0], message="Done computing gradient %d" % index)
+          grads_and_vars[index] = (logging_ops.Print(grad, [0], message="Done computing gradient %d" % index), var)
 
   def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None, collect_cdfs=False):
     """Apply gradients to variables.
