@@ -333,7 +333,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
               grad_accum = self._accumulator_list[index][0]
 
               with ops.control_dependencies([print_start_op]):
-                with tf.device("job:worker/task:0"):
+                with tf.device("job:worker/task:%d" % worker_id):
                   apply_grad_op = grad_accum.apply_grad(grad,
                                                         local_step=self._local_step._ref())
                   with ops.control_dependencies([apply_grad_op]):
@@ -347,7 +347,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
 
 
               with ops.control_dependencies([print_start_op]):
-                with tf.device("job:worker/task:0"):
+                with tf.device("job:worker/task:%d" % worker_id):
                   apply_grad_op = grad_accum.apply_indexed_slices_grad(
                     grad, local_step=self._local_step._ref())
                   with ops.control_dependencies([apply_grad_op]):
