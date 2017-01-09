@@ -42,7 +42,7 @@ class TimeoutServer(pb.Root):
       if self.worker_id != 0:
         self.sess.kill()
     except:
-      tf.logging.info("Exception caught in timeout manager...")
+      tf.logging.info("Unexpected error:", sys.exc_info()[0])
 
   def remote_worker_dequeued_token(self, worker_id, iteration):
     tf.logging.info("Worker %d dequeued token on iteration %d - %d" % (worker_id, iteration, time.time()))
