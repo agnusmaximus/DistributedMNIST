@@ -303,7 +303,6 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       # Phase 1 gradient computation
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
-          checkpoint_print_op_1 = logging_ops.Print(global_step, [global_step], message="Applying gradient for variable %d" % index)
           with ops.device(var.device):
             if grad is None:
               continue
@@ -311,28 +310,16 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
             elif isinstance(grad, ops.Tensor):
               grad_accum = self._accumulator_list[index][0]
 
-              with ops.control_dependencies([checkpoint_print_op_1]):
-                apply_grad_op = grad_accum.apply_grad(grad, local_step=self._local_step._ref())
-                with ops.control_dependencies([apply_grad_op]):
-                  with tf.device("/job:worker/task:%d" % worker_id):
-                    checkpoint_print_op_2 = logging_ops.Print(global_step, [global_step], message="Done applying gradient for variable %d" % index)
-                  train_ops.append(checkpoint_print_op_2)
-                #train_ops.append(grad_accum.apply_grad(grad,
-                #                                       local_step=self._local_step._ref()))
+              train_ops.append(grad_accum.apply_grad(grad,
+                                                     local_step=self._local_step._ref()))
 
             else:
               if not isinstance(grad, ops.IndexedSlices):
                 raise ValueError("Unknown grad type!")
               grad_accum = self._accumulator_list[index][0]
 
-              with ops.control_dependencies([checkpoint_print_op_1]):
-                apply_grad_op = grad_accum.apply_grad(grad, local_step=self._local_step._ref())
-                with ops.control_dependencies([apply_grad_op]):
-                  with tf.device("/job:worker/task:%d" % worker_id):
-                    checkpoint_print_op_2 = logging_ops.Print(global_step, [global_step], message="Done applying gradient for variable %d" % index)
-                  train_ops.append(checkpoint_print_op_2)
-                #train_ops.append(grad_accum.apply_indexed_slices_grad(
-                #  grad, local_step=self._local_step._ref()))
+              train_ops.append(grad_accum.apply_indexed_slices_grad(
+                grad, local_step=self._local_step._ref()))
 
       # Phase 2 gradient applying
       for index, (grad, var) in enumerate(grads_and_vars):
