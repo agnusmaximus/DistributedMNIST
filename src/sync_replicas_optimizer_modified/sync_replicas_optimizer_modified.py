@@ -330,8 +330,7 @@ class TimeoutReplicasOptimizer(optimizer.Optimizer):
       with ops.control_dependencies([update_local_step_op]):
         for index, (grad, var) in enumerate(grads_and_vars):
           print_start_op = logging_ops.Print(global_step, [global_step], message="Starting to apply grads for variable %d" % index)
-          #with ops.device(var.device):
-          with ops.device("job:worker/task:%d" % worker_id):
+          with ops.device(var.device):
             if grad is None:
               continue
 
