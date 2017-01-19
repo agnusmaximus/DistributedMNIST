@@ -25,8 +25,6 @@ from tensorflow.python.client import timeline
 from tensorflow.python.ops import data_flow_ops
 import mnist
 
-from timeout_manager import launch_manager
-
 np.set_printoptions(threshold=np.nan)
 tf.logging.set_verbosity(tf.logging.INFO)
 
