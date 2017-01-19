@@ -33,8 +33,6 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('worker_times_cdf_method', False, 'Track worker times cdf')
-tf.app.flags.DEFINE_boolean('interval_method', False, 'Use the interval method')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -159,23 +157,14 @@ def train(target, dataset, cluster_spec):
     opt = tf.train.AdamOptimizer(lr)
 
     # Use V2 optimizer
-    if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
-      opt = TimeoutReplicasOptimizer(
-        opt,
-        global_step,
-        total_num_replicas=num_workers)
-    else:
-      opt = tf.train.SyncReplicasOptimizer(
-        opt,
-        replicas_to_aggregate=num_replicas_to_aggregate,
-        total_num_replicas=num_workers)
+    opt = tf.train.SyncReplicasOptimizer(
+      opt,
+      replicas_to_aggregate=num_replicas_to_aggregate,
+      total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
-      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step, collect_cdfs=FLAGS.worker_times_cdf_method)
-    else:
-      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -185,7 +174,6 @@ def train(target, dataset, cluster_spec):
     # More details can be found in sync_replicas_optimizer.
     chief_queue_runners = [opt.get_chief_queue_runner()]
     init_tokens_op = opt.get_init_tokens_op()
-    #clean_up_op = opt.get_clean_up_op()
 
     # Create a saver.
     saver = tf.train.Saver()
@@ -241,10 +229,6 @@ def train(target, dataset, cluster_spec):
         sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
-    # TIMEOUT client overseer.
-    # Even if not using timeout, we want to wait until all machines are ready.
-    timeout_client, timeout_server = launch_manager(sess, FLAGS)
-
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
     # simultaneously in order to prevent running out of GPU memory.
@@ -252,17 +236,6 @@ def train(target, dataset, cluster_spec):
     begin_time = time.time()
     cur_iteration = -1
     iterations_finished = set()
-
-    if FLAGS.task_id == 0 and FLAGS.interval_method:
-      opt.start_interval_updates(sess, timeout_client)
-
-    #def test_sess_kill():
-    #  tf.logging.info("Testing sess kill")
-    #  if FLAGS.task_id != 0:
-    #    sess.kill()
-    #  Timer(1, test_sess_kill).start()
-
-    #Timer(10, test_sess_kill).start()
 
     while not sv.should_stop():
       try:
@@ -272,14 +245,6 @@ def train(target, dataset, cluster_spec):
 
         # Increment current iteration
         cur_iteration += 1
-
-        #sess.run([opt._wait_op], options=tf.RunOptions(timeout_in_ms=10000))
-        #sess.run([opt._wait_op])
-        sess.run([test_print_op])
-
-        if FLAGS.worker_times_cdf_method:
-          sess.run([opt._wait_op])
-          timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
@@ -291,13 +256,7 @@ def train(target, dataset, cluster_spec):
           run_options.trace_level=tf.RunOptions.FULL_TRACE
           run_options.output_partition_graphs=True
 
-        #timeout_ms = random.randint(300, 1200)
-        #tf.logging.info("SETTING TIMEOUT FOR %d ms" % timeout_ms)
-        #run_options.timeout_in_ms = timeout_ms
-
-        tf.logging.info("RUNNING SESSION... %f" % time.time())
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-        tf.logging.info("DONE RUNNING SESSION...")
 
         if FLAGS.worker_times_cdf_method:
           timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
@@ -335,8 +294,6 @@ def train(target, dataset, cluster_spec):
 
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
-      except tf.errors.DeadlineExceededError:
-        tf.logging.info("Killed at time %f" % time.time())
       except:
         tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
         raise
