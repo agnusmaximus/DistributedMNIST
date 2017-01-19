@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "Timeout",      # Unique name for this specific configuration
+    "name" : "Basic",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 2,
+    "n_workers" : 4,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "6",
+    "num_replicas_to_aggregate" : "5",
 
     #"method" : "reserved",
 
@@ -45,15 +45,14 @@ cfg = Cfg({
     "worker_type" : "m3.medium",
     "ps_type" : "m3.medium",
     "evaluator_type" : "m3.medium",
-    #"image_id" : "ami-8f3e8def",
-    "image_id": "ami-f1833191",
+    "image_id": "ami-2306ba43",
 
     # Launch specifications
     "spot_price" : ".03",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
-    "path_to_keyfile" : "/Users/maxlam/Desktop/School/Fall2016/Research/DistributedSGD/DistributedSGD.pem",
+    "path_to_keyfile" : "/Users/maxlam/Desktop/School/Fall2016/Research/DistributedSGD/MaxLamKeyPair.pem",
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
@@ -109,9 +108,6 @@ cfg = Cfg({
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--timeline_logging=false "
-        "--interval_method=true "
-        "--worker_times_cdf_method=false "
-        "--interval_ms=10000 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
