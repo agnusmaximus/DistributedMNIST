@@ -154,7 +154,7 @@ def train(target, dataset, cluster_spec):
     opt = tf.train.AdamOptimizer(lr)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizer(
+    opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers)
