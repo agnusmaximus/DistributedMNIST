@@ -74,14 +74,14 @@ cfg = Cfg({
     "master_pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git fetch && git reset --hard origin/clean_mnist",
     ],
 
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git fetch && git reset --hard origin/clean_mnist",
     ],
 
     # Model configuration
