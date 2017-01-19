@@ -254,9 +254,6 @@ def train(target, dataset, cluster_spec):
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
 
-        if FLAGS.worker_times_cdf_method:
-          timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
-
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
         # Log the elapsed time per iteration
