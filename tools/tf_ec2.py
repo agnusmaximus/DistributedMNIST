@@ -29,10 +29,10 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 2,
+    "n_workers" : 3,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "6",
+    "num_replicas_to_aggregate" : "4",
 
     #"method" : "reserved",
 
@@ -46,7 +46,7 @@ cfg = Cfg({
     "ps_type" : "m3.medium",
     "evaluator_type" : "m3.medium",
     #"image_id" : "ami-8f3e8def",
-    "image_id": "ami-f1833191",
+    "image_id": "ami-e568d485",
 
     # Launch specifications
     "spot_price" : ".03",                 # Has to be a string
