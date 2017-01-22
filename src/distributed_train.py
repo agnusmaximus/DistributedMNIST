@@ -254,8 +254,7 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
 
     if FLAGS.task_id == 0 and FLAGS.interval_method:
-      pass
-      #opt.start_interval_updates(sess, timeout_client)
+      opt.start_interval_updates(sess, timeout_client)
 
     def test_sess_kill():
       tf.logging.info("Testing sess kill")
@@ -263,7 +262,7 @@ def train(target, dataset, cluster_spec):
         sess.kill()
         Timer(random.randint(1000,2000)/float(1000), test_sess_kill).start()
 
-    Timer(10, test_sess_kill).start()
+    #Timer(10, test_sess_kill).start()
 
     while not sv.should_stop():
       try:
@@ -294,7 +293,7 @@ def train(target, dataset, cluster_spec):
 
         #timeout_ms = random.randint(300, 1200)
         #tf.logging.info("SETTING TIMEOUT FOR %d ms" % timeout_ms)
-        run_options.timeout_in_ms = 1000 * 60 * 1
+        #run_options.timeout_in_ms = 1000 * 60 * 1
 
         tf.logging.info("RUNNING SESSION... %f" % time.time())
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
