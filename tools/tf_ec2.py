@@ -29,7 +29,7 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 3,
+    "n_workers" : 2,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "4",
@@ -41,15 +41,15 @@ cfg = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m3.medium",
-    "worker_type" : "m3.medium",
-    "ps_type" : "m3.medium",
-    "evaluator_type" : "m3.medium",
+    "master_type" : "m4.2xlarge",
+    "worker_type" : "m4.2xlarge",
+    "ps_type" : "m4.2xlarge",
+    "evaluator_type" : "m4.2xlarge",
     #"image_id" : "ami-8f3e8def",
-    "image_id": "ami-e568d485",
+    "image_id": "ami-61269901",
 
     # Launch specifications
-    "spot_price" : ".03",                 # Has to be a string
+    "spot_price" : ".12",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -111,7 +111,7 @@ cfg = Cfg({
         "--timeline_logging=false "
         "--interval_method=true "
         "--worker_times_cdf_method=false "
-        "--interval_ms=10000 "
+        "--interval_ms=800 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
@@ -146,7 +146,7 @@ def tf_ec2_run(argv, configuration):
 
     def summarize_instances(instances):
         instance_type_to_instance_map = {}
-        for instance in instances:
+        for instance in sorted(instances, key=lambda x:x.id):
             typ = instance.instance_type
             if typ not in instance_type_to_instance_map:
                 instance_type_to_instance_map[typ] = []
@@ -453,7 +453,7 @@ def tf_ec2_run(argv, configuration):
             "ps" : [],
             "evaluator" : []
         }
-        for role, requirement in specs.items():
+        for role, requirement in sorted(specs.items(), key=lambda x:x[0]):
             instance_type_for_role = requirement["instance_type"]
             n_instances_needed = requirement["n_required"]
             instances_to_assign, rest = instance_type_to_instance_map[instance_type_for_role][:n_instances_needed], instance_type_to_instance_map[instance_type_for_role][n_instances_needed:]
