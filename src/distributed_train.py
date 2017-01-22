@@ -341,6 +341,7 @@ def train(target, dataset, cluster_spec):
         sess.reset_kill()
       except:
         tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
+        sess.reset_kill()
         raise
 
     if is_chief:
