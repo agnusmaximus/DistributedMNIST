@@ -39,7 +39,7 @@ class TimeoutServer(pb.Root):
     tf.logging.info("Parameters have been updated on step %d.." % step)
     tf.logging.info("Start killing at time %f" % time.time())
     try:
-      if self.worker_id == 0:
+      if self.worker_id == 1:
         self.sess.kill()
     except:
       tf.logging.info("Unexpected error:", sys.exc_info()[0])
