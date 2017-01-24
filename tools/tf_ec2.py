@@ -59,7 +59,7 @@ cfg = Cfg({
     #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
     "nfs_ip_address" : "172.31.28.54",          # us-west-2b
-    "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
+    "nfs_mount_point" : "/home/ubuntu/inception_sharedddd",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     "setup_commands" :
@@ -330,7 +330,8 @@ def tf_ec2_run(argv, configuration):
               stdin.close()
               client.close()
               done = True
-           except:
+           except Exception as e:
+              print("ERROR: " + str(e))
               done = False
         return output
 
