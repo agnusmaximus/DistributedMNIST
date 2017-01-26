@@ -34,7 +34,7 @@ cfg = Cfg({
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
     "num_replicas_to_aggregate" : "4",
 
-    #"method" : "reserved",
+    "method" : "reserved",
 
     # Region speficiation
     "region" : "us-west-2",
