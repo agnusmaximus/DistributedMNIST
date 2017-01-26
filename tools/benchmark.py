@@ -276,7 +276,7 @@ def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_
     plot_time_step(outdir)
     plot_time_precision(outdir)
     plot_step_loss(outdir)
-    plot_time_cdfs(outdir)
+    #plot_time_cdfs(outdir)
 
 if __name__ == "__main__":
     print("Usage: python benchmark.py [use_dir dir|select_files cfg1 cfg2...] ")
