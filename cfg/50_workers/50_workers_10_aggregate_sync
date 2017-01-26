@@ -16,10 +16,10 @@ Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "t2.medium",
-    "worker_type" : "t2.medium",
-    "ps_type" : "t2.medium",
-    "evaluator_type" : "t2.medium",
+    "master_type" : "t2.large",
+    "worker_type" : "t2.large",
+    "ps_type" : "t2.large",
+    "evaluator_type" : "t2.large",
     "image_id" : "ami-2306ba43",
 
     # Launch specifications
