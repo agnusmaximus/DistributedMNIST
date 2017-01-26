@@ -256,14 +256,6 @@ def train(target, dataset, cluster_spec):
     if FLAGS.task_id == 0 and FLAGS.interval_method:
       opt.start_interval_updates(sess, timeout_client)
 
-    def test_sess_kill():
-      tf.logging.info("Testing sess kill")
-      if FLAGS.task_id == 0:
-        sess.kill()
-        Timer(random.randint(1000,2000)/float(1000), test_sess_kill).start()
-
-    #Timer(10, test_sess_kill).start()
-
     while not sv.should_stop():
       try:
 
