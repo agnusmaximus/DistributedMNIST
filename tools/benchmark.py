@@ -262,7 +262,7 @@ def plot_time_cdfs(outdir):
     #plt.savefig("histogram.png")
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=True, launch=True, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
