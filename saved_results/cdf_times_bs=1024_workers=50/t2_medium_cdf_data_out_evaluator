@@ -1,8 +1,0 @@
-WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
-Extracting MNIST-data/train-images-idx3-ubyte.gz
-Extracting MNIST-data/train-labels-idx1-ubyte.gz
-Extracting MNIST-data/t10k-images-idx3-ubyte.gz
-Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
-Succesfully loaded model from /home/ubuntu/inception_shared/t2_medium_cdf/train_dir/model.ckpt-0 at step=0.
-terminate called after throwing an instance of 'std::bad_alloc'
-  what():  std::bad_alloc
