@@ -23,6 +23,7 @@ from tensorflow.python.ops import state_ops
 from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 from tensorflow.python.ops import data_flow_ops
+from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import SyncReplicasOptimizerModified
 
 import cifar10_input
 import cifar10
@@ -45,7 +46,7 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
                            """worker jobs. e.g. """
                            """'machine1:2222,machine2:1111,machine2:2222'""")
 
-tf.app.flags.DEFINE_string('train_dir', '/tmp/imagenet_train',
+tf.app.flags.DEFINE_string('train_dir', '/tmp/cifar10_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('rpc_port', 1235,
@@ -156,14 +157,14 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(lr)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizerV2(
+    opt = SyncReplicasOptimizerModified(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    apply_gradients_op, dequeue_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -246,7 +247,11 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
+      step_start = time.time()
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+      step_elapsed_time = time.time()-step_start
+      tf.logging.info("Step time - %f" % step_elapsed_time)
+      sess.run([dequeue_op])
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
