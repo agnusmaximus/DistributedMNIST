@@ -32,6 +32,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
+tf.app.flags.DEFINE_boolean('n_train_epochs', 10, 'Number of epochs to train for')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -232,15 +233,9 @@ def train(target, cluster_spec):
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
-    cur_iteration = -1
-    iterations_finished = set()
 
     while not sv.should_stop():
       sys.stdout.flush()
-      tf.logging.info("A new iteration...")
-
-      # Increment current iteration
-      cur_iteration += 1
 
       start_time = time.time()
 
@@ -266,6 +261,12 @@ def train(target, cluster_spec):
           f.write(ctf)
 
       if step > FLAGS.max_steps:
+        break
+
+      n_examples_done = FLAGS.batch_size * num_workers * step
+      cur_epoch = n_examples_done / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
+      tf.logging.info("Epoch: %d time %f" % (cur_epoch, time.time()-start_time));
+      if cur_epoch >= FLAGS.n_train_epochs:
         break
 
       duration = time.time() - start_time
