@@ -253,7 +253,7 @@ def train(target, cluster_spec):
       tf.logging.info("Step time - %f" % step_elapsed_time)
       dequeue_start_time = time.time()
       sess.run([dequeue_op])
-      dequeue_elepased_time = time.time() - dequeue_start_time
+      dequeue_elepsed_time = time.time() - dequeue_start_time
       tf.logging.info("Dequeue time - %f" % dequeue_elapsed_time)
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
