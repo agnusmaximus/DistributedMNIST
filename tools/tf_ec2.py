@@ -74,21 +74,21 @@ cfg = Cfg({
     "master_pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git fetch && git reset --hard origin/cifar10",
     ],
 
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git fetch && git reset --hard origin/cifar10",
     ],
 
     # Model configuration
     "batch_size" : "128",
-    "initial_learning_rate" : ".001",
-    "learning_rate_decay_factor" : ".98",
-    "num_epochs_per_decay" : "1.0",
+    "initial_learning_rate" : ".1",
+    "learning_rate_decay_factor" : ".1",
+    "num_epochs_per_decay" : "350.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
     # PS_HOSTS - special string replaced with actual list of ps hosts.
@@ -99,7 +99,7 @@ cfg = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "python src/mnist_distributed_train.py "
+        "python src/cifar10_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
@@ -108,10 +108,6 @@ cfg = Cfg({
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
-        "--timeline_logging=false "
-        "--interval_method=true "
-        "--worker_times_cdf_method=false "
-        "--interval_ms=800 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
         "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
     ],
@@ -123,7 +119,7 @@ cfg = Cfg({
         "sleep 30",
 
         # Evaluation command
-        "python src/mnist_eval.py "
+        "python src/cifar10_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "
         "--checkpoint_dir=%(base_out_dir)s/train_dir "
         "> %(base_out_dir)s/out_evaluator 2>&1 &",

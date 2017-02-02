@@ -8,7 +8,7 @@ from __future__ import print_function
 import tensorflow as tf
 
 import distributed_train
-import mnist_data
+import cifar10
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -30,19 +30,21 @@ def main(unused_args):
       job_name=FLAGS.job_name,
       task_index=FLAGS.task_id)
 
+  cifar10.maybe_download_and_extract()
+
   if FLAGS.job_name == 'ps':
     # `ps` jobs wait for incoming connections from the workers.
     server.join()
   else:
     n_workers = len(worker_hosts)
     worker_id = int(FLAGS.task_id)
-    dataset = mnist_data.load_mnist(worker_id=worker_id, n_workers=n_workers)
+
     # Only the chief checks for or creates train_dir.
     if FLAGS.task_id == 0:
       if not tf.gfile.Exists(FLAGS.train_dir):
         tf.gfile.MakeDirs(FLAGS.train_dir)
 
-    distributed_train.train(server.target, dataset.train, cluster_spec)
+    distributed_train.train(server.target, cluster_spec)
 
 if __name__ == '__main__':
   tf.logging.set_verbosity(tf.logging.DEBUG)

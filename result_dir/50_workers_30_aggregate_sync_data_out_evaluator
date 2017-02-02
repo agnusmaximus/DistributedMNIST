@@ -1,0 +1,1138 @@
+WARNING:tensorflow:Passing a `GraphDef` to the SummaryWriter is deprecated. Pass a `Graph` object instead, such as `sess.graph`.
+Extracting MNIST-data/train-images-idx3-ubyte.gz
+Extracting MNIST-data/train-labels-idx1-ubyte.gz
+Extracting MNIST-data/t10k-images-idx3-ubyte.gz
+Extracting MNIST-data/t10k-labels-idx1-ubyte.gz
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+No checkpoint file found
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319829 Time: 972.530709
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+W tensorflow/core/framework/op_kernel.cc:975] Out of range: Read less bytes than requested
+Raised when an operation iterates past the valid input range.
+
+  This exception is raised in "end-of-file" conditions, such as when a
+  [`queue.dequeue()`](../../api_docs/python/io_ops.md#QueueBase.dequeue)
+  operation is blocked on an empty queue, and a
+  [`queue.close()`](../../api_docs/python/io_ops.md#QueueBase.close)
+  operation executes.
+
+  @@__init__
+  
+Read less bytes than requested
+	 [[Node: save/RestoreV2_7 = RestoreV2[dtypes=[DT_FLOAT], _device="/job:localhost/replica:0/task:0/cpu:0"](_recv_save/Const_0, save/RestoreV2_7/tensor_names, save/RestoreV2_7/shape_and_slices)]]
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-0 at step=0.
+Num examples: 10000  Precision @ 1: 0.089200 Loss: 6.319828 Time: 1023.914430
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-4 at step=4.
+Num examples: 10000  Precision @ 1: 0.588700 Loss: 2.163178 Time: 1066.238341
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-10 at step=10.
+Num examples: 10000  Precision @ 1: 0.599000 Loss: 1.097848 Time: 1086.765969
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-15 at step=15.
+Num examples: 10000  Precision @ 1: 0.796300 Loss: 0.798210 Time: 1106.207912
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-20 at step=20.
+Num examples: 10000  Precision @ 1: 0.816100 Loss: 0.667215 Time: 1126.719583
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-25 at step=25.
+Num examples: 10000  Precision @ 1: 0.886000 Loss: 0.485391 Time: 1146.133919
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-29 at step=29.
+Num examples: 10000  Precision @ 1: 0.901300 Loss: 0.386457 Time: 1166.628726
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-34 at step=34.
+Num examples: 10000  Precision @ 1: 0.906200 Loss: 0.328049 Time: 1184.023132
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-39 at step=39.
+Num examples: 10000  Precision @ 1: 0.920000 Loss: 0.282033 Time: 1204.536510
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-44 at step=44.
+Num examples: 10000  Precision @ 1: 0.930100 Loss: 0.243924 Time: 1225.071699
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-49 at step=49.
+Num examples: 10000  Precision @ 1: 0.938300 Loss: 0.221524 Time: 1246.761413
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-53 at step=53.
+Num examples: 10000  Precision @ 1: 0.943400 Loss: 0.203952 Time: 1264.038051
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-58 at step=58.
+Num examples: 10000  Precision @ 1: 0.945900 Loss: 0.189498 Time: 1284.535166
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-63 at step=63.
+Num examples: 10000  Precision @ 1: 0.948100 Loss: 0.175906 Time: 1306.174952
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-67 at step=67.
+Num examples: 10000  Precision @ 1: 0.952400 Loss: 0.165601 Time: 1324.492629
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-72 at step=72.
+Num examples: 10000  Precision @ 1: 0.956400 Loss: 0.153417 Time: 1346.161705
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-76 at step=76.
+Num examples: 10000  Precision @ 1: 0.957800 Loss: 0.144680 Time: 1364.501248
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-81 at step=81.
+Num examples: 10000  Precision @ 1: 0.960900 Loss: 0.134046 Time: 1384.986978
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-85 at step=85.
+Num examples: 10000  Precision @ 1: 0.961800 Loss: 0.128841 Time: 1404.418295
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-90 at step=90.
+Num examples: 10000  Precision @ 1: 0.964700 Loss: 0.121723 Time: 1426.057125
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-94 at step=94.
+Num examples: 10000  Precision @ 1: 0.966000 Loss: 0.115290 Time: 1443.303104
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-99 at step=99.
+Num examples: 10000  Precision @ 1: 0.967900 Loss: 0.112623 Time: 1467.064389
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-103 at step=103.
+Num examples: 10000  Precision @ 1: 0.967600 Loss: 0.107306 Time: 1485.383617
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-107 at step=107.
+Num examples: 10000  Precision @ 1: 0.969000 Loss: 0.103374 Time: 1504.837468
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-111 at step=111.
+Num examples: 10000  Precision @ 1: 0.970800 Loss: 0.097194 Time: 1526.458791
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-116 at step=116.
+Num examples: 10000  Precision @ 1: 0.972300 Loss: 0.093953 Time: 1545.917283
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-120 at step=120.
+Num examples: 10000  Precision @ 1: 0.972500 Loss: 0.091140 Time: 1565.361781
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-124 at step=124.
+Num examples: 10000  Precision @ 1: 0.974200 Loss: 0.087140 Time: 1584.782556
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-128 at step=128.
+Num examples: 10000  Precision @ 1: 0.974700 Loss: 0.085656 Time: 1604.212275
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-132 at step=132.
+Num examples: 10000  Precision @ 1: 0.975300 Loss: 0.082901 Time: 1626.942042
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-136 at step=136.
+Num examples: 10000  Precision @ 1: 0.975500 Loss: 0.079924 Time: 1647.542135
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-140 at step=140.
+Num examples: 10000  Precision @ 1: 0.975500 Loss: 0.078140 Time: 1667.007052
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-144 at step=144.
+Num examples: 10000  Precision @ 1: 0.977700 Loss: 0.078187 Time: 1684.297595
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-148 at step=148.
+Num examples: 10000  Precision @ 1: 0.977600 Loss: 0.074985 Time: 1703.878670
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-152 at step=152.
+Num examples: 10000  Precision @ 1: 0.978300 Loss: 0.071874 Time: 1724.454485
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-156 at step=156.
+Num examples: 10000  Precision @ 1: 0.977600 Loss: 0.070701 Time: 1743.953775
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-160 at step=160.
+Num examples: 10000  Precision @ 1: 0.978200 Loss: 0.070637 Time: 1765.683682
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-164 at step=164.
+Num examples: 10000  Precision @ 1: 0.979800 Loss: 0.066128 Time: 1785.189567
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-168 at step=168.
+Num examples: 10000  Precision @ 1: 0.979600 Loss: 0.064503 Time: 1806.831424
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-172 at step=172.
+Num examples: 10000  Precision @ 1: 0.980500 Loss: 0.065417 Time: 1826.351489
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-175 at step=175.
+Num examples: 10000  Precision @ 1: 0.979100 Loss: 0.064655 Time: 1846.900010
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-179 at step=179.
+Num examples: 10000  Precision @ 1: 0.980900 Loss: 0.063368 Time: 1864.204742
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-183 at step=183.
+Num examples: 10000  Precision @ 1: 0.980500 Loss: 0.062880 Time: 1884.825596
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-187 at step=187.
+Num examples: 10000  Precision @ 1: 0.981300 Loss: 0.060818 Time: 1905.389486
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-191 at step=191.
+Num examples: 10000  Precision @ 1: 0.982500 Loss: 0.060869 Time: 1927.113205
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-194 at step=194.
+Num examples: 10000  Precision @ 1: 0.980100 Loss: 0.060287 Time: 1947.733481
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-198 at step=198.
+Num examples: 10000  Precision @ 1: 0.982200 Loss: 0.057475 Time: 1968.373992
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-202 at step=202.
+Num examples: 10000  Precision @ 1: 0.982300 Loss: 0.057919 Time: 1984.639544
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-206 at step=206.
+Num examples: 10000  Precision @ 1: 0.982000 Loss: 0.055983 Time: 2005.177062
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-210 at step=210.
+Num examples: 10000  Precision @ 1: 0.983300 Loss: 0.053709 Time: 2025.750558
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-214 at step=214.
+Num examples: 10000  Precision @ 1: 0.983600 Loss: 0.052406 Time: 2047.437207
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-217 at step=217.
+Num examples: 10000  Precision @ 1: 0.983600 Loss: 0.052017 Time: 2068.017548
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-221 at step=221.
+Num examples: 10000  Precision @ 1: 0.983500 Loss: 0.052000 Time: 2085.379935
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-225 at step=225.
+Num examples: 10000  Precision @ 1: 0.984600 Loss: 0.050646 Time: 2105.991005
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-229 at step=229.
+Num examples: 10000  Precision @ 1: 0.985000 Loss: 0.049476 Time: 2125.472804
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-233 at step=233.
+Num examples: 10000  Precision @ 1: 0.984400 Loss: 0.048463 Time: 2147.126929
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-236 at step=236.
+Num examples: 10000  Precision @ 1: 0.985200 Loss: 0.048678 Time: 2166.669041
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-240 at step=240.
+Num examples: 10000  Precision @ 1: 0.985600 Loss: 0.048092 Time: 2185.099216
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-244 at step=244.
+Num examples: 10000  Precision @ 1: 0.984600 Loss: 0.047880 Time: 2205.641603
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-248 at step=248.
+Num examples: 10000  Precision @ 1: 0.985300 Loss: 0.047707 Time: 2227.331053
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-251 at step=251.
+Num examples: 10000  Precision @ 1: 0.985300 Loss: 0.046609 Time: 2247.906289
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-255 at step=255.
+Num examples: 10000  Precision @ 1: 0.984400 Loss: 0.046180 Time: 2263.345477
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-259 at step=259.
+Num examples: 10000  Precision @ 1: 0.986000 Loss: 0.046294 Time: 2285.030067
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-263 at step=263.
+Num examples: 10000  Precision @ 1: 0.984800 Loss: 0.046688 Time: 2305.553834
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-267 at step=267.
+Num examples: 10000  Precision @ 1: 0.983800 Loss: 0.047191 Time: 2327.231545
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-270 at step=270.
+Num examples: 10000  Precision @ 1: 0.986000 Loss: 0.046381 Time: 2343.445542
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-274 at step=274.
+Num examples: 10000  Precision @ 1: 0.986100 Loss: 0.044835 Time: 2364.005869
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-278 at step=278.
+Num examples: 10000  Precision @ 1: 0.985200 Loss: 0.044665 Time: 2384.635957
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-282 at step=282.
+Num examples: 10000  Precision @ 1: 0.985900 Loss: 0.043980 Time: 2406.334922
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-286 at step=286.
+Num examples: 10000  Precision @ 1: 0.986000 Loss: 0.043183 Time: 2428.046890
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-289 at step=289.
+Num examples: 10000  Precision @ 1: 0.985700 Loss: 0.043661 Time: 2448.622152
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-293 at step=293.
+Num examples: 10000  Precision @ 1: 0.985600 Loss: 0.043652 Time: 2464.855457
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-297 at step=297.
+Num examples: 10000  Precision @ 1: 0.986000 Loss: 0.042267 Time: 2485.413000
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-301 at step=301.
+Num examples: 10000  Precision @ 1: 0.986500 Loss: 0.041824 Time: 2506.005698
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-305 at step=305.
+Num examples: 10000  Precision @ 1: 0.986800 Loss: 0.041463 Time: 2526.636338
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-308 at step=308.
+Num examples: 10000  Precision @ 1: 0.985700 Loss: 0.041257 Time: 2549.465443
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-312 at step=312.
+Num examples: 10000  Precision @ 1: 0.986200 Loss: 0.041517 Time: 2564.614164
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-316 at step=316.
+Num examples: 10000  Precision @ 1: 0.987100 Loss: 0.039764 Time: 2585.201210
+Succesfully loaded model from /home/ubuntu/inception_shared/50_workers_30_aggregate_sync/train_dir/model.ckpt-320 at step=320.
+Num examples: 10000  Precision @ 1: 0.987300 Loss: 0.039594 Time: 2606.869142
