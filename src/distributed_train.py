@@ -265,7 +265,7 @@ def train(target, cluster_spec):
 
       n_examples_done = FLAGS.batch_size * num_workers * step
       cur_epoch = n_examples_done / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
-      tf.logging.info("Epoch: %d time %f" % (cur_epoch, time.time()-start_time));
+      tf.logging.info("epoch: %d time %f" % (cur_epoch, time.time()-begin_time));
       if cur_epoch >= FLAGS.n_train_epochs:
         break
 
