@@ -317,14 +317,14 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
           token = sync_token_queue.dequeue()
 
-        with ops.control_dependencies([tf.Print(self._local_step, [self._global_step], message="%d Dequeueing" % self._worker_id)]):
+        with ops.control_dependencies([tf.Print(token, [token], message="%d Dequeueing" % self._worker_id)]):
             dequeue_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
           tokens = array_ops.fill([self._tokens_per_step], global_step)
-          with ops.control_dependencies([tf.Print(self._local_step, [self._global_step], message="Enqueueing")]):
+          with ops.control_dependencies([tf.Print(self._global_step, [self._global_step], message="Enqueueing")]):
               sync_op = sync_token_queue.enqueue_many((tokens,))
 
         if self._variable_averages is not None:
