@@ -160,8 +160,7 @@ def train(target, cluster_spec):
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
       opt,
-      FLAGS.task_id,
-      replicas_to_aggregate=num_replicas_to_aggregate,
+      global_step,
       total_num_replicas=num_workers)
 
     # Compute gradients with respect to the loss.
@@ -250,6 +249,9 @@ def train(target, cluster_spec):
 
       start_time = time.time()
 
+      sess.run([opt._wait_op])
+      timeout_client.broadcast_worker_dequeued_token(cur_iteration)
+
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
 
@@ -259,12 +261,7 @@ def train(target, cluster_spec):
 
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
 
-      if cur_iteration != 0:
-        timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
-
-      sess.run([dequeue_op])
-
-      timeout_client.broadcast_worker_dequeued_token(cur_iteration+1)
+      timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
