@@ -309,7 +309,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                                     shared_name="dummy_queue"))
 
       with ops.device(global_step.device):
-          print_start_op = tf.Print(self._local_step, [self._local_step], message="%d Starting" % self._worker_id)
+          print_end_op = tf.Print(self._local_step, [self._local_step], message="%d Finished" % self._worker_id)
 
       with ops.device(global_step.device), ops.name_scope(""):
 
@@ -345,7 +345,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                   global_step, name="SetGlobalStep"))
       self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
-      return train_only_op, dequeue_op, print_start_op
+      return train_only_op, dequeue_op, print_end_op
 
   def get_chief_queue_runner(self):
     """Returns the QueueRunner for the chief to execute.

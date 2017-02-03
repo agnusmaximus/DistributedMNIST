@@ -165,7 +165,7 @@ def train(target, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    apply_gradients_op, dequeue_op, print_start_op = opt.apply_gradients(grads, global_step=global_step)
+    apply_gradients_op, dequeue_op, print_end_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -250,11 +250,11 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       step_start = time.time()
-      sess.run([print_start_op])
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       step_elapsed_time = time.time()-step_start
       tf.logging.info("Step time - %f" % step_elapsed_time)
       dequeue_start_time = time.time()
+      sess.run([print_end_op])
       sess.run([dequeue_op])
       dequeue_elapsed_time = time.time() - dequeue_start_time
       tf.logging.info("Dequeue time - %f" % dequeue_elapsed_time)
