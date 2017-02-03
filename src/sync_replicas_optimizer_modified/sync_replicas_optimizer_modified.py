@@ -174,7 +174,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
     if total_num_replicas is None:
       total_num_replicas = replicas_to_aggregate
 
-    super(TimeoutReplicasOptimizer, self).__init__(use_locking, name)
+    super(SyncReplicasOptimizerModified, self).__init__(use_locking, name)
     logging.info(
         "TimeoutReplicas: total_num_replicas=%s",
         total_num_replicas)
@@ -325,8 +325,6 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
 
               train_ops.append(grad_accum.apply_indexed_slices_grad(
                 grad, local_step=self._local_step._ref()))
-
-
 
       # Phase 2 gradient applying
       for index, (grad, var) in enumerate(grads_and_vars):
