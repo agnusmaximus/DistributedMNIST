@@ -133,6 +133,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
 
   def __init__(self,
                opt,
+               worker_id,
                replicas_to_aggregate,
                total_num_replicas=None,
                variable_averages=None,
@@ -167,6 +168,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
     logging.info(
         "SyncReplicasV2: replicas_to_aggregate=%s; total_num_replicas=%s",
         replicas_to_aggregate, total_num_replicas)
+    self._worker_id =  worker_id
     self._opt = opt
     self._replicas_to_aggregate = replicas_to_aggregate
     self._gradients_applied = False
@@ -312,13 +314,16 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         # Replicas have to wait until they can get a token from the token queue.
         with ops.control_dependencies(train_ops):
           token = sync_token_queue.dequeue()
-        dequeue_op = state_ops.assign(self._local_step, token)
+
+        with ops.control_dependencies([tf.logging.info("%d Dequeueing" % self._worker_id)]):
+            dequeue_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
           tokens = array_ops.fill([self._tokens_per_step], global_step)
-          sync_op = sync_token_queue.enqueue_many((tokens,))
+          with ops.control_dependencies([tf.logging.info("Enqueueing")]):
+              sync_op = sync_token_queue.enqueue_many((tokens,))
 
         if self._variable_averages is not None:
           with ops.control_dependencies([sync_op]), ops.name_scope(""):
