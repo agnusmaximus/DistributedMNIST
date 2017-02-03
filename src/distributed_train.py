@@ -159,6 +159,7 @@ def train(target, cluster_spec):
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
       opt,
+      FLAGS.task_id,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers)
 
