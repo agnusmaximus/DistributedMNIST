@@ -27,6 +27,7 @@ from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import Sy
 
 import cifar10_input
 import cifar10
+from timeout_manager import launch_manager
 
 np.set_printoptions(threshold=np.nan)
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -231,13 +232,20 @@ def train(target, cluster_spec):
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
+    timeout_client, timeout_server = launch_manager(sess, FLAGS)
+
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
     # simultaneously in order to prevent running out of GPU memory.
     next_summary_time = time.time() + FLAGS.save_summaries_secs
     begin_time = time.time()
 
+    # Keep track of own iteration
+    cur_iteration = -1
+    iterations_finished = set()
+
     while not sv.should_stop():
+      cur_iteration += 1
       sys.stdout.flush()
 
       start_time = time.time()
@@ -249,15 +257,14 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
-      step_start = time.time()
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-      step_elapsed_time = time.time()-step_start
-      tf.logging.info("Finish time - %d %f" % (step, time.time()))
-      dequeue_start_time = time.time()
-      sess.run([print_end_op])
+
+      if cur_iteration != 0:
+        timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
+
       sess.run([dequeue_op])
-      dequeue_elapsed_time = time.time() - dequeue_start_time
-      tf.logging.info("Dequeue time - %d %f" % (sess.run([opt._local_step])[0], time.time()))
+
+      timeout_client.broadcast_worker_dequeued_token(cur_iteration+1)
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 

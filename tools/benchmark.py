@@ -267,7 +267,9 @@ def plot_time_cdfs(outdir):
     plt.legend(loc="upper right", fontsize=6)
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_epochs=3, rerun=True, launch=True, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_epochs=3, rerun=True, launch=False, need_shutdown_after_every_run=False):
+    bad = lambda x : "128" in x or "1024" in x
+    cfgs = [x for x in cfgs if not bad(x["name"])]
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
