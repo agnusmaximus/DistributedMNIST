@@ -87,7 +87,7 @@ def train():
         
         n_examples_done = FLAGS.batch_size * self._step
         cur_epoch = n_examples_done / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
-        tf.logging.info("epoch: %d time %f" % (cur_epoch, time.time()-self._start_train_time));
+        print("epoch: %d time %f" % (cur_epoch, time.time()-self._start_train_time));
 
         if self._step % 1 == 0:
           num_examples_per_step = FLAGS.batch_size
