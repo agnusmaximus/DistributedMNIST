@@ -33,7 +33,7 @@ def check_if_reached_iters(cluster_string, n_iters, cfg, master_file_name="out_m
     print("Currently on iteration %d" % cur_iteration)
     return cur_iteration > n_iters
 
-def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", ps_file_name="out_ps", outdir="result_dir"):
+def run_tf_and_download_files(n_epochs, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", ps_file_name="out_ps_0", outdir="result_dir"):
 
     kill_args = "tools/tf_ec2.py kill_all_python"
     tf_ec2_run(kill_args.split(), cfg)
@@ -44,6 +44,9 @@ def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator",
     cluster_string = cluster_specs["cluster_string"]
 
     #time.sleep(run_time_sec)
+    n_iters = (60000 / (int(cfg["batch_size"]) * int(cfg["n_workers"])+1)) * n_epochs
+    n_iters = max(n_iters, 20)
+    print("number of iters: %d" % n_iters)
     while not check_if_reached_iters(cluster_string, n_iters, cfg):
         time.sleep(60)
 
@@ -265,7 +268,7 @@ def plot_time_cdfs(outdir):
     #plt.savefig("histogram.png")
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=True, launch=True, need_shutdown_after_every_run=True):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_epochs=4, rerun=True, launch=False, need_shutdown_after_every_run=False):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:
@@ -273,7 +276,7 @@ def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_
         for cfg in cfgs:
             if need_shutdown_after_every_run:
                 shutdown_and_launch(cfg)
-            run_tf_and_download_files(n_iters, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
+            run_tf_and_download_files(n_epochs, cfg, evaluator_file_name=evaluator_file_name, outdir=outdir)
 
     plot_time_loss(outdir)
     plot_time_step(outdir)
