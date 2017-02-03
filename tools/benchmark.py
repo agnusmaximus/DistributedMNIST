@@ -33,7 +33,7 @@ def check_if_reached_iters(cluster_string, n_iters, cfg, master_file_name="out_m
     print("Currently on iteration %d" % cur_iteration)
     return cur_iteration > n_iters
 
-def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", outdir="result_dir"):
+def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator", master_file_name="out_master", ps_file_name="out_ps", outdir="result_dir"):
 
     kill_args = "tools/tf_ec2.py kill_all_python"
     tf_ec2_run(kill_args.split(), cfg)
@@ -56,6 +56,9 @@ def run_tf_and_download_files(n_iters, cfg, evaluator_file_name="out_evaluator",
 
     download_master_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, master_file_name, outdir)
     tf_ec2_run(download_master_file_args.split(), cfg)
+
+    download_ps_file_args = "tools/tf_ec2.py download_file %s %s %s" % (cluster_string, ps_file_name, outdir)
+    tf_ec2_run(download_ps_file_args.split(), cfg)
 
 def print_worker_sorted_times(fname):
     print("File: %s" % fname)
@@ -262,7 +265,7 @@ def plot_time_cdfs(outdir):
     #plt.savefig("histogram.png")
     plt.savefig("time_cdfs.png")
 
-def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=False, launch=False, need_shutdown_after_every_run=False):
+def plot_figs(cfgs, evaluator_file_name="out_evaluator", outdir="result_dir", n_iters=300, rerun=True, launch=True, need_shutdown_after_every_run=True):
     print([x["name"] for x in cfgs])
     if rerun:
         if launch and not need_shutdown_after_every_run:

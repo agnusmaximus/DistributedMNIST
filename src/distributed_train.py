@@ -210,6 +210,7 @@ def train(target, cluster_spec):
                              saver=saver,
                              save_model_secs=FLAGS.save_interval_secs)
 
+    tf.logging.info("BATCHSIZE: %d" % FLAGS.batch_size);
 
     tf.logging.info('%s Supervisor' % datetime.now())
 

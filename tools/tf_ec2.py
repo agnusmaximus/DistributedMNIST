@@ -45,7 +45,7 @@ cfg = Cfg({
     "worker_type" : "t2.medium",
     "ps_type" : "t2.medium",
     "evaluator_type" : "t2.medium",
-    "image_id": "ami-2306ba43",
+    "image_id": "ami-44299224",
 
     # Launch specifications
     "spot_price" : ".12",                 # Has to be a string
