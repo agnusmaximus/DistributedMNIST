@@ -170,7 +170,6 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         "SyncReplicasV2: replicas_to_aggregate=%s; total_num_replicas=%s",
         replicas_to_aggregate, total_num_replicas)
     self._worker_id =  worker_id
-    tf.logging.info("YOOOO %d" % self._worker_id)
     self._opt = opt
     self._replicas_to_aggregate = replicas_to_aggregate
     self._gradients_applied = False
@@ -309,6 +308,9 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                                     name="dummy_queue",
                                     shared_name="dummy_queue"))
 
+      with ops.device(global_step.device):
+          print_start_op = tf.Print(self._local_step, [self._local_step], message="%d Starting" % self._worker_id)
+
       with ops.device(global_step.device), ops.name_scope(""):
 
         train_only_op = control_flow_ops.group(*(train_ops))
@@ -320,7 +322,6 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         dequeue_op = state_ops.assign(self._local_step, token)
         with ops.control_dependencies([dequeue_op]):
             dequeue_op = tf.Print(token, [token], message="%d Dequeueing" % self._worker_id)
-
 
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
@@ -344,7 +345,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                   global_step, name="SetGlobalStep"))
       self.chief_init_op = control_flow_ops.group(*(chief_init_ops))
       self._gradients_applied = True
-      return train_only_op, dequeue_op
+      return train_only_op, dequeue_op, print_start_op
 
   def get_chief_queue_runner(self):
     """Returns the QueueRunner for the chief to execute.

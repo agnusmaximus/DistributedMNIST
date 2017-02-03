@@ -33,7 +33,7 @@ tf.logging.set_verbosity(tf.logging.INFO)
 
 FLAGS = tf.app.flags.FLAGS
 
-tf.app.flags.DEFINE_boolean('n_train_epochs', 10, 'Number of epochs to train for')
+tf.app.flags.DEFINE_boolean('n_train_epochs', 1000, 'Number of epochs to train for')
 tf.app.flags.DEFINE_boolean('should_summarize', False, 'Whether Chief should write summaries.')
 tf.app.flags.DEFINE_boolean('timeline_logging', False, 'Whether to log timeline of events.')
 tf.app.flags.DEFINE_string('job_name', '', 'One of "ps", "worker"')
@@ -165,7 +165,7 @@ def train(target, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    apply_gradients_op, dequeue_op = opt.apply_gradients(grads, global_step=global_step)
+    apply_gradients_op, dequeue_op, print_start_op = opt.apply_gradients(grads, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
@@ -250,6 +250,7 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       step_start = time.time()
+      sess.run([print_start_op])
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       step_elapsed_time = time.time()-step_start
       tf.logging.info("Step time - %f" % step_elapsed_time)
