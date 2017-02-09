@@ -257,15 +257,21 @@ def train(target, dataset, cluster_spec):
         #tf.logging.info("Global step attained: %d" % step)
         
         if FLAGS.task_id == 0 and loss_value <= 0.05:
-          test_batch_size = 10000
-          images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
-          logits = mnist.inference(images_placeholder, train=False)
-          validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
-          feed_dict = mnist.fill_feed_dict(data_set,
+          n_example = dataset.num_examples
+          test_batch_size = 5000
+          n_rounds = n_example / test_batch_size
+          cum_acc = 0.0
+          for round in xrange(n_rounds):
+            images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+            logits = mnist.inference(images_placeholder, train=False)
+            validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
+            feed_dict = mnist.fill_feed_dict(dataset,
                                        images_placeholder,
                                        labels_placeholder,
                                        test_batch_size)
-          acc = sess.run([validation_accuracy], feed_dict=feed_dict)
+            round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
+            cum_acc += round_acc
+          acc = cum_acc / n_rounds
           if acc >= 0.98:
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
