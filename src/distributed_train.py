@@ -265,7 +265,7 @@ def train(target, dataset, cluster_spec):
                                        images_placeholder,
                                        labels_placeholder,
                                        test_batch_size)
-          acc, loss = sess.run([val_acc, val_loss], feed_dict=feed_dict)
+          acc, loss = sess.run([validation_accuracy], feed_dict=feed_dict)
           if acc >= 0.98:
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
