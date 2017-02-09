@@ -253,6 +253,7 @@ def train(target, dataset, cluster_spec):
           run_options.output_partition_graphs=True
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        tf.logging.info(”Global step attained: %d” % step)
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
