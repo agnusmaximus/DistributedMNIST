@@ -269,6 +269,7 @@ def train(target, dataset, cluster_spec):
           if acc >= 0.98:
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
+            break
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
