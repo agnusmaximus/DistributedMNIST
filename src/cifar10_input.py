@@ -162,6 +162,7 @@ def distorted_inputs(data_dir, batch_size):
   height = IMAGE_SIZE
   width = IMAGE_SIZE
 
+  """ DON'T DISTORT IMAGES
   # Image processing for training the network. Note the many random
   # distortions applied to the image.
 
@@ -177,6 +178,11 @@ def distorted_inputs(data_dir, batch_size):
                                                max_delta=63)
   distorted_image = tf.image.random_contrast(distorted_image,
                                              lower=0.2, upper=1.8)
+  """
+  # We call this distorted_image but it's not...
+  distorted_image = tf.image.resize_image_with_crop_or_pad(reshaped_image,
+                                                           width, height)
+
 
   # Subtract off the mean and divide by the variance of the pixels.
   float_image = tf.image.per_image_standardization(distorted_image)
