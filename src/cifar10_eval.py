@@ -123,6 +123,7 @@ def evaluate():
     images, labels = cifar10.inputs(eval_data=eval_data)
 
     print("YO GOT INPUTS")
+    sys.stdout.flush()
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -132,11 +133,14 @@ def evaluate():
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
     print("YO RESTORING")
+    sys.stdout.flush()
 
     # Restore the moving average version of the learned variables for eval.
     saver = tf.train.Saver()
 
     print("YO RESTORED")
+    sys.stdout.flush()
+
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
@@ -152,6 +156,8 @@ def evaluate():
 
 def main(argv=None):  # pylint: disable=unused-argument
   print("YO STARTING EVAL")
+  sys.stdout.flush()
+
   cifar10.maybe_download_and_extract()
   if tf.gfile.Exists(FLAGS.eval_dir):
     tf.gfile.DeleteRecursively(FLAGS.eval_dir)
