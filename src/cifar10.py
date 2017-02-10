@@ -343,12 +343,12 @@ def train(total_loss, global_step):
                                   LEARNING_RATE_DECAY_FACTOR,
                                   staircase=True)
   # Generate moving averages of all losses and associated summaries.
-  loss_averages_op = _add_loss_summaries(total_loss)
+  #loss_averages_op = _add_loss_summaries(total_loss)
 
   # Compute gradients.
-  with tf.control_dependencies([loss_averages_op]):
-    opt = tf.train.GradientDescentOptimizer(lr)
-    grads = opt.compute_gradients(total_loss)
+  #with tf.control_dependencies([loss_averages_op]):
+  opt = tf.train.GradientDescentOptimizer(lr)
+  grads = opt.compute_gradients(total_loss)
 
   # Apply gradients.
   apply_gradient_op = opt.apply_gradients(grads, global_step=global_step)
