@@ -261,6 +261,7 @@ def train(target, dataset, cluster_spec):
           test_batch_size = 5000
           n_rounds = n_example / test_batch_size
           cum_acc = 0.0   
+          tf.logging.info('before for loop')
           for round in xrange(n_rounds):
             tf.logging.info('before placeholder_inputs')
             images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
