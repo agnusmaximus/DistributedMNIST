@@ -274,6 +274,7 @@ def train(target, dataset, cluster_spec):
                         labels_placeholder,
                         test_batch_size)
           round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
+          print round_acc
           tf.logging.info('round_acc = %f' % round_acc)
           cum_acc += round_acc
           
