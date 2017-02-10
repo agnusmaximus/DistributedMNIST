@@ -47,7 +47,7 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string('eval_dir', '/tmp/cifar10_eval',
                            """Directory where to write event logs.""")
-tf.app.flags.DEFINE_string('eval_data', 'test',
+tf.app.flags.DEFINE_string('eval_data', 'train_eval',
                            """Either 'test' or 'train_eval'.""")
 tf.app.flags.DEFINE_string('checkpoint_dir', '/tmp/cifar10_train',
                            """Directory where to read model checkpoints.""")
@@ -114,11 +114,15 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 
 
 def evaluate():
+  print("YO EVALUATING")
+
   """Eval CIFAR-10 for a number of steps."""
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = FLAGS.eval_data == 'test'
     images, labels = cifar10.inputs(eval_data=eval_data)
+
+    print("YO GOT INPUTS")
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -147,6 +151,7 @@ def evaluate():
 
 
 def main(argv=None):  # pylint: disable=unused-argument
+  print("YO STARTING EVAL")
   cifar10.maybe_download_and_extract()
   if tf.gfile.Exists(FLAGS.eval_dir):
     tf.gfile.DeleteRecursively(FLAGS.eval_dir)
