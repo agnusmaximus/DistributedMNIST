@@ -38,6 +38,7 @@ from datetime import datetime
 import math
 import time
 
+import sys
 import numpy as np
 import tensorflow as tf
 
@@ -140,7 +141,6 @@ def evaluate():
 
     print("YO RESTORED")
     sys.stdout.flush()
-
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
