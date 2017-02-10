@@ -68,7 +68,7 @@ tf.app.flags.DEFINE_integer(
 tf.app.flags.DEFINE_integer('num_replicas_to_aggregate', -1,
                             """Number of gradients to collect before """
                             """updating the parameters.""")
-tf.app.flags.DEFINE_integer('save_interval_secs', 5,
+tf.app.flags.DEFINE_integer('save_interval_secs', 10,
                             'Save interval seconds.')
 tf.app.flags.DEFINE_integer('save_summaries_secs', 300,
                             'Save summaries interval seconds.')
@@ -178,7 +178,7 @@ def train(target, cluster_spec):
     #clean_up_op = opt.get_clean_up_op()
 
     # Create a saver.
-    saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=50)
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
@@ -208,7 +208,8 @@ def train(target, cluster_spec):
                              summary_op=None,
                              global_step=global_step,
                              saver=saver,
-                             save_model_secs=FLAGS.save_interval_secs)
+                             save_model_secs=FLAGS.save_interval_secs,
+    )
 
     tf.logging.info("BATCHSIZE: %d" % FLAGS.batch_size);
 
