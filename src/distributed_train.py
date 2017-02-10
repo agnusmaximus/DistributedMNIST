@@ -266,6 +266,7 @@ def train(target, dataset, cluster_spec):
             images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
             logits = mnist.inference(images_placeholder, train=False)
             validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
+            tf.logging.info('before feed_dict')
             feed_dict = mnist.fill_feed_dict(dataset,
                                        images_placeholder,
                                        labels_placeholder,
