@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "cifar10test",      # Unique name for this specific configuration
+    "name" : "Cifar10",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 24,
+    "n_workers" : 10,
     "n_ps" : 5,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "25",
+    "num_replicas_to_aggregate" : "11",
 
      "method" : "reserved",
 
@@ -41,10 +41,10 @@ cfg = Cfg({
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "m3.medium",
-    "worker_type" : "m3.medium",
-    "ps_type" : "m3.medium",
-    "evaluator_type" : "m3.medium",
+    "master_type" : "m4.2xlarge",
+    "worker_type" : "m4.2xlarge",
+    "ps_type" : "m4.2xlarge",
+    "evaluator_type" : "m4.2xlarge",
     "image_id": "ami-44299224",
 
     # Launch specifications
