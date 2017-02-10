@@ -262,6 +262,8 @@ def train(target, dataset, cluster_spec):
           n_rounds = n_example / test_batch_size
           cum_acc = 0.0   
           tf.logging.info('before for loop')
+          images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+          '''
           for my_round in range(n_rounds):
             tf.logging.info(('before placeholder_inputs %d' % my_round))
             images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
@@ -276,6 +278,7 @@ def train(target, dataset, cluster_spec):
                                        test_batch_size)
             round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
             cum_acc += round_acc
+          '''
           tf.logging.info('after for loop')
           acc = cum_acc / n_rounds
           str = ('training accuracy is %.3f')
