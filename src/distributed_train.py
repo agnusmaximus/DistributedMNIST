@@ -314,6 +314,7 @@ def train(target, dataset, cluster_spec):
           # Determine the next time for running the summary.
           next_summary_time += FLAGS.save_summaries_secs
       except:
+        a = 1
       #  tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
       #  raise
 
