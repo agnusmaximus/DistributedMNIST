@@ -29,26 +29,27 @@ cfg = Cfg({
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 10,
-    "n_ps" : 5,
+    "n_workers" : 7,
+    "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "11",
+    "num_replicas_to_aggregate" : "8",
 
-     "method" : "reserved",
+    "method" : "spot",
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2b",
+    "availability_zone" : "us-west-2c",
 
     # Machine type - instance type configuration.
-    "master_type" : "m4.2xlarge",
-    "worker_type" : "m4.2xlarge",
-    "ps_type" : "m4.2xlarge",
-    "evaluator_type" : "m4.2xlarge",
-    "image_id": "ami-44299224",
+    "master_type" : "g2.2xlarge",
+    "worker_type" : "g2.2xlarge",
+    "ps_type" : "g2.2xlarge",
+    "evaluator_type" : "g2.2xlarge",
+    #"image_id": "ami-44299224",
+    "image_id": "ami-b601b1d6",
 
     # Launch specifications
-    "spot_price" : ".12",                 # Has to be a string
+    "spot_price" : ".3",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -56,9 +57,9 @@ cfg = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
+    "nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -84,9 +85,9 @@ cfg = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "128",
+    "batch_size" : "16",
     "initial_learning_rate" : ".1",
-    "learning_rate_decay_factor" : ".1",
+    "learning_rate_decay_factor" : "1",
     "num_epochs_per_decay" : "350.0",
 
     # Train command specifies how the ps/workers execute tensorflow.
