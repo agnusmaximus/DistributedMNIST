@@ -256,7 +256,7 @@ def train(target, dataset, cluster_spec):
         # The following part is added to test the training error. If the training error is already small enough, we just break
         #tf.logging.info("Global step attained: %d" % step)
         
-        if FLAGS.task_id == 0 and loss_value <= 0.05:
+        if FLAGS.task_id == 0:
           n_example = dataset.num_examples
           test_batch_size = 5000
           n_rounds = n_example / test_batch_size
@@ -272,6 +272,8 @@ def train(target, dataset, cluster_spec):
             round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
             cum_acc += round_acc
           acc = cum_acc / n_rounds
+          str = ('training accuracy is %.3f')
+          tf.logging.info(str % acc)
           if acc >= 0.98:
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
