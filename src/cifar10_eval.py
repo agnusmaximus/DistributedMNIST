@@ -127,8 +127,12 @@ def evaluate():
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
+    print("YO RESTORING")
+
     # Restore the moving average version of the learned variables for eval.
     saver = tf.train.Saver()
+
+    print("YO RESTORED")
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
