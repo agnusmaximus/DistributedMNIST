@@ -142,8 +142,18 @@ def train(target, dataset, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
+    # This is the added part for checking training error
+    n_example = dataset.num_examples
     test_batch_size = 5000
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+    logits = mnist.inference(images_placeholder, train=False)
+    validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
+    feed_dict = mnist.fill_feed_dict(dataset,
+                          images_placeholder,
+                          labels_placeholder,
+                          test_batch_size)
+    
+    
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
@@ -258,28 +268,13 @@ def train(target, dataset, cluster_spec):
         #tf.logging.info("Global step attained: %d" % step)
         
         if FLAGS.task_id == 0:
-          n_example = dataset.num_examples
-          test_batch_size = 5000
           n_rounds = n_example / test_batch_size
           cum_acc = 0.0   
-          tf.logging.info('before for loop')
-          
-          '''
+          tf.logging.info('before for loop')      
           for my_round in range(n_rounds):
-            tf.logging.info(('before placeholder_inputs %d' % my_round))
-            images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
-            tf.logging.info('before inference')
-            logits = mnist.inference(images_placeholder, train=False)
-            tf.logging.info('before reduce_sum')
-            validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
-            tf.logging.info('before feed_dict')
-            feed_dict = mnist.fill_feed_dict(dataset,
-                                       images_placeholder,
-                                       labels_placeholder,
-                                       test_batch_size)
             round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
             cum_acc += round_acc
-          '''
+          
           tf.logging.info('after for loop')
           acc = cum_acc / n_rounds
           str = ('training accuracy is %.3f')
@@ -288,8 +283,6 @@ def train(target, dataset, cluster_spec):
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
             break
-        
-        
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
