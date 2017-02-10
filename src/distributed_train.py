@@ -255,12 +255,13 @@ def train(target, dataset, cluster_spec):
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
         # The following part is added to test the training error. If the training error is already small enough, we just break
         #tf.logging.info("Global step attained: %d" % step)
-        '''
+        
         if FLAGS.task_id == 0:
           n_example = dataset.num_examples
           test_batch_size = 5000
           n_rounds = n_example / test_batch_size
           cum_acc = 0.0
+          tf.logging.info('before for loop')
           for round in xrange(n_rounds):
             images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
             logits = mnist.inference(images_placeholder, train=False)
@@ -278,7 +279,7 @@ def train(target, dataset, cluster_spec):
             str = ('training accuracy is %.3f with %d steps, terminating algorithm')
             tf.logging.info(str % (acc, step))
             break
-        '''
+        
         
 
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
