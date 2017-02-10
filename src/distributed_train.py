@@ -64,7 +64,7 @@ tf.app.flags.DEFINE_integer(
 tf.app.flags.DEFINE_integer('num_replicas_to_aggregate', -1,
                             """Number of gradients to collect before """
                             """updating the parameters.""")
-tf.app.flags.DEFINE_integer('save_interval_secs', 20,
+tf.app.flags.DEFINE_integer('save_interval_secs', 10,
                             'Save interval seconds.')
 tf.app.flags.DEFINE_integer('save_summaries_secs', 300,
                             'Save summaries interval seconds.')
@@ -143,14 +143,11 @@ def train(target, dataset, cluster_spec):
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
     # This is the added part for checking training error
-    n_example = dataset.num_examples
-    test_batch_size = 5000
-    images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
-    logits = mnist.inference(images_placeholder, train=False)
-    validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
-
-    
-    
+    # n_example = dataset.num_examples
+    # test_batch_size = 5000
+    # images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+    # logits = mnist.inference(images_placeholder, train=False)
+    # validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size) 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
@@ -242,88 +239,63 @@ def train(target, dataset, cluster_spec):
     iterations_finished = set()
 
     while not sv.should_stop():
-      #try:
+      try:
 
-      sys.stdout.flush()
-      tf.logging.info("A new iteration...")
+        sys.stdout.flush()
+        tf.logging.info("A new iteration...")
 
-      # Increment current iteration
-      cur_iteration += 1
+        # Increment current iteration
+        cur_iteration += 1
 
-      start_time = time.time()
-      feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
+        start_time = time.time()
+        feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
 
-      run_options = tf.RunOptions()
-      run_metadata = tf.RunMetadata()
+        run_options = tf.RunOptions()
+        run_metadata = tf.RunMetadata()
 
-      if FLAGS.timeline_logging:
-        run_options.trace_level=tf.RunOptions.FULL_TRACE
-        run_options.output_partition_graphs=True
+        if FLAGS.timeline_logging:
+          run_options.trace_level=tf.RunOptions.FULL_TRACE
+          run_options.output_partition_graphs=True
 
-      loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-      # The following part is added to test the training error. If the training error is already small enough, we just break
-      #tf.logging.info("Global step attained: %d" % step)
+        loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        # The following part is added to test the training error. If the training error is already small enough, we just break
+        #tf.logging.info("Global step attained: %d" % step)
         
-      if FLAGS.task_id == 0:
-        n_rounds = int(n_example / test_batch_size)
-        cum_acc = 0.0   
-        tf.logging.info('before for loop')      
-        for my_round in range(n_rounds):
-          feed_dict = mnist.fill_feed_dict(dataset,
-                        images_placeholder,
-                        labels_placeholder,
-                        test_batch_size)
-          round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
-          
-          #tf.logging.info('round_acc has length %d the first item is %f' % (len(round_acc), round_acc[0]))
-          cum_acc += round_acc[0]
-          
-        tf.logging.info('after for loop')
-        acc = cum_acc / n_rounds
-        str = ('training accuracy is %.3f')
-        tf.logging.info(str % acc)
-        if acc >= 0.98:
-          str = ('training accuracy is %.3f with %d steps, terminating algorithm')
-          tf.logging.info(str % (acc, step))
+        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+
+        # Log the elapsed time per iteration
+        finish_time = time.time()
+
+        # Create the Timeline object, and write it to a json
+        if FLAGS.timeline_logging:
+          tl = timeline.Timeline(run_metadata.step_stats)
+          ctf = tl.generate_chrome_trace_format()
+          with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
+            f.write(ctf)
+
+        if step > FLAGS.max_steps:
           break
 
-      assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
-
-      # Log the elapsed time per iteration
-      finish_time = time.time()
-
-      # Create the Timeline object, and write it to a json
-      if FLAGS.timeline_logging:
-        tl = timeline.Timeline(run_metadata.step_stats)
-        ctf = tl.generate_chrome_trace_format()
-        with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
-          f.write(ctf)
-
-      if step > FLAGS.max_steps:
-        break
-
-      duration = time.time() - start_time
-      examples_per_sec = FLAGS.batch_size / float(duration)
-      format_str = ('Worker %d: %s: step %d, loss = %f'
+        duration = time.time() - start_time
+        examples_per_sec = FLAGS.batch_size / float(duration)
+        format_str = ('Worker %d: %s: step %d, loss = %f'
                       '(%.1f examples/sec; %.3f  sec/batch)')
-      tf.logging.info(format_str %
+        tf.logging.info(format_str %
                         (FLAGS.task_id, datetime.now(), step, loss_value,
                            examples_per_sec, duration))
 
-      # Determine if the summary_op should be run on the chief worker.
-      if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+        # Determine if the summary_op should be run on the chief worker.
+        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+          tf.logging.info('Running Summary operation on the chief.')
+          summary_str = sess.run(summary_op)
+          sv.summary_computed(sess, summary_str)
+          tf.logging.info('Finished running Summary operation.')
 
-        tf.logging.info('Running Summary operation on the chief.')
-        summary_str = sess.run(summary_op)
-        sv.summary_computed(sess, summary_str)
-        tf.logging.info('Finished running Summary operation.')
-
-        # Determine the next time for running the summary.
-        next_summary_time += FLAGS.save_summaries_secs
-      #except:
-      #  a = 1
-      #  tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
-      #  raise
+          # Determine the next time for running the summary.
+          next_summary_time += FLAGS.save_summaries_secs
+      except:
+        tf.logging.info("Unexpected error: %s" % str(sys.exc_info()[0]))
+        raise
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
