@@ -80,6 +80,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
       global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
     else:
       print('No checkpoint file found')
+      sys.stdout.flush()
       return
 
     # Start the queue runners.
@@ -102,6 +103,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
       # Compute precision @ 1.
       precision = true_count / total_sample_count
       print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+      sys.stdout.flush()
 
       summary = tf.Summary()
       summary.ParseFromString(sess.run(summary_op))
@@ -115,16 +117,12 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
 
 
 def evaluate():
-  print("YO EVALUATING")
 
   """Eval CIFAR-10 for a number of steps."""
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
     eval_data = FLAGS.eval_data == 'test'
     images, labels = cifar10.inputs(eval_data=eval_data)
-
-    print("YO GOT INPUTS")
-    sys.stdout.flush()
 
     # Build a Graph that computes the logits predictions from the
     # inference model.
@@ -133,14 +131,8 @@ def evaluate():
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
-    print("YO RESTORING")
-    sys.stdout.flush()
-
     # Restore the moving average version of the learned variables for eval.
     saver = tf.train.Saver()
-
-    print("YO RESTORED")
-    sys.stdout.flush()
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
@@ -155,7 +147,6 @@ def evaluate():
 
 
 def main(argv=None):  # pylint: disable=unused-argument
-  print("YO STARTING EVAL")
   sys.stdout.flush()
 
   cifar10.maybe_download_and_extract()
