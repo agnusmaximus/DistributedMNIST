@@ -268,7 +268,7 @@ def train(target, dataset, cluster_spec):
       #tf.logging.info("Global step attained: %d" % step)
         
       if FLAGS.task_id == 0:
-        n_rounds = n_example / test_batch_size
+        n_rounds = int(n_example / test_batch_size)
         cum_acc = 0.0   
         tf.logging.info('before for loop')      
         for my_round in range(n_rounds):
