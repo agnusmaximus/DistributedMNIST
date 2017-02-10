@@ -64,7 +64,7 @@ tf.app.flags.DEFINE_integer(
 tf.app.flags.DEFINE_integer('num_replicas_to_aggregate', -1,
                             """Number of gradients to collect before """
                             """updating the parameters.""")
-tf.app.flags.DEFINE_integer('save_interval_secs', 10,
+tf.app.flags.DEFINE_integer('save_interval_secs', 5,
                             'Save interval seconds.')
 tf.app.flags.DEFINE_integer('save_summaries_secs', 300,
                             'Save summaries interval seconds.')
@@ -178,7 +178,8 @@ def train(target, dataset, cluster_spec):
     init_tokens_op = opt.get_init_tokens_op()
 
     # Create a saver.
-    saver = tf.train.Saver()
+    #saver = tf.train.Saver()
+    saver = tf.train.Saver(max_to_keep=50)
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
@@ -258,8 +259,6 @@ def train(target, dataset, cluster_spec):
           run_options.output_partition_graphs=True
 
         loss_value, step = sess.run([train_op, global_step], feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-        # The following part is added to test the training error. If the training error is already small enough, we just break
-        #tf.logging.info("Global step attained: %d" % step)
         
         assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
