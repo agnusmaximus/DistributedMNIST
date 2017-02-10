@@ -148,10 +148,7 @@ def train(target, dataset, cluster_spec):
     images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
     logits = mnist.inference(images_placeholder, train=False)
     validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
-    feed_dict = mnist.fill_feed_dict(dataset,
-                          images_placeholder,
-                          labels_placeholder,
-                          test_batch_size)
+
     
     
     # Number of classes in the Dataset label set plus 1.
@@ -272,6 +269,10 @@ def train(target, dataset, cluster_spec):
         cum_acc = 0.0   
         tf.logging.info('before for loop')      
         for my_round in range(n_rounds):
+          feed_dict = mnist.fill_feed_dict(dataset,
+                        images_placeholder,
+                        labels_placeholder,
+                        test_batch_size)
           round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
           cum_acc += round_acc
           
