@@ -260,11 +260,13 @@ def train(target, dataset, cluster_spec):
           n_example = dataset.num_examples
           test_batch_size = 5000
           n_rounds = n_example / test_batch_size
-          cum_acc = 0.0
-          tf.logging.info(('before for loop %d' % n_rounds))
+          cum_acc = 0.0   
           for round in xrange(n_rounds):
+            tf.logging.info('before placeholder_inputs')
             images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+            tf.logging.info('before inference')
             logits = mnist.inference(images_placeholder, train=False)
+            tf.logging.info('before reduce_sum')
             validation_accuracy = tf.reduce_sum(mnist.evaluation(logits, labels_placeholder)) / tf.constant(test_batch_size)
             tf.logging.info('before feed_dict')
             feed_dict = mnist.fill_feed_dict(dataset,
