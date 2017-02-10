@@ -11,6 +11,7 @@ import boto3
 import time
 import json
 import os
+import time
 from scp import SCPClient
 
 class Cfg(dict):
@@ -25,14 +26,14 @@ class Cfg(dict):
 
 cfg = Cfg({
     "name" : "Basic",      # Unique name for this specific configuration
-    "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
+    "key_name": "minibatch_dong",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 4,
+    "n_workers" : 7,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "5",
+    "num_replicas_to_aggregate" : "8",
 
     #"method" : "reserved",
 
@@ -48,18 +49,20 @@ cfg = Cfg({
     "image_id": "ami-2306ba43",
 
     # Launch specifications
-    "spot_price" : ".03",                 # Has to be a string
+    "spot_price" : ".15",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
-    "path_to_keyfile" : "/Users/maxlam/Desktop/School/Fall2016/Research/DistributedSGD/MaxLamKeyPair.pem",
+    #"path_to_keyfile" : "/Users/dongyin/Desktop/DistributedMNIST-clean_mnist/tools/minibatch.pem",
+    "path_to_keyfile" : "/Users/dongyin/Desktop/minibatch_dong.pem",
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
     #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
-    "nfs_mount_point" : "/home/ubuntu/inception_sharedddd",       # NFS base dir
+    "nfs_ip_address" : "172.31.29.206",
+    #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
     "setup_commands" :
@@ -84,7 +87,7 @@ cfg = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "128",
+    "batch_size" : "256",
     "initial_learning_rate" : ".001",
     "learning_rate_decay_factor" : ".98",
     "num_epochs_per_decay" : "1.0",
@@ -109,9 +112,10 @@ cfg = Cfg({
         "--task_id=TASK_ID "
         "--timeline_logging=false "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
-        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
+        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"     
     ],
 
+    # "--max_steps=1000 "
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
@@ -491,6 +495,7 @@ def tf_ec2_run(argv, configuration):
         # The evaluator requires a special command to continually evaluate accuracy on validation data.
         # We also launch the tensorboard on it.
         assert(len(machine_assignments["evaluator"]) == 1)
+        # Dong - If we don't want the evaluator one can remove the following two lines.
         command_machine_assignments["evaluator"] = {"instance" : machine_assignments["evaluator"][0],
                                                     "commands" : list(configuration["pre_commands"]) + list(configuration["evaluate_commands"])}
 
@@ -514,6 +519,8 @@ def tf_ec2_run(argv, configuration):
         threads = []
         q = Queue.Queue()
 
+        start_time = time.time()
+
         for name, command_and_machine in command_machine_assignments.items():
             instance = command_and_machine["instance"]
             commands = command_and_machine["commands"]
@@ -526,6 +533,8 @@ def tf_ec2_run(argv, configuration):
         # Wait until commands are all finished
         for t in threads:
             t.join()
+
+        end_time = time.time()
 
         # Print the output
         while not q.empty():
@@ -559,6 +568,14 @@ def tf_ec2_run(argv, configuration):
             "command_machine_assignments" : command_machine_assignments,
             "cluster_string" : instance_cluster_string
         }
+
+        run_time = end_time - start_time
+        print("--- %s seconds ---" % (run_time))
+
+
+
+        with open("results.txt", "a") as myfile:
+            myfile.write("%s\n" % run_time)
 
         return cluster_save
 
