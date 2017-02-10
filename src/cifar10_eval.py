@@ -79,6 +79,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
       # extract global_step from it.
       global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
       print("Step: " + str(global_step))
+      sys.stdout.flush()
     else:
       print('No checkpoint file found')
       sys.stdout.flush()
