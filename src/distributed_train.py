@@ -142,7 +142,8 @@ def train(target, dataset, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
-
+    test_batch_size = 5000
+    images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
@@ -262,7 +263,7 @@ def train(target, dataset, cluster_spec):
           n_rounds = n_example / test_batch_size
           cum_acc = 0.0   
           tf.logging.info('before for loop')
-          images_placeholder, labels_placeholder = mnist.placeholder_inputs(test_batch_size)
+          
           '''
           for my_round in range(n_rounds):
             tf.logging.info(('before placeholder_inputs %d' % my_round))
