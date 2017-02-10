@@ -276,6 +276,7 @@ def train(target, dataset, cluster_spec):
                                        test_batch_size)
             round_acc = sess.run([validation_accuracy], feed_dict=feed_dict)
             cum_acc += round_acc
+          tf.logging.info('after for loop')
           acc = cum_acc / n_rounds
           str = ('training accuracy is %.3f')
           tf.logging.info(str % acc)
