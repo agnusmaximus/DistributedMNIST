@@ -60,7 +60,7 @@ tf.app.flags.DEFINE_boolean('run_once', False,
                          """Whether to run eval only once.""")
 
 
-def eval_once(saver, summary_writer, top_k_op, summary_op):
+def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
   """Run Eval once.
 
   Args:
@@ -102,6 +102,10 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
         true_count += np.sum(predictions)
         step += 1
 
+        # Compute gradients
+        gradients = sess.run([x[1] for x in grads_and_vars])
+        print(gradients)
+
       # Compute precision @ 1.
       precision = true_count / total_sample_count
       print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
@@ -117,6 +121,10 @@ def eval_once(saver, summary_writer, top_k_op, summary_op):
     coord.request_stop()
     coord.join(threads, stop_grace_period_secs=10)
 
+def get_gradients(logits, labels):
+  assert(FLAGS.batch_size == 1)
+
+  return cifar10.compute_gradients(cifar10.loss(logits, labels))
 
 def evaluate():
 
@@ -129,6 +137,7 @@ def evaluate():
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits = cifar10.inference(images)
+    gradients = get_gradients(logits, labels)
 
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
@@ -142,7 +151,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op)
+      eval_once(saver, summary_writer, top_k_op, gradients, summary_op)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
