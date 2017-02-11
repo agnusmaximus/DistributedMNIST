@@ -62,7 +62,7 @@ tf.app.flags.DEFINE_float('learning_rate', 0.1,
                           'Initial learning rate.')
 
 
-def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
+def eval_once(saver, summary_writer, top_k_op, summary_op):
   """Run Eval once.
 
   Args:
@@ -100,8 +100,8 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
 
-      sum_of_norms = [0] * len(grads_and_vars)
-      norm_of_sums = [np.zeros(grad_and_var[0].get_shape()) for grad_and_var in grads_and_vars]
+      #sum_of_norms = [0] * len(grads_and_vars)
+      #norm_of_sums = [np.zeros(grad_and_var[0].get_shape()) for grad_and_var in grads_and_vars]
 
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
@@ -109,16 +109,16 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
         step += 1
 
         # Compute gradients
-        gradients = sess.run([x[1] for x in grads_and_vars])
-        for i, gradient in enumerate(gradients):
+        #gradients = sess.run([x[1] for x in grads_and_vars])
+        #for i, gradient in enumerate(gradients):
           #print("YO GRAD", gradient)
-          sum_of_norms[i] += np.linalg.norm(gradient)**2
-          norm_of_sums[i] += gradient
+        #  sum_of_norms[i] += np.linalg.norm(gradient)**2
+        #  norm_of_sums[i] += gradient
 
-      for i, (var, grad) in enumerate(grads_and_vars):
-        print("YO %f %f" % (sum_of_norms[i], np.linalg.norm(norm_of_sums[i])**2))
-        upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
-        print("Variable %s Upper batch size: %f" % (var.name, upper_batch_size))
+      #for i, (var, grad) in enumerate(grads_and_vars):
+      #  print("YO %f %f" % (sum_of_norms[i], np.linalg.norm(norm_of_sums[i])**2))
+      #  upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
+      #  print("Variable %s Upper batch size: %f" % (var.name, upper_batch_size))
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
@@ -151,7 +151,7 @@ def evaluate():
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits = cifar10.inference(images)
-    gradients = get_gradients(logits, labels)
+    #gradients = get_gradients(logits, labels)
 
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
@@ -165,7 +165,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, gradients, summary_op)
+      eval_once(saver, summary_writer, top_k_op, summary_op)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
