@@ -58,6 +58,8 @@ tf.app.flags.DEFINE_integer('num_examples', 10000,
                             """Number of examples to run.""")
 tf.app.flags.DEFINE_boolean('run_once', False,
                          """Whether to run eval only once.""")
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.1,
+                          'Initial learning rate.')
 
 
 def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
@@ -97,6 +99,10 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
       true_count = 0  # Counts the number of correct predictions.
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
+
+      sum_of_norms = [0] * len(grads_and_vars)
+      norm_of_sums = [np.zeros(grad_and_var[0].get_shape()) for grad_and_var in grads_and_vars]
+
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
@@ -104,7 +110,13 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
 
         # Compute gradients
         gradients = sess.run([x[1] for x in grads_and_vars])
-        print(gradients)
+        for i, gradient in enumerate(gradients):
+          sum_of_norms[i] += np.linalg.norm(gradient)**2
+          norm_of_sums += gradient
+
+      for i, (var, grad) in enumerate(grads_and_vars):
+        upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
+        print("Variable %d Upper batch size: %f" % (var.name, upper_batch_size))
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
@@ -123,8 +135,8 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
 
 def get_gradients(logits, labels):
   assert(FLAGS.batch_size == 1)
-
-  return cifar10.compute_gradients(cifar10.loss(logits, labels))
+  opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
+  return opt.compute_gradients(cifar10.loss(logits, labels))
 
 def evaluate():
 
