@@ -117,7 +117,7 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
 
       for i, (var, grad) in enumerate(grads_and_vars):
         upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
-        print("Variable %d Upper batch size: %f" % (var.name, upper_batch_size))
+        print("Variable %s Upper batch size: %f" % (var.name, upper_batch_size))
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
