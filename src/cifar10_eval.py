@@ -113,7 +113,7 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
         for i, gradient in enumerate(gradients):
           print("YO GRAD", gradient)
           sum_of_norms[i] += np.linalg.norm(gradient)**2
-          norm_of_sums += gradient
+          norm_of_sums[i] += gradient
 
       for i, (var, grad) in enumerate(grads_and_vars):
         upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
