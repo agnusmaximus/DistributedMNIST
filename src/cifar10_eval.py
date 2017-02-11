@@ -116,6 +116,7 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
           norm_of_sums[i] += gradient
 
       for i, (var, grad) in enumerate(grads_and_vars):
+        print("YO %f %f" % (sum_of_norms[i], np.linalg.norm(norm_of_sums[i])**2))
         upper_batch_size = num_iter * FLAGS.batch_size * sum_of_norms[i] / np.linalg.norm(norm_of_sums[i])**2
         print("Variable %s Upper batch size: %f" % (var.name, upper_batch_size))
 
