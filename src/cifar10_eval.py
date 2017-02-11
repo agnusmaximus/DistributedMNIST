@@ -111,7 +111,7 @@ def eval_once(saver, summary_writer, top_k_op, grads_and_vars, summary_op):
         # Compute gradients
         gradients = sess.run([x[1] for x in grads_and_vars])
         for i, gradient in enumerate(gradients):
-          print("YO GRAD", gradient)
+          print("YO GRAD", gradient.shape())
           sum_of_norms[i] += np.linalg.norm(gradient)**2
           norm_of_sums[i] += gradient
 
