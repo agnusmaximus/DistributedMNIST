@@ -24,15 +24,15 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "Cifar10",      # Unique name for this specific configuration
+    "name" : "Cifar10_speedup_workers=12_batchsize=512",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 7,
+    "n_workers" : 11,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "8",
+    "num_replicas_to_aggregate" : "12",
 
     "method" : "spot",
 
@@ -49,7 +49,7 @@ cfg = Cfg({
     "image_id": "ami-b601b1d6",
 
     # Launch specifications
-    "spot_price" : ".3",                 # Has to be a string
+    "spot_price" : ".5",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -57,9 +57,7 @@ cfg = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    "nfs_ip_address" : "172.31.3.173",         # us-west-2c
-    #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    #"nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    "nfs_ip_address" : "172.31.6.18",         # us-west-2c
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -85,7 +83,7 @@ cfg = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "16",
+    "batch_size" : "512",
     "initial_learning_rate" : ".1",
     "learning_rate_decay_factor" : "1",
     "num_epochs_per_decay" : "350.0",
