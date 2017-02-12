@@ -84,16 +84,16 @@ def train():
       def after_run(self, run_context, run_values):
         duration = time.time() - self._start_time
         loss_value = run_values.results
-        
+
         n_examples_done = FLAGS.batch_size * self._step
-        cur_epoch = n_examples_done / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
-        print("epoch: %d time %f" % (cur_epoch, time.time()-self._start_train_time));
+        cur_epoch = n_examples_done / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+        print("epoch: %f time %f" % (cur_epoch, time.time()-self._start_train_time));
 
         if self._step % 1 == 0:
           num_examples_per_step = FLAGS.batch_size
           examples_per_sec = num_examples_per_step / duration
           sec_per_batch = float(duration)
-                  
+
           format_str = ('%s: step %d, loss = %.2f (%.1f examples/sec; %.3f '
                         'sec/batch)')
           print (format_str % (datetime.now(), self._step, loss_value,
