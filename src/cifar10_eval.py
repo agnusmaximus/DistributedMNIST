@@ -104,20 +104,18 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
       norm_of_sums = None
 
       while step < num_iter and not coord.should_stop():
-        predictions = sess.run([top_k_op])
+        #predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
         step += 1
 
         # Compute gradients
         gradients = sess.run([x[0] for x in grads_and_vars])
-        print("YAYAYA: ", [x.flatten() for x in gradients])
         gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
         sys.stdout.flush()
 
         if sum_of_norms == None:
           sum_of_norms = np.linalg.norm(gradient)**2
         else:
-          print("Yo1 %.10f", np.linalg.norm(gradient))
           sum_of_norms += np.linalg.norm(gradient)**2
 
         if norm_of_sums == None:
