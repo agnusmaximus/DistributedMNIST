@@ -145,7 +145,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
 
 def get_gradients():
   assert(FLAGS.batch_size == 1)
-  images, labels = cifar10.inputs(eval_data=eval_data)
+  images, labels = cifar10.inputs(eval_data=FLAGS.eval_data=='test')
   logits = cifar10.inference(images)
   opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
   return opt.compute_gradients(cifar10.loss(logits, labels))
