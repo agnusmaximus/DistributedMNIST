@@ -124,7 +124,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
         else:
           norm_of_sums += gradient
 
-      batchsize_ratio = num_iter * sum_of_norms / np.linalg.norm(norm_of_sums)**2
+      batchsize_ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
       print("Ratio: %f" % batchsize_ratio)
 
       # Compute precision @ 1.
