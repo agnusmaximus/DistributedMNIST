@@ -113,6 +113,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
         gradients = np.array([x.flatten() for x in gradients])
         gradient = gradients.flatten()
         print("YO", gradient.shape)
+        sys.stdout.flush()
 
         if sum_of_norms == None:
           sum_of_norms = np.linalg.norm(gradient)**2
