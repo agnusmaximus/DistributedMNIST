@@ -111,6 +111,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
         # Compute gradients
         gradients = sess.run([x[0] for x in grads_and_vars])
         gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
+        gradient *= FLAGS.batch_size
         sys.stdout.flush()
 
         if sum_of_norms == None:
@@ -142,7 +143,6 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
     coord.join(threads, stop_grace_period_secs=10)
 
 def get_gradients(logits, labels):
-  assert(FLAGS.batch_size == 1)
   opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
   return opt.compute_gradients(cifar10.loss(logits, labels))
 
