@@ -110,9 +110,11 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
 
         # Compute gradients
         gradients = sess.run([x[1] for x in grads_and_vars])
+        print("YO1", gradients)
         gradients = np.array([x.flatten() for x in gradients])
+        print("YO2", gradients)
         gradient = gradients.flatten()
-        print("YO", gradient.shape)
+        print("YO", gradient.shape, gradient)
         sys.stdout.flush()
 
         if sum_of_norms == None:
