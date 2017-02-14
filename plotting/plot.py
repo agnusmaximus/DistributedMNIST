@@ -115,7 +115,8 @@ for batchsize, vals in by_batchsize.items():
     xs = [val[0] for val in vals if val[0] != 1]
     plt.plot(xs, ys, label="g2.2 worker_batchsize=%d"%int(batchsize), marker="o")
 
-plt.plot(
+workers = sorted(list(set([b[1] for b in bwet])))
+plt.plot(workers, workers, label="Optimal speedup")
 
 plt.ylabel("Speedup over one worker per epoch")
 plt.xlabel("Number of workers")
