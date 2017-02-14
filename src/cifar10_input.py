@@ -131,10 +131,6 @@ def _generate_image_and_label_batch(image, label, min_queue_examples,
         num_threads=num_preprocess_threads,
         capacity=min_queue_examples + 3 * batch_size)
 
-    images = tf.Print(images, [tf.zeros(0)], message="Dequeue images...")
-    label_batch = tf.Print(label_batch, [tf.zeros(0)], message="Dequeue images...")
-
-
   return images, tf.reshape(label_batch, [batch_size])
 
 
