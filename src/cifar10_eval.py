@@ -104,7 +104,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
       norm_of_sums = None
 
       while step < num_iter and not coord.should_stop():
-        predictions = sess.run([top_k_op])
+        #predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
         step += 1
 
