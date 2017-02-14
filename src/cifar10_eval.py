@@ -62,7 +62,7 @@ tf.app.flags.DEFINE_float('learning_rate', 1,
                           'Initial learning rate.')
 
 
-def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
+def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calculate_ratio=False):
   """Run Eval once.
 
   Args:
@@ -104,28 +104,31 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
       norm_of_sums = None
 
       while step < num_iter and not coord.should_stop():
-        #predictions = sess.run([top_k_op])
-        #true_count += np.sum(predictions)
+        if not calculate_ratio:
+          predictions = sess.run([top_k_op])
+          true_count += np.sum(predictions)
+        else:
+          # Compute gradients
+          gradients = sess.run([x[0] for x in grads_and_vars])
+          gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
+          gradient *= FLAGS.batch_size
+          sys.stdout.flush()
+
+          if sum_of_norms == None:
+            sum_of_norms = np.linalg.norm(gradient)**2
+          else:
+            sum_of_norms += np.linalg.norm(gradient)**2
+
+          if norm_of_sums == None:
+            norm_of_sums = gradient
+          else:
+            norm_of_sums += gradient
+
         step += 1
 
-        # Compute gradients
-        gradients = sess.run([x[0] for x in grads_and_vars])
-        gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
-        gradient *= FLAGS.batch_size
-        sys.stdout.flush()
-
-        if sum_of_norms == None:
-          sum_of_norms = np.linalg.norm(gradient)**2
-        else:
-          sum_of_norms += np.linalg.norm(gradient)**2
-
-        if norm_of_sums == None:
-          norm_of_sums = gradient
-        else:
-          norm_of_sums += gradient
-
-      batchsize_ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
-      print("Ratio: %f" % batchsize_ratio)
+      if calculate_ratio:
+        batchsize_ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
+        print("Ratio: %f" % batchsize_ratio)
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
@@ -172,6 +175,7 @@ def evaluate():
 
     while True:
       eval_once(saver, summary_writer, top_k_op, summary_op, gradients)
+      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, calculate_ratio=True)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
