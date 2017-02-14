@@ -110,6 +110,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
 
         # Compute gradients
         gradients = sess.run([x[1] for x in grads_and_vars])
+        print("YAYAYA: ", [x.flatten() for x in gradients])
         gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
         sys.stdout.flush()
 
