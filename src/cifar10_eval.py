@@ -58,7 +58,7 @@ tf.app.flags.DEFINE_integer('num_examples', 60000,
                             """Number of examples to run.""")
 tf.app.flags.DEFINE_boolean('run_once', False,
                          """Whether to run eval only once.""")
-tf.app.flags.DEFINE_float('learning_rate', 0.1,
+tf.app.flags.DEFINE_float('learning_rate', 1,
                           'Initial learning rate.')
 
 
@@ -106,7 +106,6 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
-        print("YAYA", predictions)
         step += 1
 
         # Compute gradients
@@ -117,7 +116,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
         if sum_of_norms == None:
           sum_of_norms = np.linalg.norm(gradient)**2
         else:
-          print("Yo1 %.10f" % np.linalg.norm(gradient))
+          print("Yo1 %.10f", np.linalg.norm(gradient))
           sum_of_norms += np.linalg.norm(gradient)**2
 
         if norm_of_sums == None:
@@ -143,10 +142,8 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
     coord.request_stop()
     coord.join(threads, stop_grace_period_secs=10)
 
-def get_gradients():
+def get_gradients(logits, labels):
   assert(FLAGS.batch_size == 1)
-  images, labels = cifar10.inputs(eval_data=FLAGS.eval_data=='test')
-  logits = cifar10.inference(images)
   opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
   return opt.compute_gradients(cifar10.loss(logits, labels))
 
@@ -161,7 +158,7 @@ def evaluate():
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits = cifar10.inference(images)
-    gradients = get_gradients()
+    gradients = get_gradients(logits, labels)
 
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
