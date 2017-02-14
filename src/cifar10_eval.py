@@ -116,6 +116,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
         if sum_of_norms == None:
           sum_of_norms = np.linalg.norm(gradient)**2
         else:
+          print("Yo1: ", np.linalg.norm(gradient))
           sum_of_norms += np.linalg.norm(gradient)**2
 
         if norm_of_sums == None:
