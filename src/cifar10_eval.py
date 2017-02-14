@@ -100,14 +100,18 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
 
-      sum_of_norms = None
-      norm_of_sums = None
-
       while step < num_iter and not coord.should_stop():
-        if not calculate_ratio:
-          predictions = sess.run([top_k_op])
-          true_count += np.sum(predictions)
-        else:
+        predictions = sess.run([top_k_op])
+        true_count += np.sum(predictions)
+        step += 1
+
+      step = 0
+
+      if calculate_ratio:
+
+        sum_of_norms = None
+        norm_of_sums = None
+        while step < num_iter:
           # Compute gradients
           gradients = sess.run([x[0] for x in grads_and_vars])
           gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
@@ -124,9 +128,8 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
           else:
             norm_of_sums += gradient
 
-        step += 1
+          step += 1
 
-      if calculate_ratio:
         batchsize_ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
         print("Ratio: %f" % batchsize_ratio)
 
@@ -174,7 +177,6 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, gradients)
       eval_once(saver, summary_writer, top_k_op, summary_op, gradients, calculate_ratio=True)
       if FLAGS.run_once:
         break
