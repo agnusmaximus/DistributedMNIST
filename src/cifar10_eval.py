@@ -143,8 +143,10 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars):
     coord.request_stop()
     coord.join(threads, stop_grace_period_secs=10)
 
-def get_gradients(logits, labels):
+def get_gradients():
   assert(FLAGS.batch_size == 1)
+  images, labels = cifar10.inputs(eval_data=eval_data)
+  logits = cifar10.inference(images)
   opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
   return opt.compute_gradients(cifar10.loss(logits, labels))
 
@@ -159,7 +161,7 @@ def evaluate():
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits = cifar10.inference(images)
-    gradients = get_gradients(logits, labels)
+    gradients = get_gradients()
 
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
