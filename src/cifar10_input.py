@@ -230,11 +230,16 @@ def distorted_inputs_queue(data_dir):
 
   # Generate a batch of images and labels by building up a queue of examples.
   types = tf_input._dtypes([tf_input._validate(tf_input._as_tensor_list([float_image, read_input.label]))])
+  enqueue_many = False
+  tensor_list = tf_input._as_tensor_list([float_image, read_input.label])
+  keep_input = ops.convert_to_tensor(True)
+  tensor_list, sparse_info = tf_input._store_sparse_tensors(
+    tensor_list, enqueue_many, keep_input)
+  shapes = tf_input._shapes([tensor_list], None, enqueue_many)
   q = data_flow_ops.RandomShuffleQueue(capacity=min_queue_examples + 3 * max_batch_size,
                                        min_after_dequeue=min_queue_examples,
+                                       shapes=shapes
                                        dtypes=types)
-  enqueue_many = False
-  keep_input = ops.convert_to_tensor(True)
   tf_input._enqueue(q, [float_image, read_input.label], 16, enqueue_many, keep_input)
 
   return q
