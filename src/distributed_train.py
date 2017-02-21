@@ -97,11 +97,14 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
-def compute_R(sess, grads_and_vars):
+def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
   step = 0
   num_iter = int(math.ceil(FLAGS.num_examples / FLAGS.batch_size))
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
+    images_real, labels_real = sess.run([images_R, labels_R])
+    feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+
     gradients = sess.run([x[0] for x in grads_and_vars])
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
     gradient *= FLAGS.batch_size
@@ -188,8 +191,7 @@ def train(target, cluster_spec):
 
     # Images and labels for computing R
     images_R, labels_R = cifar10.inputs(eval_data=False)
-    logits_R = cifar10.inference(images_R)
-    grads_and_vars_R = opt.compute_gradients(cifar10.loss(logits_R, labels_R))
+    grads_and_vars_R = opt.compute_gradients(total_loss)
 
     distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
@@ -294,7 +296,7 @@ def train(target, cluster_spec):
       start_time = time.time()
 
       # Compute batchsize ratio
-      R = compute_R(sess, grads_and_vars_R)
+      R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
 
       sess.run([opt._wait_op])
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
