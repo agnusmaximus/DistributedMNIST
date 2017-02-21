@@ -163,7 +163,7 @@ def train(target, cluster_spec):
     distorted_inputs_queue = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
     for i in range(1, 1024):
-      dequeue_inputs.append(distorted_inputs.dequeue_many(i))
+      dequeue_inputs.append(distorted_inputs_queue.dequeue_many(i))
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
