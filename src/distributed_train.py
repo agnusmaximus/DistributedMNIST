@@ -112,7 +112,7 @@ def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, la
     true_count += np.sum(predictions)
     step += 1
   precision = true_count / total_sample_count
-  print('Epoch %f %f' % (epoch, precision))
+  tf.logging.info('Epoch %f %f' % (epoch, precision))
   sys.stdout.flush()
 
 def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
