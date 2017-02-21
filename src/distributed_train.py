@@ -106,8 +106,6 @@ def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
     images_real, labels_real = sess.run([images_R, labels_R])
-    tf.logging.info(images_real.shape)
-    tf.logging.info(labels_real.shape)
 
     feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
 
