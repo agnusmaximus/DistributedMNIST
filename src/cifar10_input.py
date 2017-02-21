@@ -238,7 +238,7 @@ def distorted_inputs_queue(data_dir):
   shapes = tf_input._shapes([tensor_list], None, enqueue_many)
   q = data_flow_ops.RandomShuffleQueue(capacity=min_queue_examples + 3 * max_batch_size,
                                        min_after_dequeue=min_queue_examples,
-                                       shapes=shapes
+                                       shapes=shapes,
                                        dtypes=types)
   tf_input._enqueue(q, [float_image, read_input.label], 16, enqueue_many, keep_input)
 
