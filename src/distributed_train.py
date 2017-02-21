@@ -59,6 +59,8 @@ tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
 tf.app.flags.DEFINE_string('subset', 'train', 'Either "train" or "validation".')
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
                             'Whether to log device placement.')
+tf.app.flags.DEFINE_boolean('variable_batchsize_r', False,
+                            'Use variable batchsize comptued using R.')
 
 # Task ID is used to select the chief and also to access the local_step for
 # each replica to check staleness of the gradients in sync_replicas_optimizer.
@@ -180,8 +182,10 @@ def train(target, cluster_spec):
 
     # We swap out distorted inputs (from a queue) with placeholders
     # to enable variable batch sizes
-    #images, labels = cifar10.distorted_inputs()
-    images, labels = cifar10_input.placeholder_inputs()
+    if FLAGS.variable_batchsize_r:
+      images, labels = cifar10.distorted_inputs()
+    else:
+      images, labels = cifar10_input.placeholder_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -300,7 +304,8 @@ def train(target, cluster_spec):
       start_time = time.time()
 
       # Compute batchsize ratio
-      R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+      if FLAGS.variable_batchsize_r:
+        R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
 
       sess.run([opt._wait_op])
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
@@ -313,12 +318,14 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # We dequeue images form the shuffle queue
-      images_real, labels_real = sess.run(dequeue_inputs[128])
-      tf.logging.info(images_real.shape)
-      tf.logging.info(labels_real.shape)
-
-      feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
-      loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+      if FLAGS.variable_batchsize_r:
+        batchsize_to_use = min(1023, int(R / num_workers))
+        tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
+        images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
+        feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
+        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+      else:
+        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)

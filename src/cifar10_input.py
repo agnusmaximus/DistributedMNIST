@@ -52,8 +52,6 @@ def placeholder_inputs():
   # rather than the full size of the train or test data sets.
   images_placeholder = tf.placeholder(tf.float32, shape=(None, IMAGE_SIZE, IMAGE_SIZE, 3))
   labels_placeholder = tf.placeholder(tf.int64, shape=(None,))
-  tf.logging.info("YOO")
-  tf.logging.info(images_placeholder)
   return images_placeholder, labels_placeholder
 
 def fill_feed_dict(images_real, labels_real, images_pl, labels_pl):
