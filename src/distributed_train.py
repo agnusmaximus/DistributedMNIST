@@ -16,6 +16,7 @@ import tensorflow as tf
 import signal
 import sys
 import os
+import math
 
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
