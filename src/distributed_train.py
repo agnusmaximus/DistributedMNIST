@@ -295,6 +295,10 @@ def train(target, cluster_spec):
     cur_iteration = -1
     iterations_finished = set()
 
+    R = -1
+    n_examples_processed = 0
+    cur_epoch = 0
+
     while not sv.should_stop():
       cur_iteration += 1
       sys.stdout.flush()
@@ -303,7 +307,11 @@ def train(target, cluster_spec):
 
       # Compute batchsize ratio
       if FLAGS.variable_batchsize_r:
-        R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+        new_epoch = int(math.round(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN))
+        if n_examples_processed == 0 or new_epoch > cur_epoch:
+          R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+
+      cur_epoch = max(cur_epoch, int(math.round(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)))
 
       sess.run([opt._wait_op])
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
@@ -322,8 +330,10 @@ def train(target, cluster_spec):
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
         feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+        n_examples_processed += batchsize_to_use * num_workers
       else:
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+        n_Examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
@@ -344,8 +354,7 @@ def train(target, cluster_spec):
       if step > FLAGS.max_steps:
         break
 
-      n_examples_done = FLAGS.batch_size * num_workers * step
-      cur_epoch = n_examples_done / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      cur_epoch = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
       if cur_epoch >= FLAGS.n_train_epochs:
         break
