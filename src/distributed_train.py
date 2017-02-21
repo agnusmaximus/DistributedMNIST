@@ -183,9 +183,9 @@ def train(target, cluster_spec):
     # We swap out distorted inputs (from a queue) with placeholders
     # to enable variable batch sizes
     if FLAGS.variable_batchsize_r:
-      images, labels = cifar10.distorted_inputs()
-    else:
       images, labels = cifar10_input.placeholder_inputs()
+    else:
+      images, labels = cifar10.distorted_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
