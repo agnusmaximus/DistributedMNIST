@@ -147,8 +147,8 @@ def train(target, cluster_spec):
 
     # We swap out distorted inputs (from a queue) with placeholders
     # to enable variable batch sizes
-    images, labels = cifar10.distorted_inputs()
-    #images, labels = cifar10_input.placeholder_inputs()
+    #images, labels = cifar10.distorted_inputs()
+    images, labels = cifar10_input.placeholder_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -161,6 +161,9 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(lr)
 
     distorted_inputs_queue = cifar10.distorted_inputs_queue()
+    dequeue_inputs = []
+    for i in range(1, 1024):
+      dequeue_inputs.push_back(distorted_inputs.dequeue_many(i))
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
@@ -265,11 +268,17 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
+      # We dequeue images form the shuffle queue
+      distorted_inputs_queue.
+      images_real, labels_real = sess.run([dequeue_inputs[i]])
+      tf.logging.info("YOOOO")
+      tf.logging.info(images_real)
+
       #feed_dict = cifar10_input.fill_feed_dict(?, images, labels, FLAGS.batch_size)
+      loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
 
-      #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
-      loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-
+      # This uses the queuerunner which does not support variable batch sizes
+      #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
 
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
