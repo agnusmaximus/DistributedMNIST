@@ -273,7 +273,7 @@ def train(target, cluster_spec):
       tf.logging.info("YOOOO")
       tf.logging.info(images_real)
 
-      #feed_dict = cifar10_input.fill_feed_dict(?, images, labels, FLAGS.batch_size)
+      feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
 
       # This uses the queuerunner which does not support variable batch sizes
