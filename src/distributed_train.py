@@ -100,7 +100,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
   step = 0
-  num_iter = int(math.ceil(FLAGS.num_examples / FLAGS.batch_size))
+  num_iter = int(math.ceil(60000 / FLAGS.batch_size))
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
     images_real, labels_real = sess.run([images_R, labels_R])
