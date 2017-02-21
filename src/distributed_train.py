@@ -24,6 +24,7 @@ from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 from tensorflow.python.ops import data_flow_ops
 from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import SyncReplicasOptimizerModified
+from tensorflow.python.training import input as tf_input
 
 import cifar10_input
 import cifar10
