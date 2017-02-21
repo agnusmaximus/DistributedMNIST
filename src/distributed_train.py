@@ -145,7 +145,10 @@ def train(target, cluster_spec):
                                     FLAGS.learning_rate_decay_factor,
                                     staircase=True)
 
+    # We swap out distorted inputs (from a queue) with placeholders
+    # to enable variable batch sizes
     images, labels = cifar10.distorted_inputs()
+    #images, labels = cifar10_input.placeholder_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -260,6 +263,9 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
+      #feed_dict = cifar10_input.fill_feed_dict(?, images, labels, FLAGS.batch_size)
+
+      #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
 
       timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)

@@ -24,21 +24,21 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "Cifar10_speedup_workers=12_batchsize=512",      # Unique name for this specific configuration
+    "name" : "Cifar10_tuned_lr=.1_batchsize=2048",      # Unique name for this specific configuration
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 11,
+    "n_workers" : 7,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "12",
+    "num_replicas_to_aggregate" : "8",
 
     "method" : "spot",
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2c",
+    "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
     "master_type" : "g2.2xlarge",
@@ -57,7 +57,8 @@ cfg = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    "nfs_ip_address" : "172.31.6.18",         # us-west-2c
+    #"nfs_ip_address" : "172.31.6.18",         # us-west-2c
+    "nfs_ip_address" : "172.31.30.114",         # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -83,7 +84,7 @@ cfg = Cfg({
     ],
 
     # Model configuration
-    "batch_size" : "512",
+    "batch_size" : "256",
     "initial_learning_rate" : ".1",
     "learning_rate_decay_factor" : "1",
     "num_epochs_per_decay" : "350.0",
@@ -119,6 +120,7 @@ cfg = Cfg({
         # Evaluation command
         "python src/cifar10_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "
+        "--batch_size=2000 "
         "--checkpoint_dir=%(base_out_dir)s/train_dir "
         "> %(base_out_dir)s/out_evaluator 2>&1 &",
 

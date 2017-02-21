@@ -34,6 +34,45 @@ NUM_CLASSES = 10
 NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN = 50000
 NUM_EXAMPLES_PER_EPOCH_FOR_EVAL = 10000
 
+def placeholder_inputs():
+  """Generate placeholder variables to represent the input tensors.
+  These placeholders are used as inputs by the rest of the model building
+  code and will be fed from the downloaded data in the .run() loop, below.
+  Args:
+    batch_size: The batch size will be baked into both placeholders.
+  Returns:
+    images_placeholder: Images placeholder.
+    labels_placeholder: Labels placeholder.
+  """
+  # Note that the shapes of the placeholders match the shapes of the full
+  # image and label tensors, except the first dimension is now batch_size
+  # rather than the full size of the train or test data sets.
+  images_placeholder = tf.placeholder(tf.float32, shape=(None, IMAGE_SIZE, IMAGE_SIZE, 3))
+  labels_placeholder = tf.placeholder(tf.int64, shape=(None,))
+  return images_placeholder, labels_placeholder
+
+def fill_feed_dict(data_set, images_pl, labels_pl, batch_size):
+  """Fills the feed_dict for training the given step.
+  A feed_dict takes the form of:
+  feed_dict = {
+      <placeholder>: <tensor of values to be passed for placeholder>,
+      ....
+  }
+  Args:
+    data_set: The set of images and labels, from input_data.read_data_sets()
+    images_pl: The images placeholder, from placeholder_inputs().
+    labels_pl: The labels placeholder, from placeholder_inputs().
+  Returns:
+    feed_dict: The feed dictionary mapping from placeholders to values.
+  """
+  # Create the feed_dict for the placeholders filled with the next
+  # `batch size` examples.
+  images_feed, labels_feed = data_set.next_batch(batch_size)
+  feed_dict = {
+      images_pl: images_feed,
+      labels_pl: labels_feed,
+  }
+  return feed_dict
 
 def read_cifar10(filename_queue):
   """Reads and parses examples from CIFAR10 data files.
@@ -96,7 +135,6 @@ def read_cifar10(filename_queue):
   result.uint8image = tf.transpose(depth_major, [1, 2, 0])
 
   return result
-
 
 def _generate_image_and_label_batch(image, label, min_queue_examples,
                                     batch_size, shuffle):
@@ -196,6 +234,8 @@ def distorted_inputs(data_dir, batch_size):
                            min_fraction_of_examples_in_queue)
   print ('Filling queue with %d CIFAR images before starting to train. '
          'This will take a few minutes.' % min_queue_examples)
+
+  print("YO: ", float_image)
 
   # Generate a batch of images and labels by building up a queue of examples.
   return _generate_image_and_label_batch(float_image, read_input.label,
