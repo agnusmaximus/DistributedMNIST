@@ -116,7 +116,6 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
           gradients = sess.run([x[0] for x in grads_and_vars])
           gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
           gradient *= FLAGS.batch_size
-          print("YO %f" % np.linalg.norm(gradient))
           sys.stdout.flush()
 
           if sum_of_norms == None:
