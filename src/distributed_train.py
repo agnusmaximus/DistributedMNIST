@@ -309,6 +309,7 @@ def train(target, cluster_spec):
       if FLAGS.variable_batchsize_r:
         new_epoch = int(round(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN))
         if n_examples_processed == 0 or new_epoch > cur_epoch:
+          tf.logging.info("Computing R for epoch %d" % new_epoch)
           R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
 
       cur_epoch = max(cur_epoch, int(round(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)))
