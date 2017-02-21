@@ -24,7 +24,7 @@ import os
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
 from tensorflow.python.ops import data_flow_ops
-
+from tensorflow.python.training import input as tf_input
 
 # Process images of this size. Note that this differs from the original CIFAR
 # image size of 32 x 32. If one alters this number, then the entire model
@@ -229,11 +229,11 @@ def distorted_inputs_queue(data_dir):
   max_batch_size = 1024
 
   # Generate a batch of images and labels by building up a queue of examples.
-  types = tf.train._dtypes([float_image, read_input.label])
+  types = tf_input._dtypes([float_image, read_input.label])
   q = data_flow_ops.RandomShuffleQueue(capacity=min_queue_examples + 3 * max_batch_size,
                                        min_after_dequeue=min_queue_examples,
                                        dtypes=types)
-  tf.train._enqueue(q, [float_image, read_input.label], num_preprocess_threads, False, True)
+  tf_input._enqueue(q, [float_image, read_input.label], num_preprocess_threads, False, True)
 
   return q
 
