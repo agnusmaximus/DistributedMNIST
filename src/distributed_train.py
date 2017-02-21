@@ -167,8 +167,8 @@ def train(target, cluster_spec):
       dequeued = distorted_inputs_queue.dequeue_many(i)
       dequeued = tf_input._restore_sparse_tensors(dequeued, q_sparse_info)
       dequeued = tf_input._as_original_type(q_tensors, dequeued)
-      images, labels = dequeued
-      dequeue_inputs.append([images, tf.reshape(labels, [-1])])
+      images_q, labels_q = dequeued
+      dequeue_inputs.append([images_q, tf.reshape(labels_q, [-1])])
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
