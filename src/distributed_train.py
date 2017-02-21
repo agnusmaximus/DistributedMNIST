@@ -204,7 +204,7 @@ def train(target, cluster_spec):
     # Label 0 is reserved for an (unused) background class.
     logits = cifar10.inference(images)
 
-    top_k_op = tf.nn_in_top_k(logits, labels, 1)
+    top_k_op = tf.nn.in_top_k(logits, labels, 1)
 
     # Add classification loss.
     total_loss = cifar10.loss(logits, labels)
