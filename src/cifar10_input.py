@@ -229,7 +229,7 @@ def distorted_inputs_queue(data_dir):
   max_batch_size = 1024
 
   # Generate a batch of images and labels by building up a queue of examples.
-  types = tf_input._dtypes([float_image, read_input.label])
+  types = tf_input._dtypes(tf_input._as_tensor_list([float_image, read_input.label]))
   q = data_flow_ops.RandomShuffleQueue(capacity=min_queue_examples + 3 * max_batch_size,
                                        min_after_dequeue=min_queue_examples,
                                        dtypes=types)
