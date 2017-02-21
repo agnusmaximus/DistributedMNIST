@@ -162,7 +162,7 @@ def distorted_inputs():
   return images, labels
 
 
-def inputs(eval_data):
+def inputs(eval_data=False):
   """Construct input for CIFAR evaluation using the Reader ops.
 
   Args:
