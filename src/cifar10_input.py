@@ -233,7 +233,9 @@ def distorted_inputs_queue(data_dir):
   q = data_flow_ops.RandomShuffleQueue(capacity=min_queue_examples + 3 * max_batch_size,
                                        min_after_dequeue=min_queue_examples,
                                        dtypes=types)
-  tf_input._enqueue(q, [float_image, read_input.label], 16, False, True)
+  enqueue_many = False
+  keep_input =tf_input._validate_keep_input(True, enqueue_many)
+  tf_input._enqueue(q, [float_image, read_input.label], 16, enqueue_many, keep_input)
 
   return q
 
