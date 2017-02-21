@@ -163,7 +163,8 @@ def train(target, cluster_spec):
     distorted_inputs_queue = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
     for i in range(1, 1024):
-      dequeue_inputs.append(distorted_inputs_queue.dequeue_many(i))
+      dequeued = distorted_inputs_queue.dequeue_many(i)
+      dequeue_inputs.append(dequeued)
 
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
@@ -269,9 +270,10 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # We dequeue images form the shuffle queue
-      images_real, labels_real = sess.run([dequeue_inputs[i]])
+      #images_real, labels_real = sess.run([dequeue_inputs[i]])
+      k = sess.run([dequeue_inputs[0]])
       tf.logging.info("YOOOO")
-      tf.logging.info(images_real)
+      tf.logging.info(k)
 
       feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
