@@ -23,6 +23,7 @@ import os
 
 from six.moves import xrange  # pylint: disable=redefined-builtin
 import tensorflow as tf
+from tensorflow.python.framework import ops
 from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.training import input as tf_input
 
@@ -234,7 +235,7 @@ def distorted_inputs_queue(data_dir):
                                        min_after_dequeue=min_queue_examples,
                                        dtypes=types)
   enqueue_many = False
-  keep_input =tf_input._validate_keep_input(True, enqueue_many)
+  keep_input = ops.convert_to_tensor(True)
   tf_input._enqueue(q, [float_image, read_input.label], 16, enqueue_many, keep_input)
 
   return q
