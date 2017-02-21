@@ -100,6 +100,21 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
+def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl):
+  step = 0
+  num_iter = int(math.ceil(60000 / FLAGS.batch_size))
+  true_count = 0  # Counts the number of correct predictions.
+  total_sample_count = num_iter * FLAGS.batch_size
+  while step < num_iter:
+    images_real, labels_real = sess.run([images_R, labels_R])
+    feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    predictions = sess.run([top_k_op], feed_dict=feed_dict)
+    true_count += np.sum(predictions)
+    step += 1
+  precision = true_count / total_sample_count
+  print('Epoch %f %f' % (epoch, precision))
+  sys.stdout.flush()
+
 def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
   step = 0
   num_iter = int(math.ceil(60000 / FLAGS.batch_size))
@@ -188,6 +203,8 @@ def train(target, cluster_spec):
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = cifar10.inference(images)
+
+    top_k_op = tf.nn_in_top_k(logits, labels, 1)
 
     # Add classification loss.
     total_loss = cifar10.loss(logits, labels)
@@ -306,6 +323,7 @@ def train(target, cluster_spec):
       start_time = time.time()
 
       # Compute batchsize ratio
+      new_epoch_float = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
 
       if FLAGS.variable_batchsize_r:
@@ -313,6 +331,7 @@ def train(target, cluster_spec):
         if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
           tf.logging.info("Computing R for epoch %d" % new_epoch_track)
           R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+      compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels)
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
