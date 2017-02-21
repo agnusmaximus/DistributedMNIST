@@ -135,6 +135,11 @@ def _variable_with_weight_decay(name, shape, stddev, wd):
     tf.add_to_collection('losses', weight_decay)
   return var
 
+def distorted_inputs_queue():
+  if not FLAGS.data_dir:
+    raise ValueError('Please supply a data_dir')
+  data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
+  return cifar10_input.distorted_inputs_queue(data_dir)
 
 def distorted_inputs():
   """Construct distorted input for CIFAR training using the Reader ops.

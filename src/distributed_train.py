@@ -160,6 +160,8 @@ def train(target, cluster_spec):
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
 
+    distorted_inputs_queue = cifar10.distorted_inputs_queue(
+
     # Use V2 optimizer
     opt = SyncReplicasOptimizerModified(
       opt,
