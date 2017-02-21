@@ -274,7 +274,7 @@ def train(target, cluster_spec):
 
       # We dequeue images form the shuffle queue
       images_real, labels_real = sess.run(dequeue_inputs[0])
-      tf.logging.info(images_real)
+      tf.logging.info(images_real.shape, labels_real.shape)
 
       feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
       loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
