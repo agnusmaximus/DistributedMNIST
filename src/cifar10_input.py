@@ -229,9 +229,10 @@ def distorted_inputs_queue(data_dir):
   max_batch_size = 1024
 
   # Generate a batch of images and labels by building up a queue of examples.
-  types = tf_input._dtypes([tf_input._validate(tf_input._as_tensor_list([float_image, read_input.label]))])
+  tensors = [float_image, read_input.label]
+  types = tf_input._dtypes([tf_input._validate(tf_input._as_tensor_list(tensors))])
   enqueue_many = False
-  tensor_list = tf_input._as_tensor_list([float_image, read_input.label])
+  tensor_list = tf_input._as_tensor_list(tensors)
   keep_input = ops.convert_to_tensor(True)
   tensor_list, sparse_info = tf_input._store_sparse_tensors(
     tensor_list, enqueue_many, keep_input)
@@ -240,9 +241,9 @@ def distorted_inputs_queue(data_dir):
                                        min_after_dequeue=min_queue_examples,
                                        shapes=shapes,
                                        dtypes=types)
-  tf_input._enqueue(q, [float_image, read_input.label], 16, enqueue_many, keep_input)
+  tf_input._enqueue(q, tensors, 16, enqueue_many, keep_input)
 
-  return q
+  return q, sparse_info, tensors
 
 def distorted_inputs(data_dir, batch_size):
   """Construct distorted input for CIFAR training using the Reader ops.

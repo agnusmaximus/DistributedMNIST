@@ -160,10 +160,14 @@ def train(target, cluster_spec):
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
 
-    distorted_inputs_queue = cifar10.distorted_inputs_queue()
+    distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
     for i in range(1, 1024):
       dequeued = distorted_inputs_queue.dequeue_many(i)
+      dequeued = tf_input._restore_sparse_tensors(dequeued, q_sparse_info)
+      dequeued = tf_input._as_original_type(q_tensors, dequeued)
+      tf.logging.info("YOOO")
+      tf.logging.info(dequeued)
       dequeue_inputs.append(dequeued)
 
     # Use V2 optimizer
