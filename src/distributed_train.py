@@ -229,7 +229,7 @@ def train(target, cluster_spec):
     #clean_up_op = opt.get_clean_up_op()
 
     # Create a saver.
-    saver = tf.train.Saver(max_to_keep=50)
+    saver = tf.train.Saver(max_to_keep=100)
 
     # Build the summary operation based on the TF collection of Summaries.
     summary_op = tf.summary.merge_all()
