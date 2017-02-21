@@ -297,7 +297,7 @@ def train(target, cluster_spec):
 
     R = -1
     n_examples_processed = 0
-    cur_epoch = 0
+    cur_epoch_track = 0
 
     while not sv.should_stop():
       cur_iteration += 1
@@ -306,15 +306,15 @@ def train(target, cluster_spec):
       start_time = time.time()
 
       # Compute batchsize ratio
-      new_epoch = int(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      new_epoch_track = int(n_examples_processed / cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
 
       if FLAGS.variable_batchsize_r:
-        tf.logging.info("%d vs %d" % (new_epoch, cur_epoch))
-        if n_examples_processed == 0 or new_epoch > cur_epoch:
-          tf.logging.info("Computing R for epoch %d" % new_epoch)
+        tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
+        if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
+          tf.logging.info("Computing R for epoch %d" % new_epoch_track)
           R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
 
-      cur_epoch = max(cur_epoch, new_epoch)
+      cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
       sess.run([opt._wait_op])
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
