@@ -97,6 +97,31 @@ RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
+def compute_R(sess, grads_and_vars):
+  step = 0
+  num_iter = int(math.ceil(FLAGS.num_examples / FLAGS.batch_size))
+  sum_of_norms, norm_of_sums = None, None
+  while step < num_iter:
+    gradients = sess.run([x[0] for x in grads_and_vars])
+    gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
+    gradient *= FLAGS.batch_size
+
+    if sum_of_norms == None:
+      sum_of_norms = np.linalg.norm(gradient)**2
+    else:
+      sum_of_norms += np.linalg.norm(gradient)**2
+
+    if norm_of_sums == None:
+      norm_of_sums = gradient
+    else:
+      norm_of_sums += gradient
+
+    step += 1
+
+  ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
+  tf.logging.info("batchsize ratio: %f" % ratio)
+  return ratio
+
 def train(target, cluster_spec):
 
   """Train Inception on a dataset for a number of steps."""
@@ -160,6 +185,11 @@ def train(target, cluster_spec):
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
+
+    # Images and labels for computing R
+    images_R, labels_R = cifar10.inputs(eval_data=False)
+    logits_R = cifar10.inference(images_R)
+    grads_and_vars_R = opt.compute_gradients(cifar10.loss(logits_R, labels_R))
 
     distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
@@ -262,6 +292,9 @@ def train(target, cluster_spec):
       sys.stdout.flush()
 
       start_time = time.time()
+
+      # Compute batchsize ratio
+      R = compute_R(sess, grads_and_vars_R)
 
       sess.run([opt._wait_op])
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
