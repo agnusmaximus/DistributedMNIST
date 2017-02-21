@@ -109,7 +109,7 @@ def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
 
     feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
 
-    gradients = sess.run([x[0] for x in grads_and_vars])
+    gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
     gradient *= FLAGS.batch_size
 
