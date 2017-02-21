@@ -248,7 +248,7 @@ def inference(images):
     reshape = tf.reshape(pool2, [FLAGS.batch_size, -1])
     dim = reshape.get_shape()[1].value
     tf.logging.info("YOOO")
-    tf.logging.info(dim)
+    tf.logging.info(reshape.get_shape())
     weights = _variable_with_weight_decay('weights', shape=[dim, 384],
                                           stddev=0.04, wd=0.004)
 
