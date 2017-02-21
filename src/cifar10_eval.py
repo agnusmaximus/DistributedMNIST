@@ -177,7 +177,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, calculate_ratio=False)
+      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, calculate_ratio=True)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
