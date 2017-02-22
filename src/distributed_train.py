@@ -109,9 +109,14 @@ def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, la
   true_count = 0  # Counts the number of correct predictions.
   total_sample_count = num_iter * batch_size
   while step < num_iter:
+    t1 = time.time()
     images_real, labels_real = sess.run([images_R, labels_R])
+    t2 = time.time()
     feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    t3 = time.time()
     predictions = sess.run([top_k_op], feed_dict=feed_dict)
+    t4 = time.time()
+    tf.logging.info("Images time: %f, feed_dict time: %f, predictions time: %f" % (t2-t1, t3-t2, t4-t3))
     true_count += np.sum(predictions)
     step += 1
   precision = true_count / total_sample_count
