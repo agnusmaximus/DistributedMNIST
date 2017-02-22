@@ -326,6 +326,7 @@ def train(target, cluster_spec):
     n_examples_processed = 0
     cur_epoch_track = 0
     compute_R_train_error_time = 0
+    train_error_time = 0
 
     while not sv.should_stop():
       cur_iteration += 1
@@ -347,7 +348,10 @@ def train(target, cluster_spec):
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
             r_time_end = time.time()
             tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
-          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time)
+          c1 = time.time()
+          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
+          c2 = time.time()
+          train_error_time += c2-c1
         c_time_end = time.time()
         compute_R_train_error_time += c_time_end - c_time_start
 
