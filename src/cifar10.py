@@ -162,7 +162,7 @@ def distorted_inputs():
   return images, labels
 
 
-def inputs(eval_data=False):
+def inputs(eval_data=False, batchsize=-1):
   """Construct input for CIFAR evaluation using the Reader ops.
 
   Args:
@@ -175,12 +175,16 @@ def inputs(eval_data=False):
   Raises:
     ValueError: If no data_dir
   """
+
+  if batchsize < 0:
+    batchsize = FLAGS.batch_size
+
   if not FLAGS.data_dir:
     raise ValueError('Please supply a data_dir')
   data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
   images, labels = cifar10_input.inputs(eval_data=eval_data,
                                         data_dir=data_dir,
-                                        batch_size=FLAGS.batch_size)
+                                        batch_size=batchsize)
   if FLAGS.use_fp16:
     images = tf.cast(images, tf.float16)
     labels = tf.cast(labels, tf.float16)
