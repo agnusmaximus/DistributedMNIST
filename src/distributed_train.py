@@ -103,6 +103,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 EVAL_BATCHSIZE=2000
 
 def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl, e_time):
+  train_error_start_time = time.time()
   step = 0
   batch_size = FLAGS.batch_size
   num_iter = int(math.ceil(60000 / batch_size))
@@ -119,8 +120,9 @@ def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, la
     tf.logging.info("Images time: %f, feed_dict time: %f, predictions time: %f" % (t2-t1, t3-t2, t4-t3))
     true_count += np.sum(predictions)
     step += 1
+  train_error_end_time = time.time()
   precision = true_count / total_sample_count
-  tf.logging.info('Epoch %f %f %f' % (e_time, epoch, precision))
+  tf.logging.info('Epoch %f %f %f' % (e_time - (train_error_end_time-train_error_start_time), epoch, precision))
   sys.stdout.flush()
 
 def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
