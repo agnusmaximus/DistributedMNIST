@@ -102,7 +102,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl):
   step = 0
-  batch_size = 256
+  batch_size = 2000
   num_iter = int(math.ceil(60000 / batch_size))
   true_count = 0  # Counts the number of correct predictions.
   total_sample_count = num_iter * batch_size
