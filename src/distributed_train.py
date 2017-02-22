@@ -102,7 +102,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 EVAL_BATCHSIZE=2000
 
-def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl):
+def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl, time):
   step = 0
   batch_size = FLAGS.batch_size
   num_iter = int(math.ceil(60000 / batch_size))
@@ -120,7 +120,7 @@ def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, la
     true_count += np.sum(predictions)
     step += 1
   precision = true_count / total_sample_count
-  tf.logging.info('Epoch %f %f' % (epoch, precision))
+  tf.logging.info('Epoch %f %f %f' % (time, epoch, precision))
   sys.stdout.flush()
 
 def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
@@ -342,7 +342,7 @@ def train(target, cluster_spec):
             tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
             tf.logging.info("Computing R for epoch %d" % new_epoch_track)
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
-          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels)
+          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time)
         c_time_end = time.time()
         compute_R_train_error_time += c_time_end - c_time_start
 
