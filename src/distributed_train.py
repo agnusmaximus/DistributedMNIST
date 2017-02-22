@@ -341,7 +341,10 @@ def train(target, cluster_spec):
           if FLAGS.variable_batchsize_r:
             tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
             tf.logging.info("Computing R for epoch %d" % new_epoch_track)
+            r_time_start = time.time()
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+            r_time_end = time.time()
+            print("Compute R time: %f" % r_time_end-r_time_start)
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time)
         c_time_end = time.time()
         compute_R_train_error_time += c_time_end - c_time_start
