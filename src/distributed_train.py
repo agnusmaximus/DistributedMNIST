@@ -104,7 +104,7 @@ EVAL_BATCHSIZE=2000
 
 def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl):
   step = 0
-  batch_size = EVAL_BATCHSIZE
+  batch_size = FLAGS.batch_size
   num_iter = int(math.ceil(60000 / batch_size))
   true_count = 0  # Counts the number of correct predictions.
   total_sample_count = num_iter * batch_size
@@ -216,7 +216,7 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(lr)
 
     # Images and labels for computing R
-    images_R, labels_R = cifar10.inputs(eval_data=False, batchsize=EVAL_BATCHSIZE)
+    images_R, labels_R = cifar10.inputs(eval_data=False)
     grads_and_vars_R = opt.compute_gradients(total_loss)
 
     distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
