@@ -334,12 +334,13 @@ def train(target, cluster_spec):
       new_epoch_float = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
 
-      if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
-        if FLAGS.variable_batchsize_r:
-          tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
-          tf.logging.info("Computing R for epoch %d" % new_epoch_track)
-          R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
-        compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels)
+      if FLAGS.task_id == 0:
+        if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
+          if FLAGS.variable_batchsize_r:
+            tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
+            tf.logging.info("Computing R for epoch %d" % new_epoch_track)
+            R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels)
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
