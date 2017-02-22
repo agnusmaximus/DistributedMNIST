@@ -251,7 +251,7 @@ def inference(images):
     # Move everything into depth so we can perform a single matrix multiply.
     #reshape = tf.reshape(pool2, [FLAGS.batch_size, -1])
     #tf.logging.info("YOOO")
-    #tf.logging.info(pool2.get_shape())
+    tf.logging.info(pool2.get_shape())
     reshape = tf.reshape(pool2, [-1, 6 * 6 * 64])
     dim = reshape.get_shape()[1].value
     weights = _variable_with_weight_decay('weights', shape=[dim, 384],
