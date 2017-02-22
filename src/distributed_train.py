@@ -323,6 +323,7 @@ def train(target, cluster_spec):
     R = -1
     n_examples_processed = 0
     cur_epoch_track = 0
+    compute_R_train_error_time = 0
 
     while not sv.should_stop():
       cur_iteration += 1
@@ -335,12 +336,15 @@ def train(target, cluster_spec):
       new_epoch_track = int(new_epoch_float)
 
       if FLAGS.task_id == 0:
+        c_time_start = time.time()
         if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
           if FLAGS.variable_batchsize_r:
             tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
             tf.logging.info("Computing R for epoch %d" % new_epoch_track)
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels)
+        c_time_end = time.time()
+        compute_R_train_error_time += c_time_end - c_time_start
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
@@ -386,7 +390,7 @@ def train(target, cluster_spec):
         break
 
       cur_epoch = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-      tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
+      tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time-compute_R_train_error_time));
       if cur_epoch >= FLAGS.n_train_epochs:
         break
 
