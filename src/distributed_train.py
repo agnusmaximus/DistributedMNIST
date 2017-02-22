@@ -102,9 +102,10 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 def compute_train_error(sess, top_k_op, epoch, images_R, labels_R, images_pl, labels_pl):
   step = 0
-  num_iter = int(math.ceil(60000 / FLAGS.batch_size))
+  batch_size = 256
+  num_iter = int(math.ceil(60000 / batch_size))
   true_count = 0  # Counts the number of correct predictions.
-  total_sample_count = num_iter * FLAGS.batch_size
+  total_sample_count = num_iter * batch_size
   while step < num_iter:
     images_real, labels_real = sess.run([images_R, labels_R])
     feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
