@@ -356,7 +356,7 @@ def train(target, cluster_spec):
         n_examples_processed += batchsize_to_use * num_workers
       else:
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-        n_Examples_processed += FLAGS.batch_size * num_workers
+        n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
