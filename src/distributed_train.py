@@ -344,7 +344,7 @@ def train(target, cluster_spec):
             r_time_start = time.time()
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
             r_time_end = time.time()
-            tf.logging.info("Compute R time: %f" % r_time_end-r_time_start)
+            tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time)
         c_time_end = time.time()
         compute_R_train_error_time += c_time_end - c_time_start
