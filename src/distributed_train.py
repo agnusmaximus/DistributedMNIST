@@ -335,6 +335,9 @@ def train(target, cluster_spec):
 
       start_time = time.time()
 
+      sess.run([opt._wait_op])
+      timeout_client.broadcast_worker_dequeued_token(cur_iteration)
+
       # Compute batchsize ratio
       new_epoch_float = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
@@ -355,9 +358,6 @@ def train(target, cluster_spec):
           train_error_time += c2-c1
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
-
-      sess.run([opt._wait_op])
-      timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
