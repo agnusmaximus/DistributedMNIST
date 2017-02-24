@@ -340,20 +340,20 @@ def train(target, cluster_spec):
       new_epoch_track = int(new_epoch_float)
 
       if FLAGS.task_id == 0:
-        c_time_start = time.time()
         if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
           if FLAGS.variable_batchsize_r:
+            c_time_start = time.time()
             tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
             tf.logging.info("Computing R for epoch %d" % new_epoch_track)
             r_time_start = time.time()
             R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
             r_time_end = time.time()
             tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
+            c_time_end = time.time()
           c1 = time.time()
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
-        c_time_end = time.time()
         compute_R_train_error_time += c_time_end - c_time_start
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
@@ -372,7 +372,7 @@ def train(target, cluster_spec):
       if FLAGS.variable_batchsize_r:
         batchsize_to_use = min(1023, int(R / 2 / num_workers))
         batchsize_to_use = int(int(batchsize_to_use / 100) * 100)
-        batchsize_to_use = 1024
+        batchsize_to_use = 128
         tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
         feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
