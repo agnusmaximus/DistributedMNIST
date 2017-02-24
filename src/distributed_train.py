@@ -371,6 +371,7 @@ def train(target, cluster_spec):
       # We dequeue images form the shuffle queue
       if FLAGS.variable_batchsize_r:
         batchsize_to_use = min(1023, int(R / 2 / num_workers))
+        batchsize_to_use = batchsize_to_use / 100 * 100
         tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
         feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
