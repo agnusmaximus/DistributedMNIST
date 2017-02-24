@@ -348,11 +348,10 @@ def train(target, cluster_spec):
           r_time_end = time.time()
           tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
 
-        if FLAGS.task_id == 0:
-          c1 = time.time()
-          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
-          c2 = time.time()
-        if FLAGS.task_id == 0:
+      if FLAGS.task_id == 0:
+        c1 = time.time()
+        compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
+        c2 = time.time()
         train_error_time += c2-c1
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
