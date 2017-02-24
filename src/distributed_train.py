@@ -205,10 +205,11 @@ def train(target, cluster_spec):
 
     # We swap out distorted inputs (from a queue) with placeholders
     # to enable variable batch sizes
-    if FLAGS.variable_batchsize_r:
-      images, labels = cifar10_input.placeholder_inputs()
-    else:
-      images, labels = cifar10.distorted_inputs()
+    #if FLAGS.variable_batchsize_r:
+    #  images, labels = cifar10_input.placeholder_inputs()
+    #else:
+    #  images, labels = cifar10.distorted_inputs()
+    images, labels = cifar10_input.placeholder_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -376,8 +377,11 @@ def train(target, cluster_spec):
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
         n_examples_processed += batchsize_to_use * num_workers
       else:
-        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-        n_examples_processed += FLAGS.batch_size * num_workers
+        batchsize_to_use = FLAGS.batch_size
+        images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
+        feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
+        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+        n_examples_processed += batchsize_to_use * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
