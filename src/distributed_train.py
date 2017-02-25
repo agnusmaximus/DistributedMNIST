@@ -373,7 +373,7 @@ def train(target, cluster_spec):
 
       if FLAGS.variable_batchsize_r:
         R = float(sess.run([R_dequeue])[0])
-        tf.logging.info("Dequeued R: %f" % F)
+        tf.logging.info("Dequeued R: %f" % R)
 
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
