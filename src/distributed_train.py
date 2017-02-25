@@ -374,7 +374,7 @@ def train(target, cluster_spec):
         if FLAGS.variable_batchsize_r:
           R = float(sess.run([R_dequeue])[0])
           tf.logging.info("Dequeued R: %f" % R)
-
+          R = max(R, 1280)
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
