@@ -243,17 +243,18 @@ def train(target, cluster_spec):
       global_step,
       total_num_replicas=num_workers)
 
-    # Compute gradients with respect to the loss.
-    grads = opt.compute_gradients(total_loss)
-    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
-
-    R_queue = data_flow_ops.FIFOQueue(-1,
-                                      tf.float32,
-                                      shared_name="R_q")
+    with ops.device(global_step.device):
+      R_queue = data_flow_ops.FIFOQueue(-1,
+                                        tf.float32,
+                                        shared_name="R_q")
     R_dequeue = R_queue.dequeue()
     R_placeholder = tf.placeholder(tf.float32, shape=())
     tokens = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_many = R_queue.enqueue_many((tokens,))
+
+    # Compute gradients with respect to the loss.
+    grads = opt.compute_gradients(total_loss)
+    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
