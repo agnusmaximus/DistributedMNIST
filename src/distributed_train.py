@@ -18,6 +18,7 @@ import sys
 import os
 import math
 
+from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
 from tensorflow.python.ops import state_ops
@@ -246,6 +247,14 @@ def train(target, cluster_spec):
     grads = opt.compute_gradients(total_loss)
     apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
+    R_queue = data_flow_ops.data_flow_ops.FIFOQueue(-1,
+                                                    tf.float32,
+                                                    shapes=(),
+                                                    shared_name="R_q")
+    R_dequeue = R_queue.dequeue()
+    R_placeholder = tf.placeholder(tf.float32, shape=())
+    R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
+
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
 
@@ -336,28 +345,37 @@ def train(target, cluster_spec):
       start_time = time.time()
 
       sess.run([opt._wait_op])
+
       timeout_client.broadcast_worker_dequeued_token(cur_iteration)
 
       # Compute batchsize ratio
       new_epoch_float = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
 
-      if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
-        if FLAGS.variable_batchsize_r:
-          tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
-          tf.logging.info("Computing R for epoch %d" % new_epoch_track)
-          r_time_start = time.time()
-          R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
-          r_time_end = time.time()
-          tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
+      if FLAGS.task_id == 0:
+        if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
+          if FLAGS.variable_batchsize_r:
+            tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
+            tf.logging.info("Computing R for epoch %d" % new_epoch_track)
+            r_time_start = time.time()
+            R = compute_R(sess, grads_and_vars_R, images_R, labels_R, images, labels)
+            r_time_end = time.time()
+            tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
 
-        if FLAGS.task_id == 0:
+            sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
+
           c1 = time.time()
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
 
+
+
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
+
+      if FLAGS.variable_batchsize_r:
+        R = float(sess.run([R_dequeue])[0])
+        tf.logging.info("Dequeued R: %f" % F)
 
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
