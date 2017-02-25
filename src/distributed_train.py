@@ -251,7 +251,7 @@ def train(target, cluster_spec):
                                       shapes=(),
                                       shared_name="R_q")
     R_dequeue = R_queue.dequeue()
-    R_placeholder = tf.placeholder(tf.float32, shape=(0))
+    R_placeholder = tf.placeholder(tf.float32, shape=(-1))
     R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
 
     with tf.control_dependencies([apply_gradients_op]):
@@ -367,8 +367,6 @@ def train(target, cluster_spec):
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
-
-
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
