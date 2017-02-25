@@ -18,7 +18,6 @@ import sys
 import os
 import math
 
-from tensorflow.python.ops import data_flow_ops
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
 from tensorflow.python.ops import state_ops
