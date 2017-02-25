@@ -251,7 +251,7 @@ def train(target, cluster_spec):
                                       shapes=(),
                                       shared_name="R_q")
     R_dequeue = R_queue.dequeue()
-    R_placeholder = tf.placeholder(tf.float32, shape=(0))
+    R_placeholder = tf.placeholder(tf.float32, shape=())
     R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
 
     with tf.control_dependencies([apply_gradients_op]):
@@ -361,7 +361,7 @@ def train(target, cluster_spec):
             r_time_end = time.time()
             tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
 
-            sess.run([R_enqueue_many], feed_dict={R_placeholder: np.array([R])})
+            sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
 
           c1 = time.time()
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
