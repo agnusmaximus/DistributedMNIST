@@ -248,10 +248,10 @@ def train(target, cluster_spec):
 
     R_queue = data_flow_ops.FIFOQueue(-1,
                                       tf.float32,
-                                      shapes=(),
+                                      shapes=(0),
                                       shared_name="R_q")
     R_dequeue = R_queue.dequeue()
-    R_placeholder = tf.placeholder(tf.float32, shape=())
+    R_placeholder = tf.placeholder(tf.float32, shape=(0))
     R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
 
     with tf.control_dependencies([apply_gradients_op]):
