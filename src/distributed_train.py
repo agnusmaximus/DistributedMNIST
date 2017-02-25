@@ -246,10 +246,10 @@ def train(target, cluster_spec):
     grads = opt.compute_gradients(total_loss)
     apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
-    R_queue = data_flow_ops.data_flow_ops.FIFOQueue(-1,
-                                                    tf.float32,
-                                                    shapes=(),
-                                                    shared_name="R_q")
+    R_queue = data_flow_ops.FIFOQueue(-1,
+                                      tf.float32,
+                                      shapes=(),
+                                      shared_name="R_q")
     R_dequeue = R_queue.dequeue()
     R_placeholder = tf.placeholder(tf.float32, shape=())
     R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
