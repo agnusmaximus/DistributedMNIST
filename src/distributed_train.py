@@ -21,6 +21,7 @@ import math
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
 from tensorflow.python.ops import state_ops
+from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 from tensorflow.python.ops import data_flow_ops
@@ -251,7 +252,8 @@ def train(target, cluster_spec):
                                       shared_name="R_q")
     R_dequeue = R_queue.dequeue()
     R_placeholder = tf.placeholder(tf.float32, shape=())
-    R_enqueue_many = R_queue.enqueue_many([R_placeholder] * num_workers)
+    tokens = array_ops.fill([num_workers], R_placeholder)
+    R_enqueue_many = R_queue.enqueue_many((tokens,))
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
