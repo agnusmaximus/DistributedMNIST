@@ -249,8 +249,7 @@ def train(target, cluster_spec):
                                         shared_name="R_q")
     R_dequeue = R_queue.dequeue()
     R_placeholder = tf.placeholder(tf.float32, shape=())
-    num_to_fill_placeholder = tf.placeholder(tf.int64, shape=())
-    tokens = array_ops.fill([num_to_fill_placeholder], R_placeholder)
+    tokens = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_many = R_queue.enqueue_many((tokens,))
 
     # Compute gradients with respect to the loss.
@@ -364,21 +363,20 @@ def train(target, cluster_spec):
             r_time_end = time.time()
             tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
 
-            n_iters = int(math.ceil(60000 / float(R / R_DIV)))
-            sess.run([R_enqueue_many], feed_dict={R_placeholder: R, num_to_fill_placeholder: n_iters})
+            sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
 
           c1 = time.time()
           compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
 
-      R_DIV = 5
+      if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
+        if FLAGS.variable_batchsize_r:
+          R = float(sess.run([R_dequeue])[0])
+          tf.logging.info("Dequeued R: %f" % R)
+
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
-
-      if FLAGS.variable_batchsize_r:
-        R = float(sess.run([R_dequeue])[0])
-        tf.logging.info("Dequeued R: %f" % R)
 
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
@@ -389,7 +387,7 @@ def train(target, cluster_spec):
 
       # We dequeue images form the shuffle queue
       if FLAGS.variable_batchsize_r:
-        batchsize_to_use = min(1023, int(R / R_DIV / num_workers))
+        batchsize_to_use = min(1023, int(R / 5 / num_workers))
         batchsize_to_use = int(int(batchsize_to_use / 32) * 32)
         tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
