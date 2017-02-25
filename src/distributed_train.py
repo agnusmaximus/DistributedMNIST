@@ -248,7 +248,7 @@ def train(target, cluster_spec):
 
     R_queue = data_flow_ops.FIFOQueue(-1,
                                       tf.float32,
-                                      shapes=(0),
+                                      shapes=(),
                                       shared_name="R_q")
     R_dequeue = R_queue.dequeue()
     R_placeholder = tf.placeholder(tf.float32, shape=(0))
