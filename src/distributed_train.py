@@ -367,7 +367,7 @@ def train(target, cluster_spec):
             sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
 
           c1 = time.time()
-          compute_train_error(sess, top_k_op, new_epoch_float, dequeue_inputs[1023], images, labels, time.time()-begin_time-train_error_time)
+          #compute_train_error(sess, top_k_op, new_epoch_float, dequeue_inputs[1023], images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
 
