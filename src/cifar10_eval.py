@@ -82,6 +82,8 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
       # extract global_step from it.
       global_step = ckpt.model_checkpoint_path.split('/')[-1].split('-')[-1]
       print("Step: " + str(global_step))
+      if str(global_step) == "0":
+        start_time = time.time()
       sys.stdout.flush()
     else:
       print('No checkpoint file found')
@@ -144,7 +146,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
       # Compute precision @ 1.
       precision = true_count / total_sample_count
       #print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
-      print("%f %f %f %f" % (time.time()-start_time, float(global_step), precision, computed_loss))
+      print("Info: %f %f %f %f" % (time.time()-start_time, float(global_step), precision, computed_loss))
       sys.stdout.flush()
 
       summary = tf.Summary()
