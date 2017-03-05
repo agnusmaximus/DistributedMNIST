@@ -230,7 +230,7 @@ def train(target, cluster_spec):
 
     distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
     dequeue_inputs = []
-    for i in range(1, 1024):
+    for i in range(1, 2048):
       dequeued = distorted_inputs_queue.dequeue_many(i)
       dequeued = tf_input._restore_sparse_tensors(dequeued, q_sparse_info)
       dequeued = tf_input._as_original_type(q_tensors, dequeued)
