@@ -64,6 +64,8 @@ tf.app.flags.DEFINE_float('learning_rate', .1,
 start_time = time.time()
 
 def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss, calculate_ratio=False):
+  global start_time
+
   """Run Eval once.
 
   Args:
