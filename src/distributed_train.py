@@ -106,7 +106,8 @@ EVAL_BATCHSIZE=2000
 def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time):
   train_error_start_time = time.time()
   step = 0
-  batch_size = FLAGS.batch_size
+  #batch_size = FLAGS.batch_size
+  batch_size = 1024
   num_iter = int(math.ceil(60000 / batch_size))
   true_count = 0  # Counts the number of correct predictions.
   total_sample_count = num_iter * batch_size
