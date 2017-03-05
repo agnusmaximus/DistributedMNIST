@@ -110,7 +110,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
 
       computed_loss = 0
       while step < num_iter and not coord.should_stop():
-        computed_loss += sess.run([total_loss])[0]
+        computed_loss += sess.run([loss])[0]
         step += 1
 
       step = 0
