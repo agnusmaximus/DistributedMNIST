@@ -126,12 +126,12 @@ def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time)
   tf.logging.info('Epoch %f %f %f' % (e_time, epoch, precision))
   sys.stdout.flush()
 
-def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
+def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl):
   step = 0
-  num_iter = int(math.ceil(60000 / FLAGS.batch_size))
+  num_iter = int(math.ceil(60000 / float(1024)))
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
-    images_real, labels_real = sess.run([images_R, labels_R])
+    images_real, labels_real = sess.run(dq)
 
     feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
 
@@ -151,7 +151,7 @@ def compute_R(sess, grads_and_vars, images_R, labels_R, images_pl, labels_pl):
 
     step += 1
 
-  ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
+  ratio = num_iter * 1024 * sum_of_norms / np.linalg.norm(norm_of_sums)**2
   tf.logging.info("batchsize ratio: %f" % ratio)
   return ratio
 
@@ -366,7 +366,7 @@ def train(target, cluster_spec):
             sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
 
           c1 = time.time()
-          compute_train_error(sess, top_k_op, new_epoch_float, images_R, labels_R, images, labels, time.time()-begin_time-train_error_time)
+          compute_train_error(sess, top_k_op, new_epoch_float, dequeue_inputs[1023], images, labels, time.time()-begin_time-train_error_time)
           c2 = time.time()
           train_error_time += c2-c1
 
