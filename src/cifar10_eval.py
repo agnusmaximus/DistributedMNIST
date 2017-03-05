@@ -100,12 +100,17 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
       true_count = 0  # Counts the number of correct predictions.
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
-      computed_loss = 0
 
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
-        computed_loss += sess.run([loss])[0]
+        step += 1
+
+      step = 0
+
+      computed_loss = 0
+      while step < num_iter and not coord.should_stop():
+        computed_loss += sess.run([total_loss])[0]
         step += 1
 
       step = 0
