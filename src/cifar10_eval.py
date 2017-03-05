@@ -61,8 +61,9 @@ tf.app.flags.DEFINE_boolean('run_once', False,
 tf.app.flags.DEFINE_float('learning_rate', .1,
                           'Initial learning rate.')
 
+start_time = time.time()
 
-def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calculate_ratio=False):
+def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss, calculate_ratio=False):
   """Run Eval once.
 
   Args:
@@ -99,10 +100,12 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
       true_count = 0  # Counts the number of correct predictions.
       total_sample_count = num_iter * FLAGS.batch_size
       step = 0
+      computed_loss = 0
 
       while step < num_iter and not coord.should_stop():
         predictions = sess.run([top_k_op])
         true_count += np.sum(predictions)
+        computed_loss += sess.run([loss])[0]
         step += 1
 
       step = 0
@@ -135,7 +138,8 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
 
       # Compute precision @ 1.
       precision = true_count / total_sample_count
-      print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+      #print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+      print("%f %f %f %f" % (time.time()-start_time, global_step, precision, computed_loss))
       sys.stdout.flush()
 
       summary = tf.Summary()
@@ -148,9 +152,9 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, calcu
     coord.request_stop()
     coord.join(threads, stop_grace_period_secs=10)
 
-def get_gradients(logits, labels):
+def get_gradients(logits, labels, loss):
   opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
-  return opt.compute_gradients(cifar10.loss(logits, labels))
+  return opt.compute_gradients(loss)
 
 def evaluate():
 
@@ -163,7 +167,8 @@ def evaluate():
     # Build a Graph that computes the logits predictions from the
     # inference model.
     logits = cifar10.inference(images)
-    gradients = get_gradients(logits, labels)
+    loss = cifar10.loss(logits, labels)
+    gradients = get_gradients(logits, labels, loss)
 
     # Calculate predictions.
     top_k_op = tf.nn.in_top_k(logits, labels, 1)
@@ -177,7 +182,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, calculate_ratio=True)
+      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, loss, calculate_ratio=True)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
