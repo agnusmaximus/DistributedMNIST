@@ -139,7 +139,7 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
       # Compute precision @ 1.
       precision = true_count / total_sample_count
       #print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
-      print("%f %f %f %f" % (time.time()-start_time, global_step, precision, computed_loss))
+      print("%f %f %f %f" % (time.time()-start_time, float(global_step), precision, computed_loss))
       sys.stdout.flush()
 
       summary = tf.Summary()
@@ -182,7 +182,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, loss, calculate_ratio=True)
+      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, loss, calculate_ratio=False)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)
