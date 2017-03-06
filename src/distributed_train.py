@@ -395,9 +395,9 @@ def train(target, cluster_spec):
         if loss_value < 0:
           batchsize_to_use = 128
         else:
-          batchsize_to_use = 128 + 32 * int(cur_epoch_track)
+          batchsize_to_use = 128 + 32 * int(cur_epoch_track / 10)
         batchsize_to_use = min(batchsize_to_use, 512)
-        tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
+        tf.logging.info("Epoch: %d, Overall batchsize %f, worker batchsize %d" % (int(cur_epoch_track), R, batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
         feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
