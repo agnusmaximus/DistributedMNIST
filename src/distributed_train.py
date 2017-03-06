@@ -395,7 +395,7 @@ def train(target, cluster_spec):
         if loss_value < 0:
           batchsize_to_use = 128
         else:
-          batchsize_to_use = 128 + 32 * int(cur_iteration / 100)
+          batchsize_to_use = 128 + 32 * int(cur_epoch_track)
         batchsize_to_use = min(batchsize_to_use, 512)
         tf.logging.info("Overall batchsize %f, worker batchsize %d" % (R, batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
