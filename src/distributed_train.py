@@ -210,8 +210,8 @@ def train(target, cluster_spec):
     #if FLAGS.variable_batchsize_r:
     #  images, labels = cifar10_input.placeholder_inputs()
     #else:
-    #  images, labels = cifar10.distorted_inputs()
-    images, labels = cifar10_input.placeholder_inputs()
+    images, labels = cifar10.distorted_inputs()
+    #images, labels = cifar10_input.placeholder_inputs()
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
@@ -404,9 +404,10 @@ def train(target, cluster_spec):
         n_examples_processed += batchsize_to_use * num_workers
       else:
         batchsize_to_use = FLAGS.batch_size
-        images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
-        feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
-        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+        #images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
+        #feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
+        #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
+        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
         n_examples_processed += batchsize_to_use * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
