@@ -404,6 +404,7 @@ def train(target, cluster_spec):
         n_examples_processed += batchsize_to_use * num_workers
       else:
         batchsize_to_use = FLAGS.batch_size
+        tf.logging.info("Using static batchsize %d" % int(batchsize_to_use))
         images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
         feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
         loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
