@@ -171,7 +171,7 @@ def evaluate():
 def main(argv=None):  # pylint: disable=unused-argument
   sys.stdout.flush()
 
-  cifar_input.maybe_download_and_extract()
+  cifar_input.maybe_download_and_extract(FLAGS.dataset)
   if tf.gfile.Exists(FLAGS.eval_dir):
     tf.gfile.DeleteRecursively(FLAGS.eval_dir)
   tf.gfile.MakeDirs(FLAGS.eval_dir)
