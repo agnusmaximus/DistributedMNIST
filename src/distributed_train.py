@@ -205,10 +205,11 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizerV2(
+    opt = tf.train.SyncReplicasOptimizer(
       opt,
-      global_step,
-      total_num_replicas=num_workers)
+      num_workers,
+      total_num_replicas=num_workers,
+    )
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(model.cost)
