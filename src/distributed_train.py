@@ -87,7 +87,7 @@ tf.app.flags.DEFINE_integer('save_summaries_secs', 300,
 #tf.app.flags.DEFINE_float('initial_learning_rate', 0.045,
 #                          'Initial learning rate.')
 # For flowers
-tf.app.flags.DEFINE_float('initial_learning_rate', 0.1,
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.01,
                           'Initial learning rate.')
 tf.app.flags.DEFINE_float('num_epochs_per_decay', 2.0,
                           'Epochs after which learning rate decays.')
@@ -191,7 +191,7 @@ def train(target, cluster_spec):
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
                                num_classes=10 if FLAGS.dataset=="cifar10" else 100,
                                min_lrn_rate=0.0001,
-                               lrn_rate=0.1,
+                               lrn_rate=FLAGS.initial_learning_rate,
                                num_residual_units=5,
                                use_bottleneck=False,
                                weight_decay_rate=0.0002,
@@ -202,7 +202,7 @@ def train(target, cluster_spec):
     model.build_graph()
 
     # Create an optimizer that performs gradient descent.
-    opt = tf.train.GradientDescentOptimizer(lr)
+    opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
     # Use V2 optimizer
     opt = tf.train.SyncReplicasOptimizer(
