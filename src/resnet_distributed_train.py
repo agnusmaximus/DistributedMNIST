@@ -8,7 +8,7 @@ from __future__ import print_function
 import tensorflow as tf
 
 import distributed_train
-import cifar10
+import resnet
 
 FLAGS = tf.app.flags.FLAGS
 
@@ -30,7 +30,7 @@ def main(unused_args):
       job_name=FLAGS.job_name,
       task_index=FLAGS.task_id)
 
-  cifar10.maybe_download_and_extract()
+  resnet.maybe_download_and_extract('cifar100')
 
   if FLAGS.job_name == 'ps':
     # `ps` jobs wait for incoming connections from the workers.

@@ -25,12 +25,10 @@ from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import logging_ops
 from tensorflow.python.client import timeline
 from tensorflow.python.ops import data_flow_ops
-from sync_replicas_optimizer_modified.sync_replicas_optimizer_modified import SyncReplicasOptimizerModified
 from tensorflow.python.training import input as tf_input
 
-import cifar10_input
-import cifar10
-from timeout_manager import launch_manager
+import cifar_input
+import resnet_model
 
 np.set_printoptions(threshold=np.nan)
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -50,7 +48,7 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
                            """worker jobs. e.g. """
                            """'machine1:2222,machine2:1111,machine2:2222'""")
 
-tf.app.flags.DEFINE_string('train_dir', '/tmp/cifar10_train',
+tf.app.flags.DEFINE_string('train_dir', '/tmp/cifar100_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('rpc_port', 1235,
@@ -115,7 +113,7 @@ def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time)
     t1 = time.time()
     images_real, labels_real = sess.run(dq)
     t2 = time.time()
-    feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    feed_dict = cifar100_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
     t3 = time.time()
     predictions = sess.run([top_k_op], feed_dict=feed_dict)
     t4 = time.time()
@@ -134,7 +132,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl):
   while step < num_iter:
     images_real, labels_real = sess.run(dq)
 
-    feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    feed_dict = cifar100_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
 
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
@@ -189,72 +187,31 @@ def train(target, cluster_spec):
     # number of updates applied to the variables. The PS holds the global step.
     global_step = tf.Variable(0, name="global_step", trainable=False)
 
-    # Calculate the learning rate schedule.
-    num_batches_per_epoch = cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / FLAGS.batch_size
+    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
+    hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
+                               num_classes=num_classes,
+                               min_lrn_rate=0.0001,
+                               lrn_rate=0.1,
+                               num_residual_units=5,
+                               use_bottleneck=False,
+                               weight_decay_rate=0.0002,
+                               relu_leakiness=0.1,
+                               optimizer='sgd')
 
-    # Decay steps need to be divided by the number of replicas to aggregate.
-    # This was the old decay schedule. Don't want this since it decays too fast with a fixed learning rate.
-    decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_replicas_to_aggregate)
-    # New decay schedule. Decay every few steps.
-    #decay_steps = int(num_batches_per_epoch * FLAGS.num_epochs_per_decay / num_workers)
-
-    # Decay the learning rate exponentially based on the number of steps.
-    lr = tf.train.exponential_decay(FLAGS.initial_learning_rate,
-                                    global_step,
-                                    decay_steps,
-                                    FLAGS.learning_rate_decay_factor,
-                                    staircase=True)
-
-    # We swap out distorted inputs (from a queue) with placeholders
-    # to enable variable batch sizes
-    #if FLAGS.variable_batchsize_r:
-    #  images, labels = cifar10_input.placeholder_inputs()
-    #else:
-    #  images, labels = cifar10.distorted_inputs()
-    images, labels = cifar10_input.placeholder_inputs()
-
-    # Number of classes in the Dataset label set plus 1.
-    # Label 0 is reserved for an (unused) background class.
-    logits = cifar10.inference(images)
-
-    top_k_op = tf.nn.in_top_k(logits, labels, 1)
-
-    # Add classification loss.
-    total_loss = cifar10.loss(logits, labels)
+    model = resnet_model.ResNet(hps, images, labels, "train")
+    model.build_graph()
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
 
-    # Images and labels for computing R
-    images_R, labels_R = cifar10.inputs(eval_data=False)
-    grads_and_vars_R = opt.compute_gradients(total_loss)
-
-    distorted_inputs_queue, q_sparse_info, q_tensors = cifar10.distorted_inputs_queue()
-    dequeue_inputs = []
-    for i in range(1, 2048):
-      dequeued = distorted_inputs_queue.dequeue_many(i)
-      dequeued = tf_input._restore_sparse_tensors(dequeued, q_sparse_info)
-      dequeued = tf_input._as_original_type(q_tensors, dequeued)
-      images_q, labels_q = dequeued
-      dequeue_inputs.append([images_q, tf.reshape(labels_q, [-1])])
-
     # Use V2 optimizer
-    opt = SyncReplicasOptimizerModified(
+    opt = tf.train.SyncReplicasOptimizer(
       opt,
       global_step,
       total_num_replicas=num_workers)
 
-    with ops.device(global_step.device):
-      R_queue = data_flow_ops.FIFOQueue(-1,
-                                        tf.float32,
-                                        shared_name="R_q")
-    R_dequeue = R_queue.dequeue()
-    R_placeholder = tf.placeholder(tf.float32, shape=())
-    tokens = array_ops.fill([num_workers], R_placeholder)
-    R_enqueue_many = R_queue.enqueue_many((tokens,))
-
     # Compute gradients with respect to the loss.
-    grads = opt.compute_gradients(total_loss)
+    grads = opt.compute_gradients(model.cost)
     apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
@@ -322,8 +279,6 @@ def train(target, cluster_spec):
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
-    timeout_client, timeout_server = launch_manager(sess, FLAGS)
-
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
     # simultaneously in order to prevent running out of GPU memory.
@@ -347,38 +302,9 @@ def train(target, cluster_spec):
 
       start_time = time.time()
 
-      sess.run([opt._wait_op])
-
-      timeout_client.broadcast_worker_dequeued_token(cur_iteration)
-
       # Compute batchsize ratio
-      new_epoch_float = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      new_epoch_float = n_examples_processed / float(cifar100_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
-
-      if FLAGS.task_id == 0:
-        if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
-          if FLAGS.variable_batchsize_r:
-            tf.logging.info("%d vs %d" % (new_epoch_track, cur_epoch_track))
-            tf.logging.info("Computing R for epoch %d" % new_epoch_track)
-            r_time_start = time.time()
-            #R = compute_R(sess, grads_and_vars_R, dequeue_inputs[1023], images, labels)
-            R = -1
-            r_time_end = time.time()
-            tf.logging.info("Compute R time: %f" % (r_time_end-r_time_start))
-
-            sess.run([R_enqueue_many], feed_dict={R_placeholder: R})
-
-          c1 = time.time()
-          #compute_train_error(sess, top_k_op, new_epoch_float, dequeue_inputs[1023], images, labels, time.time()-begin_time-train_error_time)
-          c2 = time.time()
-          train_error_time += c2-c1
-
-      if n_examples_processed == 0 or new_epoch_track > cur_epoch_track:
-        if FLAGS.variable_batchsize_r:
-          R = float(sess.run([R_dequeue])[0])
-          tf.logging.info("Dequeued R: %f" % R)
-          R = max(R, 2560)
-
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
       run_options = tf.RunOptions()
@@ -388,32 +314,11 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
-      # We dequeue images form the shuffle queue
-      if FLAGS.variable_batchsize_r:
-        #batchsize_to_use = min(1023, int(R / 5 / num_workers))
-        #batchsize_to_use = int(int(batchsize_to_use / 32) * 32)
-        if loss_value < 0:
-          batchsize_to_use = 128
-        else:
-          batchsize_to_use = 128 + 32 * int(cur_epoch_track / 10)
-        batchsize_to_use = min(batchsize_to_use, 512)
-        tf.logging.info("Epoch: %d, Overall batchsize %f, worker batchsize %d" % (int(cur_epoch_track), R, batchsize_to_use))
-        images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
-        feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
-        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
-        n_examples_processed += batchsize_to_use * num_workers
-      else:
-        batchsize_to_use = FLAGS.batch_size
-        tf.logging.info("Using static batchsize %d" % int(batchsize_to_use))
-        images_real, labels_real = sess.run(dequeue_inputs[batchsize_to_use-1])
-        feed_dict = cifar10_input.fill_feed_dict(images_real, labels_real, images, labels)
-        loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict=feed_dict)
-        n_examples_processed += batchsize_to_use * num_workers
+      loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+      n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-      timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
-
       assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
       # Log the elapsed time per iteration
@@ -429,7 +334,7 @@ def train(target, cluster_spec):
       if step > FLAGS.max_steps:
         break
 
-      cur_epoch = n_examples_processed / float(cifar10_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      cur_epoch = n_examples_processed / float(cifar100_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
       if cur_epoch >= FLAGS.n_train_epochs:
         break
