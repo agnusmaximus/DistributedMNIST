@@ -286,9 +286,9 @@ class ResNet(object):
 
   def _fully_connected(self, x, out_dim):
     """FullyConnected layer for final output."""
-    x = tf.reshape(x, [self.hps.batch_size, -1])
     tf.logging.info("YOYOOYO")
     tf.logging.info(x.get_shape())
+    x = tf.reshape(x, [self.hps.batch_size, -1])
     tf.logging.info(out_dim)
     tf.logging.info(x.get_shape()[1])
     w = tf.get_variable(
