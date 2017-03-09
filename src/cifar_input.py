@@ -79,12 +79,12 @@ def build_input(dataset, data_path, batch_size, mode):
     label_bytes = 1
     label_offset = 0
     num_classes = 10
-    data_path += "/cifar-10-batches-bin/"
+    data_path += "/cifar-10-batches-bin/*"
   elif dataset == 'cifar100':
     label_bytes = 1
     label_offset = 1
     num_classes = 100
-    data_path += "/cifar-100-binary/"
+    data_path += "/cifar-100-binary/*"
   else:
     raise ValueError('Not supported dataset %s', dataset)
 
