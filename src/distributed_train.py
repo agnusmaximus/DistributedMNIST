@@ -185,7 +185,6 @@ def train(target, cluster_spec):
 
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
-    global_step = tf.Variable(0, name="global_step", trainable=False)
 
     images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
@@ -213,7 +212,7 @@ def train(target, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(model.cost)
-    apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+    apply_gradients_op = opt.apply_gradients(grads, global_step=model.global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(model.cost, name='train_op')
@@ -254,7 +253,7 @@ def train(target, cluster_spec):
                              logdir=FLAGS.train_dir,
                              init_op=init_op,
                              summary_op=None,
-                             global_step=global_step,
+                             global_step=model.global_step,
                              saver=saver,
                              save_model_secs=FLAGS.save_interval_secs,
     )
@@ -315,7 +314,7 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
-      loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+      loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options)
       n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
@@ -369,4 +368,4 @@ def train(target, cluster_spec):
     if is_chief:
       saver.save(sess,
                  os.path.join(FLAGS.train_dir, 'model.ckpt'),
-                 global_step=global_step)
+                 global_step=model.global_step)
