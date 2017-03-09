@@ -17,7 +17,11 @@
 """
 
 import tensorflow as tf
+
 import os
+import re
+import sys
+import tarfile
 
 FLAGS = tf.app.flags.FLAGS
 
