@@ -24,7 +24,7 @@ class Cfg(dict):
        return item
 
 cfg = Cfg({
-    "name" : "Cifar10_tuned_lr=.1_batchsize=2048",      # Unique name for this specific configuration
+    "name" : "resnet_test",
     "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
 
     # Cluster topology
@@ -38,18 +38,18 @@ cfg = Cfg({
 
     # Region speficiation
     "region" : "us-west-2",
-    "availability_zone" : "us-west-2b",
+    "availability_zone" : "us-west-2a",
 
     # Machine type - instance type configuration.
-    "master_type" : "g2.2xlarge",
-    "worker_type" : "g2.2xlarge",
-    "ps_type" : "g2.2xlarge",
-    "evaluator_type" : "g2.2xlarge",
+    "master_type" : "m4.2xlarge",
+    "worker_type" : "m4.2xlarge",
+    "ps_type" : "m4.2xlarge",
+    "evaluator_type" : "m4.2xlarge",
     #"image_id": "ami-44299224",
     "image_id": "ami-b601b1d6",
 
     # Launch specifications
-    "spot_price" : ".5",                 # Has to be a string
+    "spot_price" : ".15",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
@@ -57,8 +57,9 @@ cfg = Cfg({
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
-    #"nfs_ip_address" : "172.31.6.18",         # us-west-2c
-    "nfs_ip_address" : "172.31.30.114",         # us-west-2b
+    "nfs_ip_address" : "172.31.38.15", # us-west-2a
+   #"nfs_ip_address" : "172.31.6.18",         # us-west-2c
+   #"nfs_ip_address" : "172.31.30.114",         # us-west-2b
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -73,19 +74,19 @@ cfg = Cfg({
     "master_pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/cifar10",
+        "git fetch && git reset --hard origin/resnet_cifar100",
     ],
 
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/cifar10",
+        "git fetch && git reset --hard origin/resnet_cifar100",
     ],
 
     # Model configuration
-    "batch_size" : "256",
-    "initial_learning_rate" : ".1",
+    "batch_size" : "128",
+    "initial_learning_rate" : ".08",
     "learning_rate_decay_factor" : "1",
     "num_epochs_per_decay" : "350.0",
 
@@ -98,13 +99,14 @@ cfg = Cfg({
     # %(...)s - Inserts self referential string value.
     "train_commands" :
     [
-        "python src/cifar10_distributed_train.py "
+        "python src/resnet_distributed_train.py "
         "--batch_size=%(batch_size)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
+        "--variable_batchsize_r=false "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
@@ -118,7 +120,7 @@ cfg = Cfg({
         "sleep 30",
 
         # Evaluation command
-        "python src/cifar10_eval.py "
+        "python src/resnet_eval.py "
         "--eval_dir=%(base_out_dir)s/eval_dir "
         "--batch_size=2000 "
         "--checkpoint_dir=%(base_out_dir)s/train_dir "
