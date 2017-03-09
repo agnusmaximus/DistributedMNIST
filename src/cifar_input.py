@@ -80,20 +80,31 @@ def build_input(dataset, data_path, batch_size, mode):
     label_offset = 0
     num_classes = 10
     data_path += "/cifar-10-batches-bin/"
+
+    if mode == "train":
+      data_path += "data_batch*"
+    elif mode == "test":
+      data_path += "test_batch*"
+    else:
+      raise ValueError('Not supported mode %s', mode)
+
+
   elif dataset == 'cifar100':
     label_bytes = 1
     label_offset = 1
     num_classes = 100
     data_path += "/cifar-100-binary/"
+
+    if mode == "train":
+      data_path += "train*"
+    elif mode == "test":
+      data_path += "test**"
+    else:
+      raise ValueError('Not supported mode %s', mode)
+
+
   else:
     raise ValueError('Not supported dataset %s', dataset)
-
-  if mode == "train":
-    data_path += "data_batch*"
-  elif mode == "test":
-    data_path += "test_batch*"
-  else:
-    raise ValueError('Not supported mode %s', mode)
 
   depth = 3
   image_bytes = image_size * image_size * depth
