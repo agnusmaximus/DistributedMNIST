@@ -149,6 +149,7 @@ def build_input(dataset, data_path, batch_size, mode):
       example_queue, [example_enqueue_op] * num_threads))
 
   # Read 'batch' labels + images from the example queue.
+
   images, labels = example_queue.dequeue_many(batch_size)
   labels = tf.reshape(labels, [batch_size, 1])
   indices = tf.reshape(tf.range(0, batch_size, 1), [batch_size, 1])
@@ -166,3 +167,9 @@ def build_input(dataset, data_path, batch_size, mode):
   # Display the training images in the visualizer.
   tf.summary.image('images', images)
   return images, labels
+
+def placeholder_inputs():
+  IMAGE_SIZE = 32
+  images_placeholder = tf.placeholder(tf.float32, shape=(None, IMAGE_SIZE, IMAGE_SIZE, 3))
+  labels_placeholder = tf.placeholder(tf.int64, shape=(None,))
+  return images_placeholder, labels_placeholder
