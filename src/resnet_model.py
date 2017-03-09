@@ -58,9 +58,9 @@ class ResNet(object):
     """Build a whole graph for the model."""
     self.global_step = tf.contrib.framework.get_or_create_global_step()
     self._build_model()
-    if self.mode == 'train':
+    #if self.mode == 'train':
       #self._build_train_op()
-      pass
+    #  pass
     self.summaries = tf.summary.merge_all()
 
   def _stride_arr(self, stride):

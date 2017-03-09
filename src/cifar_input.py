@@ -91,7 +91,7 @@ def build_input(dataset, data_path, batch_size, mode):
   if mode == "train":
     data_path += "data_batch*"
   elif mode == "test":
-    data_path += "test_batch.bin"
+    data_path += "test_batch*"
   else:
     raise ValueError('Not supported mode %s', mode)
 
