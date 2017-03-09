@@ -49,7 +49,7 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_float('initial_learning_rate', 0.01,
                           'Initial learning rate.')
-tf.app.flags.DEFINE_string('eval_dir', '/tmp/cifar10_eval',
+tf.app.flags.DEFINE_string('eval_dir', '/tmp/resnet_eval',
                            """Directory where to write event logs.""")
 tf.app.flags.DEFINE_string('eval_data', 'test',
                            """Either 'test' or 'train_eval'.""")
@@ -171,7 +171,7 @@ def evaluate():
 def main(argv=None):  # pylint: disable=unused-argument
   sys.stdout.flush()
 
-  cifar10.maybe_download_and_extract()
+  cifar_input.maybe_download_and_extract()
   if tf.gfile.Exists(FLAGS.eval_dir):
     tf.gfile.DeleteRecursively(FLAGS.eval_dir)
   tf.gfile.MakeDirs(FLAGS.eval_dir)
