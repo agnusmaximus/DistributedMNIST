@@ -42,15 +42,18 @@ import sys
 import numpy as np
 import tensorflow as tf
 
-import cifar10
+import cifar_input
+import resnet_model
 
 FLAGS = tf.app.flags.FLAGS
 
+tf.app.flags.DEFINE_float('initial_learning_rate', 0.01,
+                          'Initial learning rate.')
 tf.app.flags.DEFINE_string('eval_dir', '/tmp/cifar10_eval',
                            """Directory where to write event logs.""")
 tf.app.flags.DEFINE_string('eval_data', 'test',
                            """Either 'test' or 'train_eval'.""")
-tf.app.flags.DEFINE_string('checkpoint_dir', '/tmp/cifar10_train',
+tf.app.flags.DEFINE_string('checkpoint_dir', '/tmp/resnet_train',
                            """Directory where to read model checkpoints.""")
 tf.app.flags.DEFINE_integer('eval_interval_secs', 1,
                             """How often to run the eval.""")
@@ -63,7 +66,7 @@ tf.app.flags.DEFINE_float('learning_rate', .1,
 
 start_time = time.time()
 
-def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss, calculate_ratio=False):
+def eval_once(saver, summary_writer, summary_op):
   global start_time
 
   """Run Eval once.
@@ -101,53 +104,25 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
                                          start=True))
 
       num_iter = int(math.ceil(FLAGS.num_examples / FLAGS.batch_size))
-      true_count = 0  # Counts the number of correct predictions.
+      correct_prediction, total_prediction = 0, 0
       total_sample_count = num_iter * FLAGS.batch_size
-      step = 0
-
-      while step < num_iter and not coord.should_stop():
-        predictions = sess.run([top_k_op])
-        true_count += np.sum(predictions)
-        step += 1
-
-      step = 0
-
       computed_loss = 0
-      while step < num_iter and not coord.should_stop():
-        computed_loss += sess.run([loss])[0]
-        step += 1
-
       step = 0
 
-      if calculate_ratio:
+      while step < num_iter and not coord.should_stop():
+        (summaries, loss, predictions, truth, train_step) = sess.run(
+          [model.summaries, model.cost, model.predictions,
+           model.labels, model.global_step])
 
-        sum_of_norms = None
-        norm_of_sums = None
-        while step < num_iter:
-          # Compute gradients
-          gradients = sess.run([x[0] for x in grads_and_vars])
-          gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
-          gradient *= FLAGS.batch_size
-          sys.stdout.flush()
-
-          if sum_of_norms == None:
-            sum_of_norms = np.linalg.norm(gradient)**2
-          else:
-            sum_of_norms += np.linalg.norm(gradient)**2
-
-          if norm_of_sums == None:
-            norm_of_sums = gradient
-          else:
-            norm_of_sums += gradient
-
-          step += 1
-
-        batchsize_ratio = num_iter * FLAGS.batch_size * sum_of_norms / np.linalg.norm(norm_of_sums)**2
-        print("Ratio: %f" % batchsize_ratio)
+        truth = np.argmax(truth, axis=1)
+        predictions = np.argmax(predictions, axis=1)
+        correct_prediction += np.sum(truth == predictions)
+        total_prediction += predictions.shape[0]
+        computed_loss += loss
+        step += 1
 
       # Compute precision @ 1.
-      precision = true_count / total_sample_count
-      #print('%s: precision @ 1 = %.3f' % (datetime.now(), precision))
+      precision = 1.0 * correct_prediction / total_prediction
       print("Info: %f %f %f %f" % (time.time()-start_time, float(global_step), precision, computed_loss))
       sys.stdout.flush()
 
@@ -161,26 +136,22 @@ def eval_once(saver, summary_writer, top_k_op, summary_op, grads_and_vars, loss,
     coord.request_stop()
     coord.join(threads, stop_grace_period_secs=10)
 
-def get_gradients(logits, labels, loss):
-  opt = tf.train.GradientDescentOptimizer(FLAGS.learning_rate)
-  return opt.compute_gradients(loss)
-
 def evaluate():
 
   """Eval CIFAR-10 for a number of steps."""
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
-    eval_data = FLAGS.eval_data == 'test'
-    images, labels = cifar10.inputs(eval_data=eval_data)
-
-    # Build a Graph that computes the logits predictions from the
-    # inference model.
-    logits = cifar10.inference(images)
-    loss = cifar10.loss(logits, labels)
-    gradients = get_gradients(logits, labels, loss)
-
-    # Calculate predictions.
-    top_k_op = tf.nn.in_top_k(logits, labels, 1)
+    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "test")
+    hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
+                               num_classes=10 if FLAGS.dataset=="cifar10" else 100,
+                               min_lrn_rate=0.0001,
+                               lrn_rate=FLAGS.initial_learning_rate,
+                               num_residual_units=5,
+                               use_bottleneck=False,
+                               weight_decay_rate=0.0002,
+                               relu_leakiness=0.1,
+                               optimizer='sgd')
+    model = resnet_model.ResNet(hps, images, labels, "test")
 
     # Restore the moving average version of the learned variables for eval.
     saver = tf.train.Saver()
@@ -191,7 +162,7 @@ def evaluate():
     summary_writer = tf.summary.FileWriter(FLAGS.eval_dir, g)
 
     while True:
-      eval_once(saver, summary_writer, top_k_op, summary_op, gradients, loss, calculate_ratio=False)
+      eval_once(saver, summary_writer, summary_op, model)
       if FLAGS.run_once:
         break
       time.sleep(FLAGS.eval_interval_secs)

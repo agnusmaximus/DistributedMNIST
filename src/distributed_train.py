@@ -48,7 +48,7 @@ tf.app.flags.DEFINE_string('worker_hosts', '',
                            """worker jobs. e.g. """
                            """'machine1:2222,machine2:1111,machine2:2222'""")
 
-tf.app.flags.DEFINE_string('train_dir', '/tmp/cifar100_train',
+tf.app.flags.DEFINE_string('train_dir', '/tmp/resnet_train',
                            """Directory where to write event logs """
                            """and checkpoint.""")
 tf.app.flags.DEFINE_integer('rpc_port', 1235,
