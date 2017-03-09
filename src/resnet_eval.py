@@ -152,6 +152,7 @@ def evaluate():
                                relu_leakiness=0.1,
                                optimizer='sgd')
     model = resnet_model.ResNet(hps, images, labels, "test")
+    model.build_graph()
 
     # Restore the moving average version of the learned variables for eval.
     saver = tf.train.Saver()
