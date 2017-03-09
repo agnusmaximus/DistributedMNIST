@@ -30,9 +30,10 @@ FLAGS = tf.app.flags.FLAGS
 
 tf.app.flags.DEFINE_string('data_dir', '/tmp/cifar_data',
                            """Path to the CIFAR-10 data directory.""")
-
 tf.app.flags.DEFINE_string('dataset', 'cifar10',
                            """cifar10 or cifar100""")
+tf.app.flags.DEFINE_integer('batch_size', 128,
+                            """Number of images to process in a batch.""")
 
 def maybe_download_and_extract(dataset_name):
   assert(dataset_name == "cifar100" or dataset_name == "cifar10")
