@@ -189,7 +189,7 @@ def train(target, cluster_spec):
 
     images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
-                               num_classes=num_classes,
+                               num_classes=10 if FLAGS.dataset=="cifar10" else 100,
                                min_lrn_rate=0.0001,
                                lrn_rate=0.1,
                                num_residual_units=5,
