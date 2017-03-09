@@ -141,7 +141,7 @@ def evaluate():
   """Eval CIFAR-10 for a number of steps."""
   with tf.Graph().as_default() as g:
     # Get images and labels for CIFAR-10.
-    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
+    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "test")
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
                                num_classes=10 if FLAGS.dataset=="cifar10" else 100,
                                min_lrn_rate=0.0001,
