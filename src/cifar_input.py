@@ -93,6 +93,7 @@ def build_input(dataset, data_path, batch_size, mode):
   record_bytes = label_bytes + label_offset + image_bytes
 
   data_files = tf.gfile.Glob(data_path)
+  tf.logging.info(data_path)
   tf.logging.info(data_files)
   file_queue = tf.train.string_input_producer(data_files, shuffle=True)
   # Read examples from files in the filename queue.
