@@ -281,5 +281,5 @@ def build_input_multi_batchsize(dataset, data_path, batch_size, mode):
 def placeholder_inputs():
   IMAGE_SIZE = 32
   images_placeholder = tf.placeholder(tf.float32, shape=(None, IMAGE_SIZE, IMAGE_SIZE, 3))
-  labels_placeholder = tf.placeholder(tf.int64, shape=(None,))
+  labels_placeholder = tf.placeholder(tf.int64, shape=(None, 10 if FLAGS.dataset == 'cifar10' else 100))
   return images_placeholder, labels_placeholder
