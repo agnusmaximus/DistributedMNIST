@@ -101,8 +101,6 @@ def build_input(dataset, data_path, batch_size, mode):
       data_path += "test**"
     else:
       raise ValueError('Not supported mode %s', mode)
-
-
   else:
     raise ValueError('Not supported dataset %s', dataset)
 
