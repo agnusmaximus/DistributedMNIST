@@ -35,6 +35,8 @@ tf.app.flags.DEFINE_string('dataset', 'cifar10',
 tf.app.flags.DEFINE_integer('batch_size', 128,
                             """Number of images to process in a batch.""")
 
+NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN=50000
+
 def maybe_download_and_extract(dataset_name):
   assert(dataset_name == "cifar100" or dataset_name == "cifar10")
 
