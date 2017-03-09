@@ -113,7 +113,7 @@ def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time)
     t1 = time.time()
     images_real, labels_real = sess.run(dq)
     t2 = time.time()
-    feed_dict = cifar100_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    feed_dict = cifar_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
     t3 = time.time()
     predictions = sess.run([top_k_op], feed_dict=feed_dict)
     t4 = time.time()
@@ -132,7 +132,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl):
   while step < num_iter:
     images_real, labels_real = sess.run(dq)
 
-    feed_dict = cifar100_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
+    feed_dict = cifar_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
 
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
@@ -335,7 +335,7 @@ def train(target, cluster_spec):
       if step > FLAGS.max_steps:
         break
 
-      cur_epoch = n_examples_processed / float(cifar100_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      cur_epoch = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
       if cur_epoch >= FLAGS.n_train_epochs:
         break
