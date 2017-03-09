@@ -289,7 +289,8 @@ class ResNet(object):
     x = tf.reshape(x, [self.hps.batch_size, -1])
     w = tf.get_variable(
         'DW', [x.get_shape()[1], out_dim],
-        initializer=tf.uniform_unit_scaling_initializer(factor=1.0))
+        initializer=tf.uniform_unit_scaling_initializer(factor=1.0),
+        validate_shape=False)
     b = tf.get_variable('biases', [out_dim],
                         initializer=tf.constant_initializer())
     return tf.nn.xw_plus_b(x, w, b)

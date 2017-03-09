@@ -188,6 +188,8 @@ def train(target, cluster_spec):
 
     #images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
     images, labels = cifar_input.placeholder_inputs()
+    variable_batchsize_inputs = cifar_input.build_input_multi_batchsize()
+
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
                                num_classes=10 if FLAGS.dataset=="cifar10" else 100,
                                min_lrn_rate=0.0001,
@@ -315,7 +317,9 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
-      loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options)
+      # Dequeue variable batchsize inputs
+      images_real, labels_real = sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+      loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
       n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
