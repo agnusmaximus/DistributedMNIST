@@ -17,6 +17,7 @@
 """
 
 import tensorflow as tf
+import os
 
 FLAGS = tf.app.flags.FLAGS
 
