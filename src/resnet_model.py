@@ -24,6 +24,7 @@ from collections import namedtuple
 
 import numpy as np
 import tensorflow as tf
+import sys
 import six
 
 from tensorflow.python.training import moving_averages
@@ -288,6 +289,7 @@ class ResNet(object):
     """FullyConnected layer for final output."""
     tf.logging.info("YOYOOYO")
     tf.logging.info(x.get_shape())
+    sys.exit(0)
     x = tf.reshape(x, [self.hps.batch_size, -1])
     tf.logging.info(out_dim)
     tf.logging.info(x.get_shape()[1])

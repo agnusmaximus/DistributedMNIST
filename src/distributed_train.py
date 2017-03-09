@@ -186,8 +186,8 @@ def train(target, cluster_spec):
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
 
-    #images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
-    images, labels = cifar_input.placeholder_inputs()
+    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
+    #images, labels = cifar_input.placeholder_inputs()
     variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
 
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
