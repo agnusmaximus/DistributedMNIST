@@ -205,7 +205,7 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizer(
+    opt = tf.train.SyncReplicasOptimizerV2(
       opt,
       global_step,
       total_num_replicas=num_workers)
