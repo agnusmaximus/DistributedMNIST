@@ -151,7 +151,7 @@ def evaluate():
                                weight_decay_rate=0.0002,
                                relu_leakiness=0.1,
                                optimizer='sgd')
-    model = resnet_model.ResNet(hps, images, labels, "test")
+    model = resnet_model.ResNet(hps, images, labels, "train")
     model.build_graph()
 
     # Restore the moving average version of the learned variables for eval.
