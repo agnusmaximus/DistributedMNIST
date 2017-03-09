@@ -30,7 +30,7 @@ def main(unused_args):
       job_name=FLAGS.job_name,
       task_index=FLAGS.task_id)
 
-  cifar_input.maybe_download_and_extract('cifar100')
+  cifar_input.maybe_download_and_extract(FLAGS.dataset)
 
   if FLAGS.job_name == 'ps':
     # `ps` jobs wait for incoming connections from the workers.
