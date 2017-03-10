@@ -220,7 +220,6 @@ def train(target, cluster_spec):
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
 
-
     sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
@@ -264,7 +263,7 @@ def train(target, cluster_spec):
 
         # Dequeue variable batchsize inputs
         images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
-        loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
+        #loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
         n_examples_processed += FLAGS.batch_size * num_workers
 
         # This uses the queuerunner which does not support variable batch sizes
