@@ -279,6 +279,7 @@ def train(target, cluster_spec):
                     len(queue_runners))
 
     if is_chief:
+      tf.logging.info("Chief is starting queue runners...")
       sv.start_queue_runners(sess, chief_queue_runners)
       sess.run(init_tokens_op)
 
