@@ -324,7 +324,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
           # step so the replicas can fetch them to start the next step.
           with tf.device('/job:worker/task:%d' % worker_id):
             dbg_print_2 = tf.Print(global_step, [global_step], message="Updating enqueueing")
-          with ops.control_Dependencies([dbg_print_2]):
+          with ops.control_dependencies([dbg_print_2]):
             tokens = array_ops.fill([self._tokens_per_step], global_step)
           sync_op = sync_token_queue.enqueue_many((tokens,))
 
