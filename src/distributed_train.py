@@ -305,7 +305,7 @@ def train(target, cluster_spec):
       if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
         tf.logging.info('Running Summary operation on the chief.')
-        summary_str = mon_sess.run(summary_op)
+        #summary_str = mon_sess.run(summary_op)
         sv.summary_computed(sess, summary_str)
         tf.logging.info('Finished running Summary operation.')
 
