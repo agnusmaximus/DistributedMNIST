@@ -209,7 +209,7 @@ def train(target, cluster_spec):
     # Use V2 optimizer
     opt = tf.train.SyncReplicasOptimizer(
       opt,
-      num_workers,
+      replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
     )
 
@@ -218,71 +218,10 @@ def train(target, cluster_spec):
     apply_gradients_op = opt.apply_gradients(grads, global_step=model.global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
-      with tf.control_dependencies([tf.Print(model.global_step, [model.global_step], message="testing...")]):
         train_op = tf.identity(model.cost, name='train_op')
 
-    # Get chief queue_runners, init_tokens and clean_up_op, which is used to
-    # synchronize replicas.
-    # More details can be found in sync_replicas_optimizer.
-    chief_queue_runners = [opt.get_chief_queue_runner()]
-    init_tokens_op = opt.get_init_tokens_op()
-    #clean_up_op = opt.get_clean_up_op()
 
-    # Create a saver.
-    saver = tf.train.Saver(max_to_keep=100)
-
-    # Build the summary operation based on the TF collection of Summaries.
-    summary_op = tf.summary.merge_all()
-
-    # Build an initialization operation to run below.
-    init_op = tf.initialize_all_variables()
-
-    test_print_op = logging_ops.Print(0, [0], message="Test print success")
-
-    # We run the summaries in the same thread as the training operations by
-    # passing in None for summary_op to avoid a summary_thread being started.
-    # Running summaries and training operations in parallel could run out of
-    # GPU memory.
-    if is_chief:
-      local_init_op = opt.chief_init_op
-    else:
-      local_init_op = opt.local_step_init_op
-
-    local_init_opt = [local_init_op]
-    ready_for_local_init_op = opt.ready_for_local_init_op
-
-    sv = tf.train.Supervisor(is_chief=is_chief,
-                             local_init_op=local_init_op,
-                             ready_for_local_init_op=ready_for_local_init_op,
-                             logdir=FLAGS.train_dir,
-                             init_op=init_op,
-                             summary_op=None,
-                             global_step=model.global_step,
-                             saver=saver,
-                             save_model_secs=FLAGS.save_interval_secs,
-    )
-
-    tf.logging.info("BATCHSIZE: %d" % FLAGS.batch_size);
-
-    tf.logging.info('%s Supervisor' % datetime.now())
-
-    sess_config = tf.ConfigProto(
-        allow_soft_placement=True,
-        log_device_placement=FLAGS.log_device_placement)
-
-    # Get a session.
-    sess = sv.prepare_or_wait_for_session(target, config=sess_config)
-
-    # Start the queue runners.
-    queue_runners = tf.get_collection(tf.GraphKeys.QUEUE_RUNNERS)
-    sv.start_queue_runners(sess, queue_runners)
-    tf.logging.info('Started %d queues for processing input data.',
-                    len(queue_runners))
-
-    if is_chief:
-      tf.logging.info("Chief is starting queue runners...")
-      sv.start_queue_runners(sess, chief_queue_runners)
-      sess.run(init_tokens_op)
+    sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
     # Train, checking for Nans. Concurrently run the summary operation at a
     # specified interval. Note that the summary_op and train_op never run
@@ -301,69 +240,73 @@ def train(target, cluster_spec):
     train_error_time = 0
     loss_value = -1
 
-    while not sv.should_stop():
-      cur_iteration += 1
-      sys.stdout.flush()
 
-      start_time = time.time()
+    with training.MonitoredTrainingSession(
+        master='', is_chief=is_chief,
+        hooks=[sync_replicas_hook]) as mon_sess:
+      while not mon_sess.should_stop():
+        cur_iteration += 1
+        sys.stdout.flush()
 
-      # Compute batchsize ratio
-      new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-      new_epoch_track = int(new_epoch_float)
-      cur_epoch_track = max(cur_epoch_track, new_epoch_track)
+        start_time = time.time()
 
-      run_options = tf.RunOptions()
-      run_metadata = tf.RunMetadata()
+        # Compute batchsize ratio
+        new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+        new_epoch_track = int(new_epoch_float)
+        cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
-      if FLAGS.timeline_logging:
-        run_options.trace_level=tf.RunOptions.FULL_TRACE
-        run_options.output_partition_graphs=True
+        run_options = tf.RunOptions()
+        run_metadata = tf.RunMetadata()
 
-      # Dequeue variable batchsize inputs
-      images_real, labels_real = sess.run(variable_batchsize_inputs[FLAGS.batch_size])
-      loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-      n_examples_processed += FLAGS.batch_size * num_workers
+        if FLAGS.timeline_logging:
+          run_options.trace_level=tf.RunOptions.FULL_TRACE
+          run_options.output_partition_graphs=True
 
-      # This uses the queuerunner which does not support variable batch sizes
-      #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-      assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+        # Dequeue variable batchsize inputs
+        images_real, labels_real = sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+        loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
+        n_examples_processed += FLAGS.batch_size * num_workers
 
-      # Log the elapsed time per iteration
-      finish_time = time.time()
+        # This uses the queuerunner which does not support variable batch sizes
+        #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
-      # Create the Timeline object, and write it to a json
-      if FLAGS.timeline_logging:
-        tl = timeline.Timeline(run_metadata.step_stats)
-        ctf = tl.generate_chrome_trace_format()
-        with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
-          f.write(ctf)
+        # Log the elapsed time per iteration
+        finish_time = time.time()
 
-      if step > FLAGS.max_steps:
-        break
+        # Create the Timeline object, and write it to a json
+        if FLAGS.timeline_logging:
+          tl = timeline.Timeline(run_metadata.step_stats)
+          ctf = tl.generate_chrome_trace_format()
+          with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
+            f.write(ctf)
 
-      cur_epoch = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-      tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
-      if cur_epoch >= FLAGS.n_train_epochs:
-        break
+        if step > FLAGS.max_steps:
+          break
 
-      duration = time.time() - start_time
-      examples_per_sec = FLAGS.batch_size / float(duration)
-      format_str = ('Worker %d: %s: step %d, loss = %f'
-                    '(%.1f examples/sec; %.3f  sec/batch)')
-      tf.logging.info(format_str %
-                      (FLAGS.task_id, datetime.now(), step, loss_value,
-                       examples_per_sec, duration))
+        cur_epoch = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+        tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
+        if cur_epoch >= FLAGS.n_train_epochs:
+          break
 
-      # Determine if the summary_op should be run on the chief worker.
-      if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+        duration = time.time() - start_time
+        examples_per_sec = FLAGS.batch_size / float(duration)
+        format_str = ('Worker %d: %s: step %d, loss = %f'
+                      '(%.1f examples/sec; %.3f  sec/batch)')
+        tf.logging.info(format_str %
+                        (FLAGS.task_id, datetime.now(), step, loss_value,
+                         examples_per_sec, duration))
 
-        tf.logging.info('Running Summary operation on the chief.')
-        summary_str = sess.run(summary_op)
-        sv.summary_computed(sess, summary_str)
-        tf.logging.info('Finished running Summary operation.')
+        # Determine if the summary_op should be run on the chief worker.
+        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
-        # Determine the next time for running the summary.
-        next_summary_time += FLAGS.save_summaries_secs
+          tf.logging.info('Running Summary operation on the chief.')
+          summary_str = sess.run(summary_op)
+          sv.summary_computed(sess, summary_str)
+          tf.logging.info('Finished running Summary operation.')
+
+          # Determine the next time for running the summary.
+          next_summary_time += FLAGS.save_summaries_secs
 
     if is_chief:
       tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
