@@ -288,6 +288,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                                               global_step)
 
       # Create token queue.
+      tf.logging.info("YOOOOO " + global_step.device)
       with ops.device(global_step.device), ops.name_scope(""):
         sync_token_queue = (
             data_flow_ops.FIFOQueue(-1,
