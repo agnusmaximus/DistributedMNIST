@@ -191,7 +191,7 @@ def build_input_multi_batchsize(dataset, data_path, batch_size, mode):
     ValueError: when the specified dataset is not supported.
   """
   image_size = 32
-  max_batch_size = 128
+  max_batch_size = 2048
   if dataset == 'cifar10':
     label_bytes = 1
     label_offset = 0
