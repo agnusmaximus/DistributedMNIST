@@ -110,7 +110,7 @@ def eval_once(saver, summary_writer, summary_op, model):
       step = 0
 
       while step < num_iter and not coord.should_stop():
-        (summaries, loss, predictions, truth, train_step) = sess.run(
+        (summaries, loss, predictions, truth) = sess.run(
           [model.summaries, model.cost, model.predictions,
            model.labels])
 
