@@ -112,7 +112,7 @@ def eval_once(saver, summary_writer, summary_op, model):
       while step < num_iter and not coord.should_stop():
         (summaries, loss, predictions, truth, train_step) = sess.run(
           [model.summaries, model.cost, model.predictions,
-           model.labels, model.global_step])
+           model.labels])
 
         truth = np.argmax(truth, axis=1)
         predictions = np.argmax(predictions, axis=1)
