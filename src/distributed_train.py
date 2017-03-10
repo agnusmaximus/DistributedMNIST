@@ -225,11 +225,6 @@ def train(target, cluster_spec):
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
-  chief_queue_runners = [opt.get_chief_queue_runner()]
-
-  if is_chief:
-    sv.start_queue_runners(sess, chief_queue_runners)
-
   # Train, checking for Nans. Concurrently run the summary operation at a
   # specified interval. Note that the summary_op and train_op never run
   # simultaneously in order to prevent running out of GPU memory.

@@ -463,6 +463,7 @@ class _SyncReplicasOptimizerModifiedHook(session_run_hook.SessionRunHook):
       self._ready_for_local_init_op = (
           self._sync_optimizer.ready_for_local_init_op)
       self._q_runner = self._sync_optimizer.get_chief_queue_runner()
+      tf.logging.info("BEGINING")
       self._init_tokens_op = self._sync_optimizer.get_init_tokens_op(
           self._num_tokens)
     else:
