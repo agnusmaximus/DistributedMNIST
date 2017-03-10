@@ -320,6 +320,7 @@ def train(target, cluster_spec):
 
       # Dequeue variable batchsize inputs
       images_real, labels_real = sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+      tf.logging.info("Dequeued images...")
       loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
       n_examples_processed += FLAGS.batch_size * num_workers
 
