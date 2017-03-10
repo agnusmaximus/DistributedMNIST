@@ -184,6 +184,9 @@ def train(target, cluster_spec):
         worker_device='/job:worker/task:%d' % FLAGS.task_id,
         cluster=cluster_spec)):
 
+    global_step = tf.Variable(0, name="global_step", trainable=False)
+
+
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
 
@@ -216,7 +219,7 @@ def train(target, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(model.cost)
-    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=model.global_step)
+    apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step)
 
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
@@ -267,9 +270,7 @@ def train(target, cluster_spec):
       # Dequeue variable batchsize inputs
       #images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
       #loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-      abc = mon_sess.run([model.global_step])[0]
-      tf.logging.info("YO " + str( abc))
-      loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options)
+      loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
@@ -323,4 +324,4 @@ def train(target, cluster_spec):
   if is_chief:
     saver.save(sess,
                os.path.join(FLAGS.train_dir, 'model.ckpt'),
-               global_step=model.global_step)
+               global_step=global_step)
