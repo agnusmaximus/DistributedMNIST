@@ -190,8 +190,8 @@ def train(target, cluster_spec):
     # Create a variable to count the number of train() calls. This equals the
     # number of updates applied to the variables. The PS holds the global step.
 
-    images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
-    #images, labels = cifar_input.placeholder_inputs()
+    #images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
+    images, labels = cifar_input.placeholder_inputs()
     #variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
 
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
@@ -268,9 +268,9 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # Dequeue variable batchsize inputs
-      #images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
-      #loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-      loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+      loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
+      #loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
