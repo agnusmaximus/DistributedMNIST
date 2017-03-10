@@ -281,7 +281,7 @@ def build_input_multi_batchsize(dataset, data_path, batch_size, mode):
     labels = tf.reshape(labels, [i, 1])
     indices = tf.reshape(tf.range(0, i, 1), [i, 1])
     labels = tf.sparse_to_dense(
-        tf.concat_v2(values=[indices, labels], axis=1),
+        tf.concat(values=[indices, labels], axis=1),
         [i, num_classes], 1.0, 0.0)
 
     assert len(images.get_shape()) == 4
