@@ -267,7 +267,7 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # Dequeue variable batchsize inputs
-      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size], feed_dict={images:tf.zeros([1, 16, 16, 32], tf.float32), labels: tf.zeros([0], tf.int64)})
+      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([10])})
       loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
       #loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       n_examples_processed += FLAGS.batch_size * num_workers
