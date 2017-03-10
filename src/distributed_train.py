@@ -29,6 +29,7 @@ from tensorflow.python.training import input as tf_input
 
 import cifar_input
 import resnet_model
+from sync_replicas_optimizer_modified import SyncReplicasOptimizerModified
 
 np.set_printoptions(threshold=np.nan)
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -207,7 +208,7 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizer(
+    opt = tf.train.SyncReplicasOptimizerModified(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
@@ -305,7 +306,7 @@ def train(target, cluster_spec):
       if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
         tf.logging.info('Running Summary operation on the chief.')
-        #summary_str = mon_sess.run(summary_op)
+        summary_str = mon_sess.run(summary_op)
         sv.summary_computed(sess, summary_str)
         tf.logging.info('Finished running Summary operation.')
 
