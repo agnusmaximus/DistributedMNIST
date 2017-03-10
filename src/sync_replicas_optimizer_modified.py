@@ -288,7 +288,6 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
                                               global_step)
 
       # Create token queue.
-      tf.logging.info("YOOOOO " + global_step.device)
       with ops.device(global_step.device), ops.name_scope(""):
         sync_token_queue = (
             data_flow_ops.FIFOQueue(-1,
@@ -312,8 +311,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
 
         # Replicas have to wait until they can get a token from the token queue.
         with ops.control_dependencies(train_ops):
-          with tf.device('/job:worker/task:%d' % worker_id):
-              dbg_print_op = tf.Print(sync_token_queue.size(), [sync_token_queue.size()], message="train op done")
+          dbg_print_op = tf.Print(sync_token_queue.size(), [sync_token_queue.size()], message="train op done %d" % worker_id)
           with ops.control_dependencies([dbg_print_op]):
               token = sync_token_queue.dequeue()
         train_op = state_ops.assign(self._local_step, token)
