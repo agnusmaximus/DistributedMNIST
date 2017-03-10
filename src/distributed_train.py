@@ -220,101 +220,103 @@ def train(target, cluster_spec):
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
 
-    sync_replicas_hook = opt.make_session_run_hook(is_chief)
+  variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
 
-    # Train, checking for Nans. Concurrently run the summary operation at a
-    # specified interval. Note that the summary_op and train_op never run
-    # simultaneously in order to prevent running out of GPU memory.
-    next_summary_time = time.time() + FLAGS.save_summaries_secs
-    begin_time = time.time()
+  sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
-    # Keep track of own iteration
-    cur_iteration = -1
-    iterations_finished = set()
+  # Train, checking for Nans. Concurrently run the summary operation at a
+  # specified interval. Note that the summary_op and train_op never run
+  # simultaneously in order to prevent running out of GPU memory.
+  next_summary_time = time.time() + FLAGS.save_summaries_secs
+  begin_time = time.time()
 
-    R = -1
-    n_examples_processed = 0
-    cur_epoch_track = 0
-    compute_R_train_error_time = 0
-    train_error_time = 0
-    loss_value = -1
+  # Keep track of own iteration
+  cur_iteration = -1
+  iterations_finished = set()
 
-    with tf.train.MonitoredTrainingSession(
-        master=target, is_chief=is_chief,
-        hooks=[sync_replicas_hook],
-        checkpoint_dir=FLAGS.train_dir) as mon_sess:
-      while not mon_sess.should_stop():
-        cur_iteration += 1
-        sys.stdout.flush()
+  R = -1
+  n_examples_processed = 0
+  cur_epoch_track = 0
+  compute_R_train_error_time = 0
+  train_error_time = 0
+  loss_value = -1
 
-        start_time = time.time()
+  with tf.train.MonitoredTrainingSession(
+      master=target, is_chief=is_chief,
+      hooks=[sync_replicas_hook],
+      checkpoint_dir=FLAGS.train_dir) as mon_sess:
+    while not mon_sess.should_stop():
+      cur_iteration += 1
+      sys.stdout.flush()
 
-        # Compute batchsize ratio
-        new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-        new_epoch_track = int(new_epoch_float)
-        cur_epoch_track = max(cur_epoch_track, new_epoch_track)
+      start_time = time.time()
 
-        run_options = tf.RunOptions()
-        run_metadata = tf.RunMetadata()
+      # Compute batchsize ratio
+      new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      new_epoch_track = int(new_epoch_float)
+      cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
-        if FLAGS.timeline_logging:
-          run_options.trace_level=tf.RunOptions.FULL_TRACE
-          run_options.output_partition_graphs=True
+      run_options = tf.RunOptions()
+      run_metadata = tf.RunMetadata()
 
-        # Dequeue variable batchsize inputs
-        images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
-        #loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-        n_examples_processed += FLAGS.batch_size * num_workers
+      if FLAGS.timeline_logging:
+        run_options.trace_level=tf.RunOptions.FULL_TRACE
+        run_options.output_partition_graphs=True
 
-        # This uses the queuerunner which does not support variable batch sizes
-        #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
-        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+      # Dequeue variable batchsize inputs
+      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+      #loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
+      n_examples_processed += FLAGS.batch_size * num_workers
 
-        # Log the elapsed time per iteration
-        finish_time = time.time()
+      # This uses the queuerunner which does not support variable batch sizes
+      #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
+      assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
-        # Create the Timeline object, and write it to a json
-        if FLAGS.timeline_logging:
-          tl = timeline.Timeline(run_metadata.step_stats)
-          ctf = tl.generate_chrome_trace_format()
-          with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
-            f.write(ctf)
+      # Log the elapsed time per iteration
+      finish_time = time.time()
 
-        if step > FLAGS.max_steps:
-          break
+      # Create the Timeline object, and write it to a json
+      if FLAGS.timeline_logging:
+        tl = timeline.Timeline(run_metadata.step_stats)
+        ctf = tl.generate_chrome_trace_format()
+        with open('%s/worker=%d_timeline_iter=%d.json' % (FLAGS.train_dir, FLAGS.task_id, step), 'w') as f:
+          f.write(ctf)
 
-        cur_epoch = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-        tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
-        if cur_epoch >= FLAGS.n_train_epochs:
-          break
+      if step > FLAGS.max_steps:
+        break
 
-        duration = time.time() - start_time
-        examples_per_sec = FLAGS.batch_size / float(duration)
-        format_str = ('Worker %d: %s: step %d, loss = %f'
-                      '(%.1f examples/sec; %.3f  sec/batch)')
-        tf.logging.info(format_str %
-                        (FLAGS.task_id, datetime.now(), step, loss_value,
-                         examples_per_sec, duration))
+      cur_epoch = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      tf.logging.info("epoch: %f time %f" % (cur_epoch, time.time()-begin_time));
+      if cur_epoch >= FLAGS.n_train_epochs:
+        break
 
-        # Determine if the summary_op should be run on the chief worker.
-        if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
+      duration = time.time() - start_time
+      examples_per_sec = FLAGS.batch_size / float(duration)
+      format_str = ('Worker %d: %s: step %d, loss = %f'
+                    '(%.1f examples/sec; %.3f  sec/batch)')
+      tf.logging.info(format_str %
+                      (FLAGS.task_id, datetime.now(), step, loss_value,
+                       examples_per_sec, duration))
 
-          tf.logging.info('Running Summary operation on the chief.')
-          summary_str = mon_sess.run(summary_op)
-          sv.summary_computed(sess, summary_str)
-          tf.logging.info('Finished running Summary operation.')
+      # Determine if the summary_op should be run on the chief worker.
+      if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
-          # Determine the next time for running the summary.
-          next_summary_time += FLAGS.save_summaries_secs
+        tf.logging.info('Running Summary operation on the chief.')
+        summary_str = mon_sess.run(summary_op)
+        sv.summary_computed(sess, summary_str)
+        tf.logging.info('Finished running Summary operation.')
 
-    if is_chief:
-      tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
+        # Determine the next time for running the summary.
+        next_summary_time += FLAGS.save_summaries_secs
 
-    # Stop the supervisor.  This also waits for service threads to finish.
-    sv.stop()
+  if is_chief:
+    tf.logging.info('Elapsed Time: %f' % (time.time()-begin_time))
 
-    # Save after the training ends.
-    if is_chief:
-      saver.save(sess,
-                 os.path.join(FLAGS.train_dir, 'model.ckpt'),
-                 global_step=model.global_step)
+  # Stop the supervisor.  This also waits for service threads to finish.
+  sv.stop()
+
+  # Save after the training ends.
+  if is_chief:
+    saver.save(sess,
+               os.path.join(FLAGS.train_dir, 'model.ckpt'),
+               global_step=model.global_step)
