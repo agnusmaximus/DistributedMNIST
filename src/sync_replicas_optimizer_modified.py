@@ -206,7 +206,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
     """
     return self._opt.compute_gradients(*args, **kwargs)
 
-  def apply_gradients(self, grads_and_vars, global_step=None, name=None):
+  def apply_gradients(self, grads_and_vars, worker_id, global_step=None, name=None):
     """Apply gradients to variables.
 
     This contains most of the synchronization implementation and also wraps the
@@ -310,8 +310,10 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
       with ops.device(global_step.device), ops.name_scope(""):
         # Replicas have to wait until they can get a token from the token queue.
         with ops.control_dependencies(train_ops):
-          with ops.control_dependencies([tf.Print(global_step, [global_step], message="train op done")]):
-            token = sync_token_queue.dequeue()
+          with tf.device('/job:worker/task:%d' % worker_id):
+              dbg_print_op = tf.Print(global_step, [global_step], message="train op done")
+            with ops.control_dependencies([dbg_print_op]):
+                token = sync_token_queue.dequeue()
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
