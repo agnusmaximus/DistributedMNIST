@@ -312,8 +312,8 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         with ops.control_dependencies(train_ops):
           with tf.device('/job:worker/task:%d' % worker_id):
               dbg_print_op = tf.Print(global_step, [global_step], message="train op done")
-            with ops.control_dependencies([dbg_print_op]):
-                token = sync_token_queue.dequeue()
+          with ops.control_dependencies([dbg_print_op]):
+              token = sync_token_queue.dequeue()
         train_op = state_ops.assign(self._local_step, token)
 
         with ops.control_dependencies([update_op]):
