@@ -313,7 +313,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         # Replicas have to wait until they can get a token from the token queue.
         with ops.control_dependencies(train_ops):
           with tf.device('/job:worker/task:%d' % worker_id):
-              dbg_print_op = tf.Print(global_step, [global_step], message="train op done")
+              dbg_print_op = tf.Print(sync_token_queue.size(), [sync_token_queue.size()], message="train op done")
           with ops.control_dependencies([dbg_print_op]):
               token = sync_token_queue.dequeue()
         train_op = state_ops.assign(self._local_step, token)
