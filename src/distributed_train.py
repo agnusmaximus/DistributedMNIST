@@ -29,7 +29,7 @@ from tensorflow.python.training import input as tf_input
 
 import cifar_input
 import resnet_model
-from sync_replicas_optimizer_modified import SyncReplicasOptimizerModified
+import sync_replicas_optimizer_modified
 
 np.set_printoptions(threshold=np.nan)
 tf.logging.set_verbosity(tf.logging.INFO)
@@ -208,7 +208,7 @@ def train(target, cluster_spec):
     opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
     # Use V2 optimizer
-    opt = tf.train.SyncReplicasOptimizerModified(
+    opt = sync_replicas_optimizer_modified.SyncReplicasOptimizerModified(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
