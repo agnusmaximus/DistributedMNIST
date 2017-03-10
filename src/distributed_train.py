@@ -210,12 +210,12 @@ def train(target, cluster_spec):
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(FLAGS.initial_learning_rate)
 
-    # Use V2 optimizer
-    opt = sync_replicas_optimizer_modified.SyncReplicasOptimizerModified(
+    opt = tf.train.SyncReplicasOptimizer(
       opt,
       replicas_to_aggregate=num_replicas_to_aggregate,
       total_num_replicas=num_workers,
     )
+
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(model.cost)
