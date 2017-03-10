@@ -31,6 +31,7 @@ from tensorflow.python.training import queue_runner
 from tensorflow.python.training import session_manager
 from tensorflow.python.training import session_run_hook
 
+import tensorflow as tf
 
 # Please note that the gradients from replicas are averaged instead of summed
 # (as in the old sync_replicas_optimizer) so you need to increase the learning
