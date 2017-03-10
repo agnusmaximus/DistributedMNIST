@@ -242,7 +242,8 @@ def train(target, cluster_spec):
 
     with tf.train.MonitoredTrainingSession(
         master=target, is_chief=is_chief,
-        hooks=[sync_replicas_hook]) as mon_sess:
+        hooks=[sync_replicas_hook],
+        checkpoint_dir=FLAGS.train_dir) as mon_sess:
       while not mon_sess.should_stop():
         cur_iteration += 1
         sys.stdout.flush()
@@ -262,8 +263,8 @@ def train(target, cluster_spec):
           run_options.output_partition_graphs=True
 
         # Dequeue variable batchsize inputs
-        images_real, labels_real = sess.run(variable_batchsize_inputs[FLAGS.batch_size])
-        loss_value, step = sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
+        images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size])
+        loss_value, step = mon_sess.run([train_op, model.global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
         n_examples_processed += FLAGS.batch_size * num_workers
 
         # This uses the queuerunner which does not support variable batch sizes
@@ -300,7 +301,7 @@ def train(target, cluster_spec):
         if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
           tf.logging.info('Running Summary operation on the chief.')
-          summary_str = sess.run(summary_op)
+          summary_str = mon_sess.run(summary_op)
           sv.summary_computed(sess, summary_str)
           tf.logging.info('Finished running Summary operation.')
 
