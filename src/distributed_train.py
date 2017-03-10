@@ -192,7 +192,7 @@ def train(target, cluster_spec):
 
     #images, labels = cifar_input.build_input(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
     images, labels = cifar_input.placeholder_inputs()
-    #variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
+    variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
 
     hps = resnet_model.HParams(batch_size=FLAGS.batch_size,
                                num_classes=10 if FLAGS.dataset=="cifar10" else 100,
@@ -222,8 +222,6 @@ def train(target, cluster_spec):
 
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
-
-  variable_batchsize_inputs = cifar_input.build_input_multi_batchsize(FLAGS.dataset, FLAGS.data_dir, FLAGS.batch_size, "train")
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
