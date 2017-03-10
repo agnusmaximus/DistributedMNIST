@@ -241,7 +241,7 @@ def train(target, cluster_spec):
     loss_value = -1
 
     with tf.train.MonitoredTrainingSession(
-        master='/job:worker/task:0', is_chief=is_chief,
+        master=target, is_chief=is_chief,
         hooks=[sync_replicas_hook]) as mon_sess:
       while not mon_sess.should_stop():
         cur_iteration += 1
