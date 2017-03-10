@@ -336,7 +336,7 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
 
               with ops.control_dependencies([sync_op]):
                 with tf.device('/job:worker/task:%d' % worker_id):
-                  sync_op = tf.Print(global_step, [global_step], message="Done enqueueing op")
+                    sync_op = tf.Print(sync_token_queue.size(), [sync_token_queue.size()], message="Done enqueueing op")
 
         if self._variable_averages is not None:
           with ops.control_dependencies([sync_op]), ops.name_scope(""):
