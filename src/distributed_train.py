@@ -240,7 +240,7 @@ def train(target, cluster_spec):
     train_error_time = 0
     loss_value = -1
 
-    with tf.training.MonitoredTrainingSession(
+    with tf.train.MonitoredTrainingSession(
         master='', is_chief=is_chief,
         hooks=[sync_replicas_hook]) as mon_sess:
       while not mon_sess.should_stop():
