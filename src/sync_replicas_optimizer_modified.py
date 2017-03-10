@@ -322,7 +322,10 @@ class SyncReplicasOptimizerModified(optimizer.Optimizer):
         with ops.control_dependencies([update_op]):
           # Sync_op needs to insert tokens to the token queue at the end of the
           # step so the replicas can fetch them to start the next step.
-          tokens = array_ops.fill([self._tokens_per_step], global_step)
+          with tf.device('/job:worker/task:%d' % worker_id):
+            dbg_print_2 = tf.Print(global_step, [global_step], message="Updating enqueueing")
+          with ops.control_Dependencies([dbg_print_2]):
+            tokens = array_ops.fill([self._tokens_per_step], global_step)
           sync_op = sync_token_queue.enqueue_many((tokens,))
 
         if self._variable_averages is not None:
