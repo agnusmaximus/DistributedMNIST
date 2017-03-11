@@ -102,29 +102,30 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 EVAL_BATCHSIZE=2000
 
-def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time):
-  train_error_start_time = time.time()
+def model_evaluate(sess, model, images, labels, inputs_dq, batchsize):
+  num_iter = int(math.ceil(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / batchsize))
+  correct_prediction, total_prediction = 0, 0
+  total_sample_count = num_iter * batchsize
+  computed_loss = 0
   step = 0
-  #batch_size = FLAGS.batch_size
-  batch_size = 1024
-  num_iter = int(math.ceil(60000 / batch_size))
-  true_count = 0  # Counts the number of correct predictions.
-  total_sample_count = num_iter * batch_size
+
   while step < num_iter:
-    t1 = time.time()
-    images_real, labels_real = sess.run(dq)
-    t2 = time.time()
-    feed_dict = cifar_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
-    t3 = time.time()
-    predictions = sess.run([top_k_op], feed_dict=feed_dict)
-    t4 = time.time()
-    tf.logging.info("Images time: %f, feed_dict time: %f, predictions time: %f" % (t2-t1, t3-t2, t4-t3))
-    true_count += np.sum(predictions)
+    images_real, labels_real = sess.run(inputs_dq, feed_dict={images_pl:np.zeros([1, 32, 32, 3]), labels_pl: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+    feed_dict = {images:images_real, labels:labels_real}
+    (summaries, loss, predictions, truth) = sess.run(
+      [model.summaries, model.cost, model.predictions,
+       model.labels], feed_dict=feed_dict)
+
+    truth = np.argmax(truth, axis=1)
+    predictions = np.argmax(predictions, axis=1)
+    correct_prediction += np.sum(truth == predictions)
+    total_prediction += predictions.shape[0]
+    computed_loss += loss
     step += 1
-  train_error_end_time = time.time()
-  precision = true_count / total_sample_count
-  tf.logging.info('Epoch %f %f %f' % (e_time, epoch, precision))
-  sys.stdout.flush()
+
+  # Compute precision @ 1.
+  precision = 1.0 * correct_prediction / total_prediction
+  return precision, computed_loss
 
 def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
   step = 0
@@ -254,6 +255,9 @@ def train(target, cluster_spec):
   train_error_time = 0
   loss_value = -1
 
+  compute_train_error_times = []
+  compute_r_times = []
+
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
       hooks=[sync_replicas_hook],
@@ -278,6 +282,7 @@ def train(target, cluster_spec):
 
       # Compute R
       if FLAGS.variable_batchsize and cur_iteration != 0 and new_epoch_track > cur_epoch_track:
+        t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
@@ -287,6 +292,19 @@ def train(target, cluster_spec):
 
         R = mon_sess.run([R_dequeue_op], feed_dict={R_placeholder : 0, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})[0]
         tf.logging.info("Dequeued R - %f" % float(R))
+
+        t_compute_r_end = time.time()
+        compute_r_times.append(t_compute_r_end - t_compute_r_begin)
+
+      if new_epoch_track > cur_epoch_track:
+        t_evaluate_begin = time.time()
+        precision, loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
+        t_evaluate_end = time.time()
+        compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
+
+        t_elapsed = time.time() - begin_time
+        t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
+        print("Info: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
