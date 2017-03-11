@@ -296,7 +296,7 @@ def train(target, cluster_spec):
         t_compute_r_end = time.time()
         compute_r_times.append(t_compute_r_end - t_compute_r_begin)
 
-      if new_epoch_track > cur_epoch_track:
+      if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_evaluate_begin = time.time()
         precision, loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
         t_evaluate_end = time.time()
