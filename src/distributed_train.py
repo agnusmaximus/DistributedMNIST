@@ -224,7 +224,7 @@ def train(target, cluster_spec):
         train_op = tf.identity(model.cost, name='train_op')
 
     # Queue for broadcasting R
-    R_queue = data_flow_ops.FIFOQueue(1,
+    R_queue = data_flow_ops.FIFOQueue(-1,
                                       tf.float32,
                                       shapes=(),
                                       name="R_queue",
