@@ -117,7 +117,7 @@ def model_evaluate(sess, model, images_pl, labels_pl, inputs_dq, batchsize):
       [model.summaries, model.cost, model.predictions,
        model.labels], feed_dict=feed_dict)
 
-    tf.logging.info("Hello")
+    tf.logging.info("%d of %d" % (step, num_iter))
 
     truth = np.argmax(truth, axis=1)
     predictions = np.argmax(predictions, axis=1)
