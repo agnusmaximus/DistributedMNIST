@@ -232,27 +232,29 @@ def train(target, cluster_spec):
                                         name="R_queue",
                                         shared_name="R_queue")
 
-      computing_R_queue = data_flow_ops.FIFOQueue(-1,
-                                                  tf.int64,
-                                                  shapes=(),
-                                                  name="computing_R_queue",
-                                                  shared_name="computing_R_queue")
+      block_workers_queue = data_flow_ops.FIFOQueue(1,
+                                                    tf.int64,
+                                                    shapes=(),
+                                                    name="block_workers_queue",
+                                                    shared_name="block_workers_queue")
 
 
     R_placeholder = tf.placeholder(tf.int64, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
 
-    compute_r_values = array_ops.fill([num_workers], tf.constant(0, dtype=tf.int64))
-    compute_r_queue_enqueue = computing_R_queue.enqueue_many((compute_r_values,))
+    block_workers_op = block_workers_queue.enqueue(tf.constant(0, dtype=tf.int64))
+    unblock_workers_op = block_workers_queue.dequeue()
+
+    workers_block_if_neccessary_op = tf.while_loop(block_workers_queue.size() > 0,
+                                                   lambda x : tf.constant(0),
+                                                   [tf.constant(0)])
 
     def is_computing_r():
       with ops.control_dependencies([computing_R_queue.dequeue()]):
         return R_queue.dequeue()
 
-    R_dequeue_op = tf.cond(computing_R_queue.size() > 0,
-                           is_computing_r,
-                           lambda : tf.identity(tf.constant(0, dtype=tf.int64)))
+    R_dequeue_op = R_queue.dequeue()
 
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
@@ -306,29 +308,42 @@ def train(target, cluster_spec):
       tf.logging.info("YO %d" % (n_examples_processed))
 
       if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
+
+        # Block workers from computing gradients
+        mon_sess.run([block_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+
         t_evaluate_begin = time.time()
         computed_precision, computed_loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
         t_evaluate_end = time.time()
         compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
 
-        tf.logging.info("WTF?")
-        tf.logging.info("%f %f" % (float(computed_precision), float(computed_loss)))
-
         t_elapsed = time.time() - begin_time
         t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
         tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, cur_iteration, computed_precision, computed_loss))
+
+        # Unblock workers from computing gradients
+        mon_sess.run([unblock_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+
+      # Workers block if the block queue is not empty
+      mon_sess.run([workers_block_if_necessary_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
 
       # Compute R
       if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
-          mon_sess.run([compute_r_queue_enqueue], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+
+          # Block workers from computing gradients
+          mon_sess.run([block_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+
           tf.logging.info("Master computing R...")
           sys.stdout.flush()
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
           R = R / 4 / num_workers
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computed R - %f" % float(R))
+
+          # Unblock workers from computing gradients
+          mon_sess.run([unblock_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
 
         t_compute_r_end = time.time()
         compute_r_times.append(t_compute_r_end - t_compute_r_begin)
