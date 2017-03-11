@@ -279,7 +279,7 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # Compute R
-      if FLAGS.variable_batchsize and cur_iteration != 1:
+      if FLAGS.variable_batchsize and cur_iteration != 0:
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
