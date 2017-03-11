@@ -243,7 +243,7 @@ def train(target, cluster_spec):
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
 
-    compute_r_values = array_ops.fill([num_workers], tf.zeros([0], dtype=tf.int64)])
+    compute_r_values = array_ops.fill([num_workers], tf.zeros([0], dtype=tf.int64))
     compute_r_queue_enqueue = computing_R_queue.enqueue_many((compute_r_values,))
     compute_r_dequeue = compute_R_queue.dequeue()
 
