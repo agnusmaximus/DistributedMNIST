@@ -276,7 +276,7 @@ def build_input_multi_batchsize(dataset, data_path, batch_size, mode):
 
   # Read 'batch' labels + images from the example queue.
   input_variable_batchsize = [None]
-  for i in range(1, 1024):
+  for i in range(1, 2048):
     images, labels = example_queue.dequeue_many(i)
     labels = tf.reshape(labels, [i, 1])
     indices = tf.reshape(tf.range(0, i, 1), [i, 1])
