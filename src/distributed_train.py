@@ -253,7 +253,7 @@ def train(target, cluster_spec):
 
     R_dequeue_op = tf.cond(computing_R_queue.size() > 0,
                            is_computing_r,
-                           lambda : tf.identity(tf.zeros([0], dtype=tf.int64)))
+                           lambda : tf.identity(tf.constant(0, dtype=tf.int64)))
 
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
