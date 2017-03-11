@@ -232,14 +232,24 @@ def train(target, cluster_spec):
                                         name="R_queue",
                                         shared_name="R_queue")
 
+      computing_R_queue = data_flow_ops.FIFOQueue(-1,
+                                                  tf.int64,
+                                                  shapes=(),
+                                                  name="computing_R_queue",
+                                                  shared_name="computing_R_queue")
+
+
     R_placeholder = tf.placeholder(tf.int64, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
 
-    R_dequeue_op = tf.cond(R_queue.size() > 0,
-                           lambda : R_queue.dequeue(),
-                           lambda : tf.identity(tf.zeros([0], dtype=tf.int64)))
+    compute_r_values = array_ops.fill([num_workers], tf.zeros([0], dtype=tf.int64)])
+    compute_r_queue_enqueue = computing_R_queue.enqueue_many((compute_r_values,))
+    compute_r_dequeue = compute_R_queue.dequeue()
 
+    R_dequeue_op = tf.cond(computing_R_queue.size() > 0,
+                           lambda : with ops.control_dependencies([compute_r_dequeue]): R_queue.dequeue(),
+                           lambda : tf.identity(tf.zeros([0], dtype=tf.int64)))
 
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
@@ -309,6 +319,7 @@ def train(target, cluster_spec):
       if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
+          mon_sess.run([compute_r_queue_enqueue], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computing R...")
           sys.stdout.flush()
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
