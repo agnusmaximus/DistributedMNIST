@@ -126,18 +126,17 @@ def compute_train_error(sess, top_k_op, epoch, dq, images_pl, labels_pl, e_time)
   tf.logging.info('Epoch %f %f %f' % (e_time, epoch, precision))
   sys.stdout.flush()
 
-def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl):
+def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
   step = 0
-  num_iter = int(math.ceil(60000 / float(1024)))
+  num_iter = int(math.ceil(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / float(batchsize)))
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
     images_real, labels_real = sess.run(dq)
-
+    feed_dict = {images_pl : images_real, labels_pl : labels_real}
     feed_dict = cifar_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
-
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
-    gradient *= FLAGS.batch_size
+    gradient *= batchsize
 
     if sum_of_norms == None:
       sum_of_norms = np.linalg.norm(gradient)**2
@@ -151,7 +150,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl):
 
     step += 1
 
-  ratio = num_iter * 1024 * sum_of_norms / np.linalg.norm(norm_of_sums)**2
+  ratio = num_iter * batchsize * sum_of_norms / np.linalg.norm(norm_of_sums)**2
   tf.logging.info("batchsize ratio: %f" % ratio)
   return ratio
 
@@ -223,6 +222,14 @@ def train(target, cluster_spec):
     with tf.control_dependencies([apply_gradients_op]):
         train_op = tf.identity(model.cost, name='train_op')
 
+    # Queue for broadcasting R
+    R_queue = data_flow_ops.FIFOQueue(1,
+                                      tf.float32
+                                      shapes=(),
+                                      name="R_queue",
+                                      shared_name="R_queue"))
+
+
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
   # Train, checking for Nans. Concurrently run the summary operation at a
@@ -241,7 +248,6 @@ def train(target, cluster_spec):
   compute_R_train_error_time = 0
   train_error_time = 0
   loss_value = -1
-
 
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
@@ -266,11 +272,18 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
+      # Compute R
+      if FLAGS.variable_batchsize:
+        if FLAGS.task_id == 0:
+          R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
+          tf.logging.info("Master computed R - %f" % float(R))
+
+
       # Dequeue variable batchsize inputs
+      batchsize_to_use = R if FLAGS.variable_batchsize else FLAGS.batch_size
       tf.logging.info("Batchsize: %d" % FLAGS.batch_size)
       images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
       loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-      #loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
       n_examples_processed += FLAGS.batch_size * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
