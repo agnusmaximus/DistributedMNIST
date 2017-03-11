@@ -263,7 +263,7 @@ def train(target, cluster_spec):
   compute_train_error_times = [0]
   compute_r_times = [0]
 
-  checkpoint_save_secs = 60 * 20
+  checkpoint_save_secs = 60 * 2
 
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
@@ -286,6 +286,8 @@ def train(target, cluster_spec):
       # Compute batchsize ratio
       new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
+
+      tf.logging.info("YO %d vs %d" % (cur_epoch_track, new_epoch_track))
 
       if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_evaluate_begin = time.time()
