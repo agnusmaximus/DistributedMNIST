@@ -103,6 +103,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 EVAL_BATCHSIZE=2000
 
 def model_evaluate(sess, model, images_pl, labels_pl, inputs_dq, batchsize):
+  tf.logging.info("Evaluating model...")
   num_iter = int(math.ceil(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / batchsize))
   correct_prediction, total_prediction = 0, 0
   total_sample_count = num_iter * batchsize
