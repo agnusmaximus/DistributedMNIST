@@ -294,7 +294,7 @@ def train(target, cluster_spec):
         tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
 
       # Compute R
-      if FLAGS.variable_batchsize and cur_iteration != 0 and new_epoch_track > cur_epoch_track:
+      if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
