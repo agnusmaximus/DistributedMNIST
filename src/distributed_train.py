@@ -157,7 +157,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
 
   ratio = num_iter * batchsize * sum_of_norms / np.linalg.norm(norm_of_sums)**2
   tf.logging.info("batchsize ratio: %f" % ratio)
-  return 8 * 1000 * 4
+  return 2000
   return ratio
 
 def train(target, cluster_spec):
