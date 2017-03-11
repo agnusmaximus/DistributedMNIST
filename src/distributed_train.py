@@ -220,20 +220,22 @@ def train(target, cluster_spec):
     grads = opt.compute_gradients(model.cost)
     apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
-    with tf.control_dependencies([apply_gradients_op]):
-        train_op = tf.identity(model.cost, name='train_op')
-
     # Queue for broadcasting R
-    R_queue = data_flow_ops.FIFOQueue(-1,
-                                      tf.float32,
-                                      shapes=(),
-                                      name="R_queue",
-                                      shared_name="R_queue")
+    with ops.device(global_step.device):
+      R_queue = data_flow_ops.FIFOQueue(-1,
+                                        tf.float32,
+                                        shapes=(),
+                                        name="R_queue",
+                                        shared_name="R_queue")
 
     R_placeholder = tf.placeholder(tf.float32, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
     R_dequeue_op = R_queue.dequeue()
+
+
+    with tf.control_dependencies([apply_gradients_op]):
+        train_op = tf.identity(model.cost, name='train_op')
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
