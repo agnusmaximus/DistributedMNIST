@@ -247,8 +247,12 @@ def train(target, cluster_spec):
     compute_r_queue_enqueue = computing_R_queue.enqueue_many((compute_r_values,))
     compute_r_dequeue = compute_R_queue.dequeue()
 
+    def is_computing_r():
+      with ops.control_dependencies([compute_r_dequeue]):
+        return R_queue.dequeue()
+
     R_dequeue_op = tf.cond(computing_R_queue.size() > 0,
-                           lambda : with ops.control_dependencies([compute_r_dequeue]): R_queue.dequeue(),
+                           is_computing_r,
                            lambda : tf.identity(tf.zeros([0], dtype=tf.int64)))
 
     with tf.control_dependencies([apply_gradients_op]):
