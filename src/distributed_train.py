@@ -102,7 +102,7 @@ RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
 
 EVAL_BATCHSIZE=2000
 
-def model_evaluate(sess, model, images, labels, inputs_dq, batchsize):
+def model_evaluate(sess, model, images_pl, labels_pl, inputs_dq, batchsize):
   num_iter = int(math.ceil(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / batchsize))
   correct_prediction, total_prediction = 0, 0
   total_sample_count = num_iter * batchsize
@@ -111,7 +111,7 @@ def model_evaluate(sess, model, images, labels, inputs_dq, batchsize):
 
   while step < num_iter:
     images_real, labels_real = sess.run(inputs_dq, feed_dict={images_pl:np.zeros([1, 32, 32, 3]), labels_pl: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
-    feed_dict = {images:images_real, labels:labels_real}
+    feed_dict = {images_pl:images_real, labels_pl:labels_real}
     (summaries, loss, predictions, truth) = sess.run(
       [model.summaries, model.cost, model.predictions,
        model.labels], feed_dict=feed_dict)
@@ -255,8 +255,8 @@ def train(target, cluster_spec):
   train_error_time = 0
   loss_value = -1
 
-  compute_train_error_times = []
-  compute_r_times = []
+  compute_train_error_times = [0]
+  compute_r_times = [0]
 
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
