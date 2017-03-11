@@ -255,7 +255,7 @@ def build_input_multi_batchsize(dataset, data_path, batch_size, mode):
 
     example_queue = tf.RandomShuffleQueue(
         capacity=3 * max_batch_size,
-        min_after_dequeue=1 * max_batch_size,
+        min_after_dequeue=2 * max_batch_size,
         dtypes=[tf.float32, tf.int32],
         shapes=[[image_size, image_size, depth], [1]])
     num_threads = 4
