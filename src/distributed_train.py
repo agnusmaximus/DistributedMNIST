@@ -248,7 +248,7 @@ def train(target, cluster_spec):
   cur_iteration = -1
   iterations_finished = set()
 
-  R = -1
+  R = 64
   n_examples_processed = 0
   cur_epoch_track = 0
   compute_R_train_error_time = 0
@@ -279,7 +279,7 @@ def train(target, cluster_spec):
         run_options.output_partition_graphs=True
 
       # Compute R
-      if FLAGS.variable_batchsize:
+      if FLAGS.variable_batchsize and cur_iteration != 1:
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
