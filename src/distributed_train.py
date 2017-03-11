@@ -289,10 +289,10 @@ def train(target, cluster_spec):
 
       # Dequeue variable batchsize inputs
       batchsize_to_use = R if FLAGS.variable_batchsize else FLAGS.batch_size
-      tf.logging.info("Batchsize: %d" % FLAGS.batch_size)
-      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[FLAGS.batch_size], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+      tf.logging.info("Batchsize: %d" % batchsize_to_use)
+      images_real, labels_real = mon_sess.run(variable_batchsize_inputs[batchsize_to_use], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
       loss_value, step = mon_sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options, feed_dict={images:images_real, labels:labels_real})
-      n_examples_processed += FLAGS.batch_size * num_workers
+      n_examples_processed += batchsize_to_use * num_workers
 
       # This uses the queuerunner which does not support variable batch sizes
       #loss_value, step = sess.run([train_op, global_step], run_metadata=run_metadata, options=run_options)
