@@ -227,7 +227,7 @@ def train(target, cluster_spec):
                                       tf.float32,
                                       shapes=(),
                                       name="R_queue",
-                                      shared_name="R_queue"))
+                                      shared_name="R_queue")
 
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
