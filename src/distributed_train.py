@@ -312,7 +312,7 @@ def train(target, cluster_spec):
       if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
 
         # Block workers from computing gradients
-        mon_sess.run([block_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+        #mon_sess.run([block_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
 
         t_evaluate_begin = time.time()
         computed_precision, computed_loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
@@ -324,7 +324,7 @@ def train(target, cluster_spec):
         tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, cur_iteration, computed_precision, computed_loss))
 
         # Unblock workers from computing gradients
-        mon_sess.run([unblock_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+        #mon_sess.run([unblock_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
 
       # Workers block if the block queue is not empty
       tf.logging.info("Blocking worker if necesssary...")
@@ -342,6 +342,7 @@ def train(target, cluster_spec):
           tf.logging.info("Master computing R...")
           sys.stdout.flush()
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
+          tf.logging.info("Master computed raw R - %f" % float(R))
           R = R / 4 / num_workers
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computed R - %f" % float(R))
