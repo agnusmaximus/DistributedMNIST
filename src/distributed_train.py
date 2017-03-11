@@ -304,7 +304,7 @@ def train(target, cluster_spec):
 
         t_elapsed = time.time() - begin_time
         t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
-        print("Info: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
+        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
