@@ -125,7 +125,9 @@ def model_evaluate(sess, model, images_pl, labels_pl, inputs_dq, batchsize):
     total_prediction += predictions.shape[0]
     computed_loss += loss
     step += 1
+
   tf.logging.info("Done evaluating...")
+
   # Compute precision @ 1.
   precision = 1.0 * correct_prediction / total_prediction
   return precision, computed_loss
@@ -287,13 +289,15 @@ def train(target, cluster_spec):
 
       if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_evaluate_begin = time.time()
-        precision, loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
+        computed_precision, computed_loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
+        tf.logging.info("WTF?")
+        tf.logging.info("%f %f" % (float(computed_precision), float(computed_loss)))
         t_evaluate_end = time.time()
         compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
 
         t_elapsed = time.time() - begin_time
         t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
-        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
+        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, computed_precision, computed_loss))
 
       # Compute R
       if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
