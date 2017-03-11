@@ -307,6 +307,7 @@ def train(target, cluster_spec):
         t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
+          sys.stdout.flush()
           #R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
           #R = R / 4 / num_workers
           R = 128
