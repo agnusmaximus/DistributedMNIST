@@ -284,7 +284,8 @@ def train(target, cluster_spec):
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
           tf.logging.info("Master computed R - %f" % float(R))
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R})
-        R = mon_sess.run([R_dequeue_op])[0]
+        #R = mon_sess.run([R_dequeue_op])[0]
+        R = 1024
 
       # Dequeue variable batchsize inputs
       batchsize_to_use = R if FLAGS.variable_batchsize else FLAGS.batch_size
