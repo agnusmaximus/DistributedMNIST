@@ -131,7 +131,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
   num_iter = int(math.ceil(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN / float(batchsize)))
   sum_of_norms, norm_of_sums = None, None
   while step < num_iter:
-    images_real, labels_real = sess.run(dq)
+    images_real, labels_real = sess.run(dq, feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
     feed_dict = {images_pl : images_real, labels_pl : labels_real}
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
