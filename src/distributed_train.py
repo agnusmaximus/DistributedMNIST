@@ -224,7 +224,7 @@ def train(target, cluster_spec):
 
     # Queue for broadcasting R
     R_queue = data_flow_ops.FIFOQueue(1,
-                                      tf.float32
+                                      tf.float32,
                                       shapes=(),
                                       name="R_queue",
                                       shared_name="R_queue"))
