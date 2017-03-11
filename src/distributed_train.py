@@ -298,7 +298,7 @@ def train(target, cluster_spec):
 
         t_elapsed = time.time() - begin_time
         t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
-        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, computed_precision, computed_loss))
+        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, cur_iteration, computed_precision, computed_loss))
 
       # Compute R
       if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
