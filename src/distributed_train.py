@@ -237,8 +237,8 @@ def train(target, cluster_spec):
     R_enqueue_op = R_queue.enqueue_many((R_values,))
 
     R_dequeue_op = tf.cond(R_queue.size() > 0,
-                           lambda x : R_queue.dequeue(),
-                           lambda x : tf.identity(tf.zero(0)))
+                           lambda : R_queue.dequeue(),
+                           lambda : tf.identity(tf.zero(0)))
 
 
     with tf.control_dependencies([apply_gradients_op]):
