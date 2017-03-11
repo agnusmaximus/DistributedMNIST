@@ -258,7 +258,7 @@ def train(target, cluster_spec):
       master=target, is_chief=is_chief,
       hooks=[sync_replicas_hook],
       checkpoint_dir=FLAGS.train_dir,
-      save_checkpoint_secs=60*2) as mon_sess:
+      save_checkpoint_secs=60*4) as mon_sess:
     while not mon_sess.should_stop():
       cur_iteration += 1
       sys.stdout.flush()
