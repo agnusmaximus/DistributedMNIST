@@ -229,6 +229,9 @@ def train(target, cluster_spec):
                                       name="R_queue",
                                       shared_name="R_queue")
 
+    R_placeholder = tf.placeholder(tf.float32, shape=())
+    R_values = array_ops.fill([num_workers], R_placeholder)
+    R_enqueue_op = R_queue.enqueue_many((R_values,))
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
@@ -275,6 +278,7 @@ def train(target, cluster_spec):
       # Compute R
       if FLAGS.variable_batchsize:
         if FLAGS.task_id == 0:
+          tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
           tf.logging.info("Master computed R - %f" % float(R))
 
