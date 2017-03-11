@@ -133,7 +133,6 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
   while step < num_iter:
     images_real, labels_real = sess.run(dq)
     feed_dict = {images_pl : images_real, labels_pl : labels_real}
-    feed_dict = cifar_input.fill_feed_dict(images_real, labels_real, images_pl, labels_pl)
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
     gradient *= batchsize
@@ -232,6 +231,7 @@ def train(target, cluster_spec):
     R_placeholder = tf.placeholder(tf.float32, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
+    R_dequeue_op = R_queue.dequeue()
 
   sync_replicas_hook = opt.make_session_run_hook(is_chief)
 
@@ -281,7 +281,8 @@ def train(target, cluster_spec):
           tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
           tf.logging.info("Master computed R - %f" % float(R))
-
+          mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R})
+        R = mon_sess.run([R_dequeue_op])[0]
 
       # Dequeue variable batchsize inputs
       batchsize_to_use = R if FLAGS.variable_batchsize else FLAGS.batch_size
