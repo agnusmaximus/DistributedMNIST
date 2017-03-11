@@ -235,7 +235,10 @@ def train(target, cluster_spec):
     R_placeholder = tf.placeholder(tf.int64, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
-    R_dequeue_op = R_queue.dequeue()
+
+    R_dequeue_op = tf.cond(R_queue.size() > 0,
+                           lambda x : R_queue.dequeue()
+                           lambda x : tf.zero(0))
 
 
     with tf.control_dependencies([apply_gradients_op]):
@@ -312,12 +315,16 @@ def train(target, cluster_spec):
           R = R / 4 / num_workers
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computed R - %f" % float(R))
-
-        R = mon_sess.run([R_dequeue_op], feed_dict={R_placeholder : 0, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})[0]
         tf.logging.info("Dequeued R - %f" % float(R))
 
         t_compute_r_end = time.time()
         compute_r_times.append(t_compute_r_end - t_compute_r_begin)
+
+      if FLAGS.variable_batchsize:
+        R_temp = mon_sess.run([R_dequeue_op], feed_dict={R_placeholder : 0, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})[0]
+        tf.logging.info("Rtemp: %d" % int(R_temp))
+        if R_temp > 0:
+          R = R_temp
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
