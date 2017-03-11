@@ -125,7 +125,7 @@ def model_evaluate(sess, model, images_pl, labels_pl, inputs_dq, batchsize):
     total_prediction += predictions.shape[0]
     computed_loss += loss
     step += 1
-
+  tf.logging.info("Done evaluating...")
   # Compute precision @ 1.
   precision = 1.0 * correct_prediction / total_prediction
   return precision, computed_loss
