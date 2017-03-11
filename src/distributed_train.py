@@ -246,9 +246,9 @@ def train(target, cluster_spec):
     block_workers_op = block_workers_queue.enqueue(tf.constant(0, dtype=tf.int64))
     unblock_workers_op = block_workers_queue.dequeue()
 
-    workers_block_if_neccessary_op = tf.while_loop(lambda x : block_workers_queue.size() > 0,
-                                                   lambda x : tf.constant(0),
-                                                   [tf.constant(0)])
+    workers_block_if_necessary_op = tf.while_loop(lambda x : block_workers_queue.size() > 0,
+                                                  lambda x : tf.constant(0),
+                                                  [tf.constant(0)])
 
     def is_computing_r():
       with ops.control_dependencies([computing_R_queue.dequeue()]):
@@ -325,7 +325,9 @@ def train(target, cluster_spec):
         mon_sess.run([unblock_workers_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
 
       # Workers block if the block queue is not empty
+      tf.logging.info("Blocking worker if necesssary...")
       mon_sess.run([workers_block_if_necessary_op], feed_dict={images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
+      tf.logging.info("Unblocked worker")
 
       # Compute R
       if FLAGS.variable_batchsize and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
