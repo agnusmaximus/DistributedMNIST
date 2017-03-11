@@ -290,10 +290,11 @@ def train(target, cluster_spec):
       if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
         t_evaluate_begin = time.time()
         computed_precision, computed_loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
-        tf.logging.info("WTF?")
-        tf.logging.info("%f %f" % (float(computed_precision), float(computed_loss)))
         t_evaluate_end = time.time()
         compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
+
+        tf.logging.info("WTF?")
+        tf.logging.info("%f %f" % (float(computed_precision), float(computed_loss)))
 
         t_elapsed = time.time() - begin_time
         t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
