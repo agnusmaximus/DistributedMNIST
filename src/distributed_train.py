@@ -136,7 +136,6 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
     gradient *= batchsize
-    tf.logging.info("YO %f" % np.linalg.norm(gradient))
 
     if sum_of_norms == None:
       sum_of_norms = np.linalg.norm(gradient)**2
@@ -266,11 +265,6 @@ def train(target, cluster_spec):
 
       start_time = time.time()
 
-      # Compute batchsize ratio
-      new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
-      new_epoch_track = int(new_epoch_float)
-      cur_epoch_track = max(cur_epoch_track, new_epoch_track)
-
       run_options = tf.RunOptions()
       run_metadata = tf.RunMetadata()
 
@@ -278,8 +272,12 @@ def train(target, cluster_spec):
         run_options.trace_level=tf.RunOptions.FULL_TRACE
         run_options.output_partition_graphs=True
 
+      # Compute batchsize ratio
+      new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
+      new_epoch_track = int(new_epoch_float)
+
       # Compute R
-      if FLAGS.variable_batchsize and cur_iteration != 0:
+      if FLAGS.variable_batchsize and cur_iteration != 0 and new_epoch_track > cur_epoch_track:
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
           R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
@@ -287,6 +285,8 @@ def train(target, cluster_spec):
           tf.logging.info("Master computed R - %f" % float(R))
         R = mon_sess.run([R_dequeue_op], feed_dict={R_placeholder : 0, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})[0]
         tf.logging.info("Dequeued R - %f" % float(R))
+
+      cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
       # Dequeue variable batchsize inputs
       batchsize_to_use = R if FLAGS.variable_batchsize else FLAGS.batch_size
