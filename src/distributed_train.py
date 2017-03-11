@@ -259,7 +259,7 @@ def train(target, cluster_spec):
   compute_train_error_times = [0]
   compute_r_times = [0]
 
-  checkpoint_save_secs = 60 * 2
+  checkpoint_save_secs = 60 * 20
 
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
