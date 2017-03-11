@@ -245,10 +245,9 @@ def train(target, cluster_spec):
 
     compute_r_values = array_ops.fill([num_workers], tf.constant(0, dtype=tf.int64))
     compute_r_queue_enqueue = computing_R_queue.enqueue_many((compute_r_values,))
-    compute_r_dequeue = computing_R_queue.dequeue()
 
     def is_computing_r():
-      with ops.control_dependencies([compute_r_dequeue]):
+      with ops.control_dependencies([computing_R_queue.dequeue()]):
         return R_queue.dequeue()
 
     R_dequeue_op = tf.cond(computing_R_queue.size() > 0,
