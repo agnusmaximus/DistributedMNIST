@@ -330,16 +330,17 @@ def train(target, cluster_spec):
           R = R / 4 / num_workers
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computed R - %f" % float(R))
-        tf.logging.info("Dequeued R - %f" % float(R))
 
         t_compute_r_end = time.time()
         compute_r_times.append(t_compute_r_end - t_compute_r_begin)
 
       if FLAGS.variable_batchsize:
+        tf.logging.info("Dequeuing R...")
         R_temp = mon_sess.run([R_dequeue_op], feed_dict={R_placeholder : 0, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})[0]
         tf.logging.info("Rtemp: %d" % int(R_temp))
         if R_temp > 0:
           R = R_temp
+        tf.logging.info("Dequeued R - %f" % float(R))
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
