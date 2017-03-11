@@ -228,7 +228,7 @@ def train(target, cluster_spec):
                                         name="R_queue",
                                         shared_name="R_queue")
 
-    R_placeholder = tf.placeholder(tf.float32, shape=())
+    R_placeholder = tf.placeholder(tf.int64, shape=())
     R_values = array_ops.fill([num_workers], R_placeholder)
     R_enqueue_op = R_queue.enqueue_many((R_values,))
     R_dequeue_op = R_queue.dequeue()
