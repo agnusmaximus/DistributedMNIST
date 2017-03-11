@@ -259,7 +259,7 @@ def train(target, cluster_spec):
   compute_train_error_times = [0]
   compute_r_times = [0]
 
-  checkpoint_save_secs = 10000000
+  checkpoint_save_secs = 60 * 2
 
   with tf.train.MonitoredTrainingSession(
       master=target, is_chief=is_chief,
@@ -283,6 +283,16 @@ def train(target, cluster_spec):
       new_epoch_float = n_examples_processed / float(cifar_input.NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN)
       new_epoch_track = int(new_epoch_float)
 
+      if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
+        t_evaluate_begin = time.time()
+        precision, loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
+        t_evaluate_end = time.time()
+        compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
+
+        t_elapsed = time.time() - begin_time
+        t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
+        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
+
       # Compute R
       if FLAGS.variable_batchsize and cur_iteration != 0 and new_epoch_track > cur_epoch_track:
         t_compute_r_begin = time.time()
@@ -298,16 +308,6 @@ def train(target, cluster_spec):
 
         t_compute_r_end = time.time()
         compute_r_times.append(t_compute_r_end - t_compute_r_begin)
-
-      if FLAGS.task_id == 0 and (new_epoch_track > cur_epoch_track or cur_iteration == 0):
-        t_evaluate_begin = time.time()
-        precision, loss = model_evaluate(mon_sess, model, images, labels, variable_batchsize_inputs[1000], 1000)
-        t_evaluate_end = time.time()
-        compute_train_error_times.append(t_evaluate_end-t_evaluate_begin)
-
-        t_elapsed = time.time() - begin_time
-        t_elapsed_adjusted = t_elapsed - sum(compute_train_error_times) - sum(compute_r_times)
-        tf.logging.info("IInfo: %f %f %f %f" % (t_elapsed_adjusted, step, precision, loss))
 
       cur_epoch_track = max(cur_epoch_track, new_epoch_track)
 
