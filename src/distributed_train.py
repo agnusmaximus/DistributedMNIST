@@ -307,8 +307,9 @@ def train(target, cluster_spec):
         t_compute_r_begin = time.time()
         if FLAGS.task_id == 0:
           tf.logging.info("Master computing R...")
-          R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
-          R = R / 4 / num_workers
+          #R = compute_R(mon_sess, grads, variable_batchsize_inputs[1000], images, labels, 1000)
+          #R = R / 4 / num_workers
+          R = 128
           mon_sess.run([R_enqueue_op], feed_dict={R_placeholder : R, images:np.zeros([1, 32, 32, 3]), labels: np.zeros([1, 10 if FLAGS.dataset == 'cifar10' else 100])})
           tf.logging.info("Master computed R - %f" % float(R))
 
