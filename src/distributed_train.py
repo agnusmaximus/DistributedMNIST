@@ -136,6 +136,7 @@ def compute_R(sess, grads_and_vars, dq, images_pl, labels_pl, batchsize):
     gradients = sess.run([x[0] for x in grads_and_vars], feed_dict=feed_dict)
     gradient = np.concatenate(np.array([x.flatten() for x in gradients]))
     gradient *= batchsize
+    tf.logging.info("YO %f" % np.linalg.norm(gradient))
 
     if sum_of_norms == None:
       sum_of_norms = np.linalg.norm(gradient)**2
