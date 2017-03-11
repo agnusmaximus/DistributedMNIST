@@ -246,7 +246,7 @@ def train(target, cluster_spec):
     block_workers_op = block_workers_queue.enqueue(tf.constant(0, dtype=tf.int64))
     unblock_workers_op = block_workers_queue.dequeue()
 
-    workers_block_if_neccessary_op = tf.while_loop(block_workers_queue.size() > 0,
+    workers_block_if_neccessary_op = tf.while_loop(lambda x : block_workers_queue.size() > 0,
                                                    lambda x : tf.constant(0),
                                                    [tf.constant(0)])
 
