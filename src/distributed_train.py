@@ -20,6 +20,7 @@ import math
 
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import variables
+from tensorflow.python.ops import control_flow_ops
 from tensorflow.python.ops import state_ops
 from tensorflow.python.ops import array_ops
 from tensorflow.python.ops import logging_ops
