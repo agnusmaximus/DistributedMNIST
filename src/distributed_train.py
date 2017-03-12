@@ -256,7 +256,7 @@ def train(target, cluster_spec):
                                                   lambda x : tf.constant(0),
                                                   [tf.constant(0)])
 
-    R_dequeue_op = tf.cond(R_queue.size() > 0,
+    R_dequeue_op = tf.cond(tf.Print(R_queue.size(), [R_queue.size()], message="R queue size") > 0,
                            lambda : R_queue.dequeue(),
                            lambda : tf.identity(tf.constant(0, dtype=tf.int64)))
 
