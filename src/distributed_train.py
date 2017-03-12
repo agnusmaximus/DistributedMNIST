@@ -245,7 +245,7 @@ def train(target, cluster_spec):
 
     R_enqueue_ops = []
     for i in range(num_workers):
-      R_enqueue_ops.append(R_queues[i].enqueue(R))
+      R_enqueue_ops.append(R_queues[i].enqueue(R_placeholder))
     R_enqueue_op = control_flow_ops.group(*(R_enqueue_ops))
 
     block_workers_op = block_workers_queue.enqueue(tf.constant(0, dtype=tf.int64))
