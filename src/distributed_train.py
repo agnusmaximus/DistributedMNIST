@@ -232,8 +232,8 @@ def train(target, cluster_spec):
         R_queues.append(data_flow_ops.FIFOQueue(-1,
                                                 tf.int64,
                                                 shapes=(),
-                                                name="R_queue",
-                                                shared_name="R_queue"))
+                                                name="R_queue_%d" % i,
+                                                shared_name="R_queue_%d" % i))
 
       block_workers_queue = data_flow_ops.FIFOQueue(1,
                                                     tf.int64,
