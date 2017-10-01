@@ -158,14 +158,14 @@ def train(target, dataset, cluster_spec):
     # Create an optimizer that performs gradient descent.
     opt = tf.train.AdamOptimizer(lr)
 
-    # Use V2 optimizer
+    # Use SyncReplicasOptimizer optimizer
     if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
       opt = TimeoutReplicasOptimizer(
         opt,
         global_step,
         total_num_replicas=num_workers)
     else:
-      opt = tf.train.SyncReplicasOptimizerV2(
+      opt = tf.train.SyncReplicasOptimizer(
         opt,
         replicas_to_aggregate=num_replicas_to_aggregate,
         total_num_replicas=num_workers)
