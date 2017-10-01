@@ -16,6 +16,7 @@ def main(unused_args):
   assert FLAGS.job_name in ['ps', 'worker'], 'job_name must be ps or worker'
 
   # Adding a test sentence
+  # Add another test sentence
 
   # Extract all the hostnames for the ps and worker jobs to construct the
   # cluster spec.
