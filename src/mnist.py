@@ -161,7 +161,7 @@ def loss(logits, labels):
 def evaluation(logits, labels):
   pred = tf.nn.softmax(logits)
   correct = tf.nn.in_top_k(pred, labels, 1)
-  return tf.reduce_sum(tf.cast(correct, tf.int32))
+  return tf.reduce_mean(tf.cast(correct, tf.int32))
 
 def predictions(logits):
     return tf.nn.softmax(logits)
