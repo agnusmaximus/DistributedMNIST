@@ -338,7 +338,7 @@ def train(target, dataset, cluster_spec):
         if step % FLAGS.save_results_period == 0:
           time_file_name = FLAGS.train_dir + ('/worker%d_time.npy' % FLAGS.task_id)
           loss_file_name = FLAGS.train_dir + ('/worker%d_loss.npy' % FLAGS.task_id)
-          train_acc_file_name = FLAGS.train_dir + ('worker%d_train_acc.npy' % FLAGS.task_id)
+          train_acc_file_name = FLAGS.train_dir + ('/worker%d_train_acc.npy' % FLAGS.task_id)
           np.save(time_file_name, time_list)
           np.save(loss_file_name, loss_list)
           np.save(train_acc_file_name, train_acc_list)
