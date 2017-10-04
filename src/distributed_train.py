@@ -349,7 +349,7 @@ def train(target, dataset, cluster_spec):
                         (FLAGS.task_id, datetime.now(), step, loss_value, train_acc_value,
                            examples_per_sec, duration))
 
-        time_acc_list.append((end_time, train_acc_value))
+        time_acc_list.append((finish_time, train_acc_value))
 
         # Save the results when step % FLAGS.save_results_period == 0
         if step % FLAGS.save_results_period == 0:
