@@ -164,7 +164,6 @@ def train(target, dataset, cluster_spec):
     # Add train accuracy
     train_acc = mnist.evaluation(logits, labels)
 
-
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
 
@@ -277,9 +276,7 @@ def train(target, dataset, cluster_spec):
     if FLAGS.task_id == 0 and FLAGS.interval_method:
       opt.start_interval_updates(sess, timeout_client)
 
-    # loss_list = []
-    train_acc_list = []
-    time_list = []
+    time_acc_list = []
 
     while not sv.should_stop():
       try:
@@ -344,7 +341,8 @@ def train(target, dataset, cluster_spec):
         if step > FLAGS.max_steps:
           break
 
-        duration = time.time() - start_time
+        end_time = time.time()
+        duration = end_time - start_time
         examples_per_sec = FLAGS.batch_size / float(duration)
         format_str = ('Worker %d: %s: step %d, loss = %f, train_acc = %f'
                       '(%.1f examples/sec; %.3f  sec/batch)')
@@ -352,18 +350,13 @@ def train(target, dataset, cluster_spec):
                         (FLAGS.task_id, datetime.now(), step, loss_value, train_acc_value,
                            examples_per_sec, duration))
 
-        time_list.append(time.time())
-        # loss_list.append(loss_value)
-        train_acc_list.append(train_acc_value)
+        time_acc_list.append((end_time, train_acc_value))
 
         # Save the results when step % FLAGS.save_results_period == 0
         if step % FLAGS.save_results_period == 0:
-          time_file_name = FLAGS.train_dir + ('/worker%d_time.npy' % FLAGS.task_id)
-          # loss_file_name = FLAGS.train_dir + ('/worker%d_loss.npy' % FLAGS.task_id)
-          train_acc_file_name = FLAGS.train_dir + ('/worker%d_train_acc.npy' % FLAGS.task_id)
-          np.save(time_file_name, time_list)
+          time_acc_file_name = FLAGS.train_dir + ('/worker%d_time_acc.npy' % FLAGS.task_id)
           # np.save(loss_file_name, loss_list)
-          np.save(train_acc_file_name, train_acc_list)
+          np.save(time_acc_file_name, time_acc_list)
 
 
 

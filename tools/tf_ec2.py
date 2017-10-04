@@ -11,54 +11,59 @@ import boto3
 import time
 import json
 import os
+import time
 from scp import SCPClient
 
 class Cfg(dict):
 
-   def __getitem__(self, item):
-       item = dict.__getitem__(self, item)
-       if type(item) == type([]):
-           return [x % self if type(x) == type("") else x for x in item]
-       if type(item) == type(""):
-           return item % self
-       return item
+    def __getitem__(self, item):
+        item = dict.__getitem__(self, item)
+        if type(item) == type([]):
+            return [x % self if type(x) == type("") else x for x in item]
+        if type(item) == type(""):
+            return item % self
+        return item
 
 cfg = Cfg({
-    "name" : "Timeout",      # Unique name for this specific configuration
-    "key_name": "MaxLamKeyPair",          # Necessary to ssh into created instances
+    "name" : "Basic",      # Unique name for this specific configuration
+    "key_name": "GradientDiversityDong",          # Necessary to ssh into created instances
 
     # Cluster topology
     "n_masters" : 1,                      # Should always be 1
-    "n_workers" : 49,
+    "n_workers" : 1,
     "n_ps" : 1,
     "n_evaluators" : 1,                   # Continually validates the model on the validation data
-    "num_replicas_to_aggregate" : "50",
+    "num_replicas_to_aggregate" : "2",
 
-    "method" : "reserved",
+    #"method" : "reserved",
 
     # Region speficiation
     "region" : "us-west-2",
     "availability_zone" : "us-west-2b",
 
     # Machine type - instance type configuration.
-    "master_type" : "t2.large",
-    "worker_type" : "t2.large",
-    "ps_type" : "t2.large",
-    "evaluator_type" : "t2.large",
-    "image_id": "ami-2306ba43",
+    "master_type" : "p2.xlarge",
+    "worker_type" : "p2.xlarge",
+    "ps_type" : "p2.xlarge",
+    "evaluator_type" : "p2.xlarge",
+    "image_id": "ami-b3b14acb",
+    #"image_id": "ami-3425b254",
 
     # Launch specifications
-    "spot_price" : ".12",                 # Has to be a string
+    "spot_price" : ".56",                 # Has to be a string
 
     # SSH configuration
     "ssh_username" : "ubuntu",            # For sshing. E.G: ssh ssh_username@hostname
-    "path_to_keyfile" : "/Users/maxlam/Desktop/School/Fall2016/Research/DistributedSGD/DistributedSGD.pem",
+    #"path_to_keyfile" : "/Users/dongyin/Desktop/DistributedMNIST-clean_mnist/tools/minibatch.pem",
+    "path_to_keyfile" : "/Users/dongyin/Documents/Mini-batch-experiments/GradientDiversityDong.pem",
 
     # NFS configuration
     # To set up these values, go to Services > ElasticFileSystem > Create new filesystem, and follow the directions.
     #"nfs_ip_address" : "172.31.3.173",         # us-west-2c
     #"nfs_ip_address" : "172.31.35.0",          # us-west-2a
-    "nfs_ip_address" : "172.31.28.54",          # us-west-2b
+    "nfs_ip_address" : "172.31.29.206",         # us-west-2b
+    #"nfs_ip_address" : "172.31.44.21",
+    #"nfs_ip_address" : "172.31.28.54",          
     "nfs_mount_point" : "/home/ubuntu/inception_shared",       # NFS base dir
     "base_out_dir" : "%(nfs_mount_point)s/%(name)s", # Master writes checkpoints to this directory. Outfiles are written to this directory.
 
@@ -73,21 +78,26 @@ cfg = Cfg({
     "master_pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git pull",
+        # "git fetch && git reset --hard origin/clean_mnist",
     ],
 
     # Pre commands are run on every machine before the actual training.
     "pre_commands" :
     [
         "cd DistributedMNIST",
-        "git fetch && git reset --hard origin/master",
+        "git pull",
+        # "git fetch && git reset --hard origin/clean_mnist",
     ],
 
     # Model configuration
-    "batch_size" : "128",
-    "initial_learning_rate" : ".001",
-    "learning_rate_decay_factor" : ".98",
+    "batch_size" : "64",
+    "max_steps" : "10000",
+    "initial_learning_rate" : ".1",
+    "learning_rate_decay_factor" : "0.98",
     "num_epochs_per_decay" : "1.0",
+    "drop_connect" : "False",
+    "drop_connect_probability" : "0.9",
 
     # Train command specifies how the ps/workers execute tensorflow.
     # PS_HOSTS - special string replaced with actual list of ps hosts.
@@ -100,21 +110,22 @@ cfg = Cfg({
     [
         "python src/mnist_distributed_train.py "
         "--batch_size=%(batch_size)s "
+        "--max_steps=%(max_steps)s "
         "--initial_learning_rate=%(initial_learning_rate)s "
         "--learning_rate_decay_factor=%(learning_rate_decay_factor)s "
         "--num_epochs_per_decay=%(num_epochs_per_decay)s "
+        "--drop_connect=%(drop_connect)s "
+        "--drop_connect_probability=%(drop_connect_probability)s "
         "--train_dir=%(base_out_dir)s/train_dir "
         "--worker_hosts='WORKER_HOSTS' "
         "--ps_hosts='PS_HOSTS' "
         "--task_id=TASK_ID "
         "--timeline_logging=false "
-        "--interval_method=false "
-        "--worker_times_cdf_method=false "
-        "--interval_ms=1200 "
         "--num_replicas_to_aggregate=%(num_replicas_to_aggregate)s "
-        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"
+        "--job_name=JOB_NAME > %(base_out_dir)s/out_ROLE_ID 2>&1 &"     
     ],
 
+    # "--max_steps=1000 "
     # Commands to run on the evaluator
     "evaluate_commands" :
     [
@@ -140,12 +151,14 @@ def tf_ec2_run(argv, configuration):
     client = boto3.client("ec2", region_name=configuration["region"])
     ec2 = boto3.resource("ec2", region_name=configuration["region"])
 
+
     def sleep_a_bit():
         time.sleep(5)
 
+
     def summarize_instances(instances):
         instance_type_to_instance_map = {}
-        for instance in sorted(instances, key=lambda x:x.id):
+        for instance in instances:
             typ = instance.instance_type
             if typ not in instance_type_to_instance_map:
                 instance_type_to_instance_map[typ] = []
@@ -156,44 +169,51 @@ def tf_ec2_run(argv, configuration):
 
         return instance_type_to_instance_map
 
+
     def summarize_idle_instances(argv):
         print("Idle instances: (Idle = not running tensorflow)")
         summarize_instances(get_idle_instances())
 
+
     def summarize_running_instances(argv):
         print("Running instances: ")
-        summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}]))
+        summarize_instances(ec2.instances.filter(Filters=[{'Name': 'instance-state-name',
+            'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}]))
+
 
     # Terminate all request.
     def terminate_all_requests():
-         spot_requests = client.describe_spot_instance_requests()
-         spot_request_ids = []
-         for spot_request in spot_requests["SpotInstanceRequests"]:
+        spot_requests = client.describe_spot_instance_requests()
+        spot_request_ids = []
+        for spot_request in spot_requests["SpotInstanceRequests"]:
             if spot_request["State"] != "cancelled" and spot_request["LaunchSpecification"]["KeyName"] == configuration["key_name"]:
-               spot_request_id = spot_request["SpotInstanceRequestId"]
-               spot_request_ids.append(spot_request_id)
+                spot_request_id = spot_request["SpotInstanceRequestId"]
+                spot_request_ids.append(spot_request_id)
 
-         if len(spot_request_ids) != 0:
-             print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
-             client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
+        if len(spot_request_ids) != 0:
+            print("Terminating spot requests: %s" % " ".join([str(x) for x in spot_request_ids]))
+            client.cancel_spot_instance_requests(SpotInstanceRequestIds=spot_request_ids)
 
-         # Wait until all are cancelled.
-         # TODO: Use waiter class
-         done = False
-         while not done:
-             print("Waiting for all spot requests to be terminated...")
-             done = True
-             spot_requests = client.describe_spot_instance_requests()
-             states = [x["State"] for x in spot_requests["SpotInstanceRequests"] if x["LaunchSpecification"]["KeyName"] == configuration["key_name"]]
-             for state in states:
-                 if state != "cancelled":
-                     done = False
-             sleep_a_bit()
+        # Wait until all are cancelled.
+        # TODO: Use waiter class
+        done = False
+        while not done:
+            print("Waiting for all spot requests to be terminated...")
+            done = True
+            spot_requests = client.describe_spot_instance_requests()
+            states = [x["State"] for x in spot_requests["SpotInstanceRequests"]
+                if x["LaunchSpecification"]["KeyName"] == configuration["key_name"]]
+            for state in states:
+                if state != "cancelled":
+                    done = False
+            sleep_a_bit()
+
 
     # Terminate all instances in the configuration
     # Note: all_instances = ec2.instances.all() to get all intances
     def terminate_all_instances():
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         all_instance_ids = [x.id for x in live_instances]
         print([x.id for x in live_instances])
         if len(all_instance_ids) != 0:
@@ -212,41 +232,43 @@ def tf_ec2_run(argv, configuration):
                         done = False
                 sleep_a_bit()
 
+
     # Launch instances as specified in the configuration.
     def launch_instances():
-       method = "spot"
-       if "method" in configuration.keys():
-          method = configuration["method"]
-       worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
-       master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
-       ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
-       evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
-       specs = [(worker_instance_type, worker_count),
-                (master_instance_type, master_count),
-                (ps_instance_type, ps_count),
-                (evaluator_instance_type, evaluator_count)]
-       for (instance_type, count) in specs:
-          launch_specs = {"KeyName" : configuration["key_name"],
+        method = "spot"
+        if "method" in configuration.keys():
+            method = configuration["method"]
+        worker_instance_type, worker_count = configuration["worker_type"], configuration["n_workers"]
+        master_instance_type, master_count = configuration["master_type"], configuration["n_masters"]
+        ps_instance_type, ps_count = configuration["ps_type"], configuration["n_ps"]
+        evaluator_instance_type, evaluator_count = configuration["evaluator_type"], configuration["n_evaluators"]
+        specs = [(worker_instance_type, worker_count),
+                 (master_instance_type, master_count),
+                 (ps_instance_type, ps_count),
+                 (evaluator_instance_type, evaluator_count)]
+        for (instance_type, count) in specs:
+            launch_specs = {"KeyName" : configuration["key_name"],
                           "ImageId" : configuration["image_id"],
                           "InstanceType" : instance_type,
                           "Placement" : {"AvailabilityZone":configuration["availability_zone"]},
                           "SecurityGroups": ["default"]}
-          if method == "spot":
+
+            if method == "spot":
              # TODO: EBS optimized? (Will incur extra hourly cost)
-             client.request_spot_instances(InstanceCount=count,
+                client.request_spot_instances(InstanceCount=count,
                                            LaunchSpecification=launch_specs,
                                            SpotPrice=configuration["spot_price"])
-          elif method == "reserved":
-             client.run_instances(ImageId=launch_specs["ImageId"],
+            elif method == "reserved":
+                client.run_instances(ImageId=launch_specs["ImageId"],
                                   MinCount=count,
                                   MaxCount=count,
                                   KeyName=launch_specs["KeyName"],
                                   InstanceType=launch_specs["InstanceType"],
                                   Placement=launch_specs["Placement"],
                                   SecurityGroups=launch_specs["SecurityGroups"])
-          else:
-             print("Unknown method: %s" % method)
-             sys.exit(-1)
+            else:
+                print("Unknown method: %s" % method)
+                sys.exit(-1)
 
 
     # TODO: use waiter class?
@@ -255,7 +277,8 @@ def tf_ec2_run(argv, configuration):
         while not done:
             print("Waiting for instances to be initialized...")
             done = True
-            live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+            live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+                {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
             ids = [x.id for x in live_instances]
             resps_list = [client.describe_instance_status(InstanceIds=ids[i:i+50]) for i in range(0, len(ids), 50)]
             statuses = []
@@ -275,29 +298,29 @@ def tf_ec2_run(argv, configuration):
     # Prints out status of request in between time waits.
     # TODO: Use waiter class
     def wait_until_instance_request_status_fulfilled():
-         requests_fulfilled = False
-         n_active_or_open = 0
-         while not requests_fulfilled or n_active_or_open == 0:
-             requests_fulfilled = True
-             statuses = client.describe_spot_instance_requests()
-             print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
-             print("-------------------------------------------")
-             n_active_or_open = 0
-             for instance_request in statuses["SpotInstanceRequests"]:
-                 if instance_request["LaunchSpecification"]["KeyName"] != configuration["key_name"]:
+        requests_fulfilled = False
+        n_active_or_open = 0
+        while not requests_fulfilled or n_active_or_open == 0:
+            requests_fulfilled = True
+            statuses = client.describe_spot_instance_requests()
+            print("InstanceRequestId, InstanceType, SpotPrice, State - Status : StatusMessage")
+            print("-------------------------------------------")
+            n_active_or_open = 0
+            for instance_request in statuses["SpotInstanceRequests"]:
+                if instance_request["LaunchSpecification"]["KeyName"] != configuration["key_name"]:
                     continue
-                 sid = instance_request["SpotInstanceRequestId"]
-                 machine_type = instance_request["LaunchSpecification"]["InstanceType"]
-                 price = instance_request["SpotPrice"]
-                 state = instance_request["State"]
-                 status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
-                 if state == "active" or state == "open":
-                     n_active_or_open += 1
-                     print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
-                     if state != "active":
-                         requests_fulfilled = False
-             print("-------------------------------------------")
-             sleep_a_bit()
+                sid = instance_request["SpotInstanceRequestId"]
+                machine_type = instance_request["LaunchSpecification"]["InstanceType"]
+                price = instance_request["SpotPrice"]
+                state = instance_request["State"]
+                status, status_string = instance_request["Status"]["Code"], instance_request["Status"]["Message"]
+                if state == "active" or state == "open":
+                    n_active_or_open += 1
+                    print("%s, %s, %s, %s - %s : %s" % (sid, machine_type, price, state, status, status_string))
+                    if state != "active":
+                        requests_fulfilled = False
+            print("-------------------------------------------")
+            sleep_a_bit()
 
     # Create a client to the instance
     def connect_client(instance):
@@ -313,28 +336,29 @@ def tf_ec2_run(argv, configuration):
     def run_ssh_commands(instance, commands):
         done = False
         while not done:
-           try:
-              print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, "\n".join(commands)))
+            try:
+                print("Instance %s, Running ssh commands:\n%s" % (instance.public_ip_address, "\n".join(commands)))
 
-              # Always need to exit
-              commands.append("exit")
+                # Always need to exit
+                commands.append("exit")
 
-              # Set up ssh client
-              client = connect_client(instance)
+                # Set up ssh client
+                client = connect_client(instance)
 
-              # Clear the stdout from ssh'ing in
-              # For each command perform command and read stdout
-              commandstring = "\n".join(commands)
-              stdin, stdout, stderr = client.exec_command(commandstring)
-              output = stdout.read()
+                # Clear the stdout from ssh'ing in
+                # For each command perform command and read stdout
+                commandstring = "\n".join(commands)
+                stdin, stdout, stderr = client.exec_command(commandstring)
+                output = stdout.read()
 
-              # Close down
-              stdout.close()
-              stdin.close()
-              client.close()
-              done = True
-           except:
-              done = False
+                # Close down
+                stdout.close()
+                stdin.close()
+                client.close()
+                done = True
+            except Exception as e:
+                print("ERROR: " + str(e))
+                done = False
         return output
 
     def run_ssh_commands_parallel(instance, commands, q):
@@ -352,7 +376,8 @@ def tf_ec2_run(argv, configuration):
     # We check whether an instance is running the inception model by ssh'ing into a running machine,
     # and checking whether python is running.
     def get_idle_instances():
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
 
@@ -452,7 +477,7 @@ def tf_ec2_run(argv, configuration):
             "ps" : [],
             "evaluator" : []
         }
-        for role, requirement in sorted(specs.items(), key=lambda x:x[0]):
+        for role, requirement in specs.items():
             instance_type_for_role = requirement["instance_type"]
             n_instances_needed = requirement["n_required"]
             instances_to_assign, rest = instance_type_to_instance_map[instance_type_for_role][:n_instances_needed], instance_type_to_instance_map[instance_type_for_role][n_instances_needed:]
@@ -461,7 +486,8 @@ def tf_ec2_run(argv, configuration):
 
         # Construct the host strings necessary for running the inception command.
         # Note we use private ip addresses to avoid EC2 transfer costs.
-        worker_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["master"] + machine_assignments["worker"]])
+        worker_host_string = ",".join([x.private_ip_address+":"+str(port)
+            for x in machine_assignments["master"] + machine_assignments["worker"]])
         ps_host_string = ",".join([x.private_ip_address+":"+str(port) for x in machine_assignments["ps"]])
 
         # Create a map of command&machine assignments
@@ -469,10 +495,15 @@ def tf_ec2_run(argv, configuration):
         setup_machine_assignments = {}
 
         # Construct the master command
-        command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["master_pre_commands"])}
-        setup_machine_assignments["master"] = {"instance" : machine_assignments["master"][0], "commands" : list(configuration["setup_commands"])}
+        command_machine_assignments["master"] = {"instance" : machine_assignments["master"][0],
+            "commands" : list(configuration["master_pre_commands"])}
+        setup_machine_assignments["master"] = {"instance" : machine_assignments["master"][0],
+            "commands" : list(configuration["setup_commands"])}
         for command_string in configuration["train_commands"]:
-            command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "0").replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", "master"))
+            command_machine_assignments["master"]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string)
+                .replace("TASK_ID", "0").replace("JOB_NAME", "worker")
+                .replace("WORKER_HOSTS", worker_host_string)
+                .replace("ROLE_ID", "master"))
 
         # Construct the worker commands
         for worker_id, instance in enumerate(machine_assignments["worker"]):
@@ -480,7 +511,11 @@ def tf_ec2_run(argv, configuration):
             command_machine_assignments[name] = {"instance" : instance,
                                                  "commands" : list(configuration["pre_commands"])}
             for command_string in configuration["train_commands"]:
-                command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string).replace("TASK_ID", "%d" % (worker_id+1)).replace("JOB_NAME", "worker").replace("WORKER_HOSTS", worker_host_string).replace("ROLE_ID", name))
+                command_machine_assignments[name]["commands"].append(command_string.replace("PS_HOSTS", ps_host_string)
+                    .replace("TASK_ID", "%d" % (worker_id+1))
+                    .replace("JOB_NAME", "worker")
+                    .replace("WORKER_HOSTS", worker_host_string)
+                    .replace("ROLE_ID", name))
 
         # Construct ps commands
         for ps_id, instance in enumerate(machine_assignments["ps"]):
@@ -493,8 +528,10 @@ def tf_ec2_run(argv, configuration):
         # The evaluator requires a special command to continually evaluate accuracy on validation data.
         # We also launch the tensorboard on it.
         assert(len(machine_assignments["evaluator"]) == 1)
+        # Dong - If we don't want the evaluator one can remove the following two lines.
         command_machine_assignments["evaluator"] = {"instance" : machine_assignments["evaluator"][0],
-                                                    "commands" : list(configuration["pre_commands"]) + list(configuration["evaluate_commands"])}
+                                                    "commands" : list(configuration["pre_commands"]) 
+                                                    + list(configuration["evaluate_commands"])}
 
         # Run the commands via ssh in parallel
         threads = []
@@ -516,6 +553,8 @@ def tf_ec2_run(argv, configuration):
         threads = []
         q = Queue.Queue()
 
+        start_time = time.time()
+
         for name, command_and_machine in command_machine_assignments.items():
             instance = command_and_machine["instance"]
             commands = command_and_machine["commands"]
@@ -528,6 +567,8 @@ def tf_ec2_run(argv, configuration):
         # Wait until commands are all finished
         for t in threads:
             t.join()
+
+        end_time = time.time()
 
         # Print the output
         while not q.empty():
@@ -544,7 +585,8 @@ def tf_ec2_run(argv, configuration):
             instance = command_and_machine["instance"]
             instances.append(instance)
             commands = command_and_machine["commands"]
-            ssh_command = "ssh -i %s %s@%s" % (configuration["path_to_keyfile"], configuration["ssh_username"], instance.public_ip_address)
+            ssh_command = "ssh -i %s %s@%s" % (configuration["path_to_keyfile"], configuration["ssh_username"],
+                instance.public_ip_address)
             print("%s - %s" % (name, instance.instance_id))
             print("To ssh: %s" % ssh_command)
             print("------------------------")
@@ -561,6 +603,14 @@ def tf_ec2_run(argv, configuration):
             "command_machine_assignments" : command_machine_assignments,
             "cluster_string" : instance_cluster_string
         }
+
+        run_time = end_time - start_time
+        print("--- %s seconds ---" % (run_time))
+
+
+
+        with open("results.txt", "a") as myfile:
+            myfile.write("%s\n" % run_time)
 
         return cluster_save
 
@@ -585,7 +635,8 @@ def tf_ec2_run(argv, configuration):
         summarize_idle_instances(None)
 
     def kill_all_python(argv):
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},  {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
         for instance in live_instances:
@@ -598,51 +649,52 @@ def tf_ec2_run(argv, configuration):
         summarize_idle_instances(None)
 
     def download_file(argv):
-       if len(argv) != 5:
-          print("Usage python inception_ec2.py download_file instances_cluster_string path_to_file dir_to_save")
-          sys.exit(0)
+        if len(argv) != 5:
+            print("Usage python inception_ec2.py download_file instances_cluster_string path_to_file dir_to_save")
+            sys.exit(0)
 
-       # Get instances of the cluster
-       cluster_instance_string = argv[2]
-       instance_ids = cluster_instance_string.split(",")
+        # Get instances of the cluster
+        cluster_instance_string = argv[2]
+        instance_ids = cluster_instance_string.split(",")
 
-       filepath = argv[3]
+        filepath = argv[3]
 
-       # Create the outpath if it does not exist
-       outpath = argv[4] + "/"
-       if not os.path.exists(outpath):
-          os.makedirs(outpath)
+        # Create the outpath if it does not exist
+        outpath = argv[4] + "/"
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
 
-       # Get a random running instance (does not have to be idle, since
-       # might want to download while everything machine is not idle)
-       running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
-       if len(running_instances) == 0:
-          print("Error, no running instances")
-          sys.exit(0)
-       selected_instance = None
-       for instance in running_instances:
-          if instance.instance_id in instance_ids:
-             selected_instance = instance
-       if selected_instance == None:
-          print("Error, no instance in instance cluster: %s" % cluster_instance_string)
-          sys.exit(0)
+        # Get a random running instance (does not have to be idle, since
+        # might want to download while everything machine is not idle)
+        running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name',
+            'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
+        if len(running_instances) == 0:
+            print("Error, no running instances")
+            sys.exit(0)
+        selected_instance = None
+        for instance in running_instances:
+            if instance.instance_id in instance_ids:
+                selected_instance = instance
+        if selected_instance == None:
+            print("Error, no instance in instance cluster: %s" % cluster_instance_string)
+            sys.exit(0)
 
-       # For the selected instance, ssh and compress the directory
-       file_to_download = configuration["base_out_dir"] + "/" + filepath
-       name = configuration["name"] + "_data_" + filepath
-       copy_command = "cp -r %s ./%s" % (file_to_download, name)
-       run_ssh_commands(instance, [copy_command])
+        # For the selected instance, ssh and compress the directory
+        file_to_download = configuration["base_out_dir"] + "/" + filepath
+        name = configuration["name"] + "_data_" + filepath
+        copy_command = "cp -r %s ./%s" % (file_to_download, name)
+        run_ssh_commands(instance, [copy_command])
 
-       # SCP the data over to the local machine
-       client = connect_client(selected_instance)
-       scp = SCPClient(client.get_transport())
-       local_path = outpath + name
-       print("SCP %s to %s" % (name, local_path))
-       scp.get("%s" % name, local_path=local_path)
-       scp.close()
-       client.close()
+        # SCP the data over to the local machine
+        client = connect_client(selected_instance)
+        scp = SCPClient(client.get_transport())
+        local_path = outpath + name
+        print("SCP %s to %s" % (name, local_path))
+        scp.get("%s" % name, local_path=local_path)
+        scp.close()
+        client.close()
 
-       return local_path
+        return local_path
 
     def download_outdir(argv):
         if len(argv) != 4:
@@ -660,7 +712,8 @@ def tf_ec2_run(argv, configuration):
 
         # Get a random running instance (does not have to be idle, since
         # might want to download while everything machine is not idle)
-        running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
+        running_instances = [x for x in ec2.instances.filter(Filters=[{'Name': 'instance-state-name',
+            'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])]
         if len(running_instances) == 0:
             print("Error, no running instances")
             sys.exit(0)
@@ -696,7 +749,8 @@ def tf_ec2_run(argv, configuration):
         command = argv[3]
         instance_ids_to_run_command = cluster_instance_string.split(",")
 
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         threads = []
         q = Queue.Queue()
         for instance in live_instances:
@@ -716,7 +770,9 @@ def tf_ec2_run(argv, configuration):
     # Setup nfs on all instances
     def setup_nfs():
         print("Clearing previous nfs file system...")
-        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}, {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
+        live_instances = ec2.instances.filter(Filters=[{'Name': 'instance-state-name', 'Values': ['running']},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]},
+            {'Name': 'key-name', 'Values': [configuration["key_name"]]}])
         live_instances_string = ",".join([x.instance_id for x in live_instances])
         rm_command = "sudo rm -rf %s" % configuration["nfs_mount_point"]
         argv = ["python", "inception_ec2.py", live_instances_string, rm_command]
@@ -740,10 +796,10 @@ def tf_ec2_run(argv, configuration):
     def launch(argv):
         method = "spot"
         if "method" in configuration:
-           method = configuration["method"]
+            method = configuration["method"]
         launch_instances()
         if method == "spot":
-           wait_until_instance_request_status_fulfilled()
+            wait_until_instance_request_status_fulfilled()
         wait_until_running_instances_initialized()
         setup_nfs()
 
@@ -784,15 +840,18 @@ def tf_ec2_run(argv, configuration):
     }
     help_map = {
         "launch" : "Launch instances",
-        "clean_launch_and_run" : "Shut everything down, launch instances, wait until requests fulfilled, check that configuration is fulfilled, and launch and run inception.",
+        "clean_launch_and_run" : "Shut everything down, launch instances, wait until requests fulfilled,"
+            + "check that configuration is fulfilled, and launch and run inception.",
         "shutdown" : "Shut everything down by cancelling all instance requests, and terminating all instances.",
         "list_idle_instances" : "Lists all idle instances. Idle instances are running instances not running tensorflow.",
         "list_running_instances" : "Lists all running instances.",
         "run_tf" : "Runs inception on idle instances.",
         "kill_all_python" : "Kills python running inception training on ALL instances.",
-        "kill_python" : "Kills python running inception on instances indicated by instance id string separated by ',' (no spaces).",
+        "kill_python" : "Kills python running inception on instances"
+            + "indicated by instance id string separated by ',' (no spaces).",
         "run_command" : "Runs given command on instances selcted by instance id string, separated by ','.",
-        "download_outdir" : "Downloads base_out_dir as specified in the configuration. Used for pulling checkpoint files and saved models.",
+        "download_outdir" : "Downloads base_out_dir as specified in the configuration."
+            + "Used for pulling checkpoint files and saved models.",
         "download_file" : "Downloads base_out_dir/filepath as specified in the configuration."
     }
 
