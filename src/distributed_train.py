@@ -181,18 +181,20 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
-    print(grads)
 
     # Apply drop connect if FLAGS.drop_connect is True.
     if FLAGS.drop_connect:
       bernoulli_sampler = tf.contrib.distributions.Bernoulli(p=FLAGS.drop_connect_probability)
-      drop_connect_op = apply_drop_connect_all(grads, bernoulli_sampler)
+      dropped_grads = [(drop_connect(gv[0], bernoulli_sampler), gv[1]) for gv in grads]
 
     if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
       apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id,
         global_step=global_step, collect_cdfs=FLAGS.worker_times_cdf_method)
     else:
-      apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
+      if FLAGS.drop_connect:
+        apply_gradients_op = opt.apply_gradients(dropped_grads, global_step=global_step)
+      else:
+        apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
     '''
     This part is an old version, new version only uses apply_gradients_op
@@ -311,11 +313,11 @@ def train(target, dataset, cluster_spec):
         #run_options.timeout_in_ms = 1000 * 60 * 1
 
         tf.logging.info("RUNNING SESSION... %f" % time.time())
-        if FLAGS.drop_connect:
+        #if FLAGS.drop_connect:
           # sess.run(drop_connect_op, feed_dict=feed_dict, run_metadata=run_metadata,
           #   options=run_options)
-          print(sess.run(grads, feed_dict=feed_dict, run_metadata=run_metadata,
-            options=run_options))
+        #  print(sess.run(grads, feed_dict=feed_dict, run_metadata=run_metadata,
+        #    options=run_options))
 
         sess.run(apply_gradients_op, feed_dict=feed_dict, run_metadata=run_metadata,
             options=run_options)
@@ -392,9 +394,8 @@ def train(target, dataset, cluster_spec):
                  global_step=global_step)
 
 
-def apply_drop_connect_all(grads_and_vars, bernoulli_sampler):
-  return [tf.assign(gv[0], drop_connect(gv[0], bernoulli_sampler)) for gv in grads_and_vars]
-
+#def apply_drop_connect_all(grads_and_vars, bernoulli_sampler):
+#  return [tf.assign(gv[0], drop_connect(gv[0], bernoulli_sampler)) for gv in grads_and_vars]
 
 def drop_connect(grad, bernoulli_sampler):
   drop_connect_tensor = bernoulli_sampler.sample(tf.shape(grad))
