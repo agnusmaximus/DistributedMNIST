@@ -311,7 +311,9 @@ def train(target, dataset, cluster_spec):
 
         tf.logging.info("RUNNING SESSION... %f" % time.time())
         if FLAGS.drop_connect:
-          sess.run(drop_connect_op, feed_dict=feed_dict, run_metadata=run_metadata,
+          # sess.run(drop_connect_op, feed_dict=feed_dict, run_metadata=run_metadata,
+          #   options=run_options)
+          print sess.run(grads, feed_dict=feed_dict, run_metadata=run_metadata,
             options=run_options)
 
         sess.run(apply_gradients_op, feed_dict=feed_dict, run_metadata=run_metadata,
