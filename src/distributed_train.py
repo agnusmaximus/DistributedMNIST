@@ -316,10 +316,10 @@ def train(target, dataset, cluster_spec):
 
         sess.run(apply_gradients_op, feed_dict=feed_dict, run_metadata=run_metadata,
             options=run_options)
-        # loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
+        loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
+          feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        #step, train_acc_value = sess.run([global_step, train_acc], 
         #   feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-        step, train_acc_value = sess.run([global_step, train_acc], 
-           feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
         tf.logging.info("Global step attained: %d" % step)
         tf.logging.info("DONE RUNNING SESSION...")
 
