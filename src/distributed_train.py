@@ -181,6 +181,7 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
+    print(grads)
 
     # Apply drop connect if FLAGS.drop_connect is True.
     if FLAGS.drop_connect:
