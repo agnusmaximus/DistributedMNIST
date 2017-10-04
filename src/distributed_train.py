@@ -362,8 +362,6 @@ def train(target, dataset, cluster_spec):
           # np.save(loss_file_name, loss_list)
           np.save(time_acc_file_name, time_acc_list)
 
-
-
         # Determine if the summary_op should be run on the chief worker.
         if is_chief and next_summary_time < time.time() and FLAGS.should_summarize:
 
