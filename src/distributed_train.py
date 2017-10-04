@@ -341,8 +341,7 @@ def train(target, dataset, cluster_spec):
         if step > FLAGS.max_steps:
           break
 
-        end_time = time.time()
-        duration = end_time - start_time
+        duration = finish_time - start_time
         examples_per_sec = FLAGS.batch_size / float(duration)
         format_str = ('Worker %d: %s: step %d, loss = %f, train_acc = %f'
                       '(%.1f examples/sec; %.3f  sec/batch)')
