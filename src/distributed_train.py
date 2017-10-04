@@ -395,7 +395,7 @@ def apply_drop_connect_all(grads_and_vars, bernoulli_sampler):
 
 def drop_connect(grad, bernoulli_sampler):
   drop_connect_tensor = bernoulli_sampler.sample(tf.shape(grad))
-  return grad * drop_connect_tensor
+  return grad * tf.cast(drop_connect_tensor, dtype=tf.float32)
 
 
 
