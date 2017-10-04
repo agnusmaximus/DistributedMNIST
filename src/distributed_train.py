@@ -57,6 +57,7 @@ tf.app.flags.DEFINE_integer('save_results_period', 1000, """period of saving"""
                            """"results""")
 
 tf.app.flags.DEFINE_integer('max_steps', 1000000, 'Number of batches to run.')
+tf.app.flags.DEFINE_boolean('drop_connect', False, 'drop connect or not')
 tf.app.flags.DEFINE_integer('batch_size', 128, 'Batch size.')
 tf.app.flags.DEFINE_string('subset', 'train', 'Either "train" or "validation".')
 tf.app.flags.DEFINE_boolean('log_device_placement', False,
@@ -94,6 +95,8 @@ tf.app.flags.DEFINE_float('num_epochs_per_decay', 2.0,
                           'Epochs after which learning rate decays.')
 tf.app.flags.DEFINE_float('learning_rate_decay_factor', 0.999,
                           'Learning rate decay factor.')
+tf.app.flags.DEFINE_float('drop_connect_probability', 0.9,
+                          'The probability of drop connect')
 
 # Constants dictating the learning rate schedule.
 RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
@@ -179,13 +182,24 @@ def train(target, dataset, cluster_spec):
 
     # Compute gradients with respect to the loss.
     grads = opt.compute_gradients(total_loss)
+
+    # Apply drop connect if FLAGS.drop_connect is True.
+    if FLAGS.drop_connect:
+      bernoulli_sampler = tf.contrib.distributions.Bernoulli(probs=FLAGS.drop_connect_probability)
+      drop_connect_op = apply_drop_connect_all(grads, bernoulli_sampler)
+
     if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
-      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id, global_step=global_step, collect_cdfs=FLAGS.worker_times_cdf_method)
+      apply_gradients_op = opt.apply_gradients(grads, FLAGS.task_id,
+        global_step=global_step, collect_cdfs=FLAGS.worker_times_cdf_method)
     else:
       apply_gradients_op = opt.apply_gradients(grads, global_step=global_step)
 
+    '''
+    This part is an old version, new version only uses apply_gradients_op
     with tf.control_dependencies([apply_gradients_op]):
       train_op = tf.identity(total_loss, name='train_op')
+    '''
+
 
     # Get chief queue_runners, init_tokens and clean_up_op, which is used to
     # synchronize replicas.
@@ -263,7 +277,7 @@ def train(target, dataset, cluster_spec):
     if FLAGS.task_id == 0 and FLAGS.interval_method:
       opt.start_interval_updates(sess, timeout_client)
 
-    loss_list = []
+    # loss_list = []
     train_acc_list = []
     time_list = []
 
@@ -299,8 +313,16 @@ def train(target, dataset, cluster_spec):
         #run_options.timeout_in_ms = 1000 * 60 * 1
 
         tf.logging.info("RUNNING SESSION... %f" % time.time())
-        loss_value, step, train_acc_value = sess.run([train_op, global_step, train_acc], 
-          feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        if FLAGS.drop_connect:
+          sess.run(drop_connect_op, feed_dict=feed_dict, run_metadata=run_metadata,
+            options=run_options)
+
+        sess.run(apply_gradients_op, feed_dict=feed_dict, run_metadata=run_metadata,
+            options=run_options)
+        # loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
+        #   feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        step, train_acc_value = sess.run([global_step, train_acc], 
+           feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
         tf.logging.info("Global step attained: %d" % step)
         tf.logging.info("DONE RUNNING SESSION...")
 
@@ -331,16 +353,16 @@ def train(target, dataset, cluster_spec):
                            examples_per_sec, duration))
 
         time_list.append(time.time())
-        loss_list.append(loss_value)
+        # loss_list.append(loss_value)
         train_acc_list.append(train_acc_value)
 
         # Save the results when step % FLAGS.save_results_period == 0
         if step % FLAGS.save_results_period == 0:
           time_file_name = FLAGS.train_dir + ('/worker%d_time.npy' % FLAGS.task_id)
-          loss_file_name = FLAGS.train_dir + ('/worker%d_loss.npy' % FLAGS.task_id)
+          # loss_file_name = FLAGS.train_dir + ('/worker%d_loss.npy' % FLAGS.task_id)
           train_acc_file_name = FLAGS.train_dir + ('/worker%d_train_acc.npy' % FLAGS.task_id)
           np.save(time_file_name, time_list)
-          np.save(loss_file_name, loss_list)
+          # np.save(loss_file_name, loss_list)
           np.save(train_acc_file_name, train_acc_list)
 
 
@@ -373,3 +395,15 @@ def train(target, dataset, cluster_spec):
       saver.save(sess,
                  os.path.join(FLAGS.train_dir, 'model.ckpt'),
                  global_step=global_step)
+
+
+def apply_drop_connect_all(grads_and_vars, bernoulli_sampler):
+  return [tf.assign(gv[0], drop_connect(gv[0], bernoulli_sampler)) for gv in grads_and_vars]
+
+
+def drop_connect(grad, bernoulli_sampler):
+  drop_connect_tensor = bernoulli_sampler.sample(tf.shape(grad))
+  return grad * drop_connect_tensor
+
+
+
