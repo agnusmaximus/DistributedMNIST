@@ -184,7 +184,7 @@ def train(target, dataset, cluster_spec):
 
     # Apply drop connect if FLAGS.drop_connect is True.
     if FLAGS.drop_connect:
-      bernoulli_sampler = tf.contrib.distributions.Bernoulli(probs=FLAGS.drop_connect_probability)
+      bernoulli_sampler = tf.contrib.distributions.Bernoulli(p=FLAGS.drop_connect_probability)
       drop_connect_op = apply_drop_connect_all(grads, bernoulli_sampler)
 
     if FLAGS.interval_method or FLAGS.worker_times_cdf_method:
