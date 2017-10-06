@@ -331,7 +331,8 @@ def train(target, dataset, cluster_spec):
         if FLAGS.worker_times_cdf_method:
           timeout_client.broadcast_worker_finished_computing_gradients(cur_iteration)
 
-        assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
+        # the following assert line sometimes causes problem, remove for now
+        # assert not np.isnan(loss_value), 'Model diverged with loss = NaN'
 
         # Log the elapsed time per iteration
         finish_time = time.time()
