@@ -42,7 +42,7 @@ def main(unused_args):
       if not tf.gfile.Exists(FLAGS.train_dir):
         tf.gfile.MakeDirs(FLAGS.train_dir)
 
-    distributed_train.train(server.target, dataset.train, cluster_spec)
+    distributed_train.train(server.target, dataset.train, dataset.test, cluster_spec)
 
 if __name__ == '__main__':
   tf.logging.set_verbosity(tf.logging.DEBUG)

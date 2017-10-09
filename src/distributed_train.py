@@ -102,8 +102,11 @@ tf.app.flags.DEFINE_float('drop_connect_probability', 0.9,
 RMSPROP_DECAY = 0.9                # Decay term for RMSProp.
 RMSPROP_MOMENTUM = 0.9             # Momentum in RMSProp.
 RMSPROP_EPSILON = 1.0              # Epsilon term for RMSProp.
+"""
+dataset -> train, dataset_test -> test
+"""
 
-def train(target, dataset, cluster_spec):
+def train(target, dataset, dataset_test, cluster_spec):
 
   """Train Inception on a dataset for a number of steps."""
   # Number of workers and parameter servers are infered from the workers and ps
@@ -153,16 +156,21 @@ def train(target, dataset, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
+    images_test, labels_test = mnist.placeholder_inputs(FLAGS.batch_size/6)
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
+    # Test logits
+    logits_test = mnist.inference(images_test, train=False)
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
 
     # Add train accuracy
     train_acc = mnist.evaluation(logits, labels)
+    # Test accuracy
+    test_acc = mnist.evaluation(logits_test, labels_test)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
@@ -300,6 +308,8 @@ def train(target, dataset, cluster_spec):
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
+        feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
+          labels_test, FLAGS.batch_size/6)
 
         run_options = tf.RunOptions()
         run_metadata = tf.RunMetadata()
@@ -323,6 +333,8 @@ def train(target, dataset, cluster_spec):
             options=run_options)
         loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
           feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
+        test_acc_value = sess.run(test_acc, feed_dict=feed_dict_test, run_metadata=run_metadata,
+          options=run_options)
         #step, train_acc_value = sess.run([global_step, train_acc], 
         #   feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
         tf.logging.info("Global step attained: %d" % step)
@@ -349,13 +361,13 @@ def train(target, dataset, cluster_spec):
 
         duration = finish_time - start_time
         examples_per_sec = FLAGS.batch_size / float(duration)
-        format_str = ('Worker %d: %s: step %d, loss = %f, train_acc = %f'
+        format_str = ('Worker %d: %s: step %d, loss = %f, train_acc = %f, test_acc = %f'
                       '(%.1f examples/sec; %.3f  sec/batch)')
         tf.logging.info(format_str %
                         (FLAGS.task_id, datetime.now(), step, loss_value, train_acc_value,
-                           examples_per_sec, duration))
+                           test_acc_value, examples_per_sec, duration))
 
-        time_acc_list.append((finish_time, train_acc_value))
+        time_acc_list.append((finish_time, train_acc_value, test_acc_value, loss_value))
 
         # Save the results when step % FLAGS.save_results_period == 0
         if step % FLAGS.save_results_period == 0:
