@@ -333,8 +333,10 @@ def train(target, dataset, dataset_test, cluster_spec):
             options=run_options)
         loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
           feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-        test_acc_value = sess.run(test_acc, feed_dict=feed_dict_test, run_metadata=run_metadata,
-          options=run_options)
+        test_acc_value = 0.0
+        # test_acc_value = sess.run(test_acc, feed_dict=feed_dict_test, run_metadata=run_metadata,
+        #  options=run_options)
+
         #step, train_acc_value = sess.run([global_step, train_acc], 
         #   feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
         tf.logging.info("Global step attained: %d" % step)
