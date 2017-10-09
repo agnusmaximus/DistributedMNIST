@@ -156,13 +156,13 @@ def train(target, dataset, dataset_test, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
-    images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
+    # images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
     # Test logits
-    logits_test = mnist.inference(images_test, train=False)
+    # logits_test = mnist.inference(images_test, train=False)
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
@@ -170,7 +170,7 @@ def train(target, dataset, dataset_test, cluster_spec):
     # Add train accuracy
     train_acc = mnist.evaluation(logits, labels)
     # Test accuracy
-    test_acc = mnist.evaluation(logits_test, labels_test)
+    # test_acc = mnist.evaluation(logits_test, labels_test)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
@@ -308,8 +308,8 @@ def train(target, dataset, dataset_test, cluster_spec):
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
-        feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
-          labels_test, int(FLAGS.batch_size/6))
+        # feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
+        #  labels_test, int(FLAGS.batch_size/6))
 
         run_options = tf.RunOptions()
         run_metadata = tf.RunMetadata()
