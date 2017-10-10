@@ -308,8 +308,8 @@ def train(target, dataset, dataset_test, cluster_spec):
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
-        # feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
-        #  labels_test, int(FLAGS.batch_size/6))
+        feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
+          labels_test, int(FLAGS.batch_size/6))
 
         run_options = tf.RunOptions()
         run_metadata = tf.RunMetadata()
