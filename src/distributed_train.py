@@ -162,7 +162,7 @@ def train(target, dataset, dataset_test, cluster_spec):
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
     # Test logits
-    # logits_test = mnist.inference(images_test, train=False)
+    logits_test = mnist.inference(images_test, train=False)
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
