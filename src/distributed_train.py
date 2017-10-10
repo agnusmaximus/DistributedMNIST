@@ -156,13 +156,13 @@ def train(target, dataset, dataset_test, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
-    images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
+    # images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
     logits = mnist.inference(images, train=True)
     # Test logits
-    logits_test = mnist.inference(images_test, train=False)
+    # logits_test = mnist.inference(images_test, train=False)
 
     # Add classification loss.
     total_loss = mnist.loss(logits, labels)
@@ -170,7 +170,7 @@ def train(target, dataset, dataset_test, cluster_spec):
     # Add train accuracy
     train_acc = mnist.evaluation(logits, labels)
     # Test accuracy
-    test_acc = mnist.evaluation(logits_test, labels_test)
+    # test_acc = mnist.evaluation(logits_test, labels_test)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
@@ -308,8 +308,8 @@ def train(target, dataset, dataset_test, cluster_spec):
 
         start_time = time.time()
         feed_dict = mnist.fill_feed_dict(dataset, images, labels, FLAGS.batch_size)
-        feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
-          labels_test, int(FLAGS.batch_size/6))
+        # feed_dict_test = mnist.fill_feed_dict(dataset_test, images_test,
+        #  labels_test, int(FLAGS.batch_size/6))
 
         run_options = tf.RunOptions()
         run_metadata = tf.RunMetadata()
@@ -333,8 +333,8 @@ def train(target, dataset, dataset_test, cluster_spec):
             options=run_options)
         loss_value, step, train_acc_value = sess.run([total_loss, global_step, train_acc], 
           feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
-        test_acc_value = sess.run(test_acc, feed_dict=feed_dict_test, run_metadata=run_metadata,
-          options=run_options)
+        # test_acc_value = sess.run(test_acc, feed_dict=feed_dict_test, run_metadata=run_metadata,
+        #  options=run_options)
 
         #step, train_acc_value = sess.run([global_step, train_acc], 
         #   feed_dict=feed_dict, run_metadata=run_metadata, options=run_options)
@@ -360,6 +360,8 @@ def train(target, dataset, dataset_test, cluster_spec):
         if step > FLAGS.max_steps:
           break
 
+        test_acc_value = 0.0
+        
         duration = finish_time - start_time
         examples_per_sec = FLAGS.batch_size / float(duration)
         format_str = ('Worker %d: %s: step %d, loss = %f, train_acc = %f, test_acc = %f'
