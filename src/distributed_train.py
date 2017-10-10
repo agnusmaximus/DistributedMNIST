@@ -170,7 +170,7 @@ def train(target, dataset, dataset_test, cluster_spec):
     # Add train accuracy
     train_acc = mnist.evaluation(logits, labels)
     # Test accuracy
-    # test_acc = mnist.evaluation(logits_test, labels_test)
+    test_acc = mnist.evaluation(logits_test, labels_test)
 
     # Create an optimizer that performs gradient descent.
     opt = tf.train.GradientDescentOptimizer(lr)
