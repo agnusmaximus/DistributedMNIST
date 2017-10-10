@@ -156,7 +156,7 @@ def train(target, dataset, dataset_test, cluster_spec):
                                     staircase=True)
 
     images, labels = mnist.placeholder_inputs(FLAGS.batch_size)
-    # images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
+    images_test, labels_test = mnist.placeholder_inputs(int(FLAGS.batch_size/6))
 
     # Number of classes in the Dataset label set plus 1.
     # Label 0 is reserved for an (unused) background class.
