@@ -138,7 +138,8 @@ def _variable_with_weight_decay(name, shape, stddev, wd):
 def distorted_inputs_queue():
   if not FLAGS.data_dir:
     raise ValueError('Please supply a data_dir')
-  data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
+  # data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-bin')
+  data_dir = os.path.join(FLAGS.data_dir, 'cifar-10-batches-py')
   return cifar10_input.distorted_inputs_queue(data_dir)
 
 def distorted_inputs():
