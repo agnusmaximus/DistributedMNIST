@@ -174,7 +174,9 @@ def _generate_image_and_label_batch(image, label, min_queue_examples,
   return images, tf.reshape(label_batch, [batch_size])
 
 def distorted_inputs_queue(data_dir):
-  filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+  #filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+  #             for i in xrange(1, 6)]
+  filenames = [os.path.join(data_dir, 'data_batch_%d' % i)
                for i in xrange(1, 6)]
   for f in filenames:
     if not tf.gfile.Exists(f):
@@ -256,7 +258,9 @@ def distorted_inputs(data_dir, batch_size):
     images: Images. 4D tensor of [batch_size, IMAGE_SIZE, IMAGE_SIZE, 3] size.
     labels: Labels. 1D tensor of [batch_size] size.
   """
-  filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+  #filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+  #             for i in xrange(1, 6)]
+  filenames = [os.path.join(data_dir, 'data_batch_%d' % i)
                for i in xrange(1, 6)]
   for f in filenames:
     if not tf.gfile.Exists(f):
@@ -327,11 +331,14 @@ def inputs(eval_data, data_dir, batch_size):
     labels: Labels. 1D tensor of [batch_size] size.
   """
   if not eval_data:
-    filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+    #filenames = [os.path.join(data_dir, 'data_batch_%d.bin' % i)
+    #             for i in xrange(1, 6)]
+    filenames = [os.path.join(data_dir, 'data_batch_%d' % i)
                  for i in xrange(1, 6)]
     num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_TRAIN
   else:
-    filenames = [os.path.join(data_dir, 'test_batch.bin')]
+    # filenames = [os.path.join(data_dir, 'test_batch.bin')]
+    filenames = [os.path.join(data_dir, 'test_batch')]
     num_examples_per_epoch = NUM_EXAMPLES_PER_EPOCH_FOR_EVAL
 
   for f in filenames:
