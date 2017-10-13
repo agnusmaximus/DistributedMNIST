@@ -73,8 +73,8 @@ INITIAL_LEARNING_RATE = 0.1       # Initial learning rate.
 # names of the summaries when visualizing a model.
 TOWER_NAME = 'tower'
 
-DATA_URL = 'http://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz'
-
+#DATA_URL = 'http://www.cs.toronto.edu/~kriz/cifar-10-binary.tar.gz'
+DATA_URL = 'http://www.cs.toronto.edu/~kriz/cifar-10-python.tar.gz'
 
 def _activation_summary(x):
   """Helper to create summaries for activations.
@@ -395,4 +395,4 @@ def maybe_download_and_extract():
     print('Successfully downloaded', filename, statinfo.st_size, 'bytes.')
   
   print('filepath', filepath)
-  tarfile.open(filepath, 'r').extractall(dest_directory)
+  tarfile.open(filepath, 'r:gz').extractall(dest_directory)
